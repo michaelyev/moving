@@ -1,8 +1,8 @@
-import { Button, Input, Sheet, Typography } from "@mui/joy";
-import { BlueButton } from "./BlueButton";
-import Image from "next/image";
+import { Button, Sheet } from "@mui/joy";
+
 
 export const Booking = () => {
+  
     return (
       <Sheet
         sx={{

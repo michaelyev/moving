@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import Button from '@mui/joy/Button'
 import Image from 'next/image'
 

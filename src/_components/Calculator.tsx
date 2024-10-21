@@ -1,7 +1,5 @@
 "use client"; // Делает этот компонент клиентским
 
-import { CssBaseline, ThemeProvider as MaterialThemeProvider } from "@mui/material";
-import { CssVarsProvider as JoyThemeProvider } from "@mui/joy/styles";
 import { AddressInput } from "@/_components/AddressInput";
 import { BlueButton } from '@/_components/BlueButton';
 import { Booking } from '@/_components/BookingComponentCalculator';

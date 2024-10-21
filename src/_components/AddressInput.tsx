@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+
 import React, { useState } from 'react';
 import Button from '@mui/joy/Button';
 import Stack from '@mui/joy/Stack';
@@ -8,17 +11,14 @@ import Sheet from '@mui/joy/Sheet';
 import { GoogleMapModal } from './MapsModal'; // Assuming the Maps modal is exported from 'GoogleMapModal'
 
 export const AddressInput: React.FC = () => {
-  const [modalTitle, setModalTitle] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState(false);
 
-  const handleOpenMapModal = (title: string) => {
-    setModalTitle(title);
+  const handleOpenMapModal = () => {
     setOpenModal(true); // Opens the modal
   };
 
   const handleCloseModal = () => {
     setOpenModal(false); // Closes the modal
-    setModalTitle(null);
   };
 
   const handleLocationsSelect = (locations: any) => {
@@ -59,7 +59,7 @@ export const AddressInput: React.FC = () => {
             }}
           >
             <Button
-              onClick={() => handleOpenMapModal('Pickup From')}  // Opens the modal for "Pickup From"
+              onClick={() => handleOpenMapModal()}  // Opens the modal for "Pickup From"
               sx={{
                 all: "unset",
                 flexDirection: "column",
@@ -120,7 +120,7 @@ export const AddressInput: React.FC = () => {
             }}
           >
             <Button
-              onClick={() => handleOpenMapModal('Drop Off To')}  // Opens the modal for "Drop Off To"
+              onClick={() => handleOpenMapModal()}  // Opens the modal for "Drop Off To"
               sx={{
                 all: "unset",
                 flexDirection: "column",

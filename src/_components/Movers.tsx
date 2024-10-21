@@ -1,7 +1,6 @@
 import Button from '@mui/joy/Button';
 import Sheet from '@mui/joy/Sheet';
 import { Typography } from '@mui/material'
-import Image from 'next/image';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
 

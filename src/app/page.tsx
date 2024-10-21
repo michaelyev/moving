@@ -1,6 +1,5 @@
 'use client';  // Директива 'use client' для корректной работы с состоянием
 
-import { useState } from 'react';
 import { AddressInput } from '@/_components/AddressInput';
 import { BlueButton } from '@/_components/BlueButton';
 import { Booking } from '@/_components/BookingComponentCalculator';
@@ -12,10 +11,6 @@ import PhoneNumberInput from '@/_components/PhoneNumberInput';
 import { PropertyTypeSelection } from '@/_components/PropertyTypeSelection';
 import Sheet from '@mui/joy/Sheet';
 import BoltIcon from '@mui/icons-material/Bolt';
-import Modal from '@mui/joy/Modal';
-import ModalClose from '@mui/joy/ModalClose';
-import Typography from '@mui/joy/Typography';
-import { GoogleMapModal } from '@/_components/MapsModal';
 
 export default function Home() {
   

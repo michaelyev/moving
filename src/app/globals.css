@@ -11,8 +11,10 @@ html, body {
   height: 100%;
   font-size: 100%;
   font-family: sans-serif;
-  line-height: 1.5;,
-  padding: '5px'
+  line-height: 1.5;
+  padding: 5px
+  
+  
 }
 
 body {

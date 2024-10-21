@@ -98,7 +98,8 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
       <Sheet
         sx={{
           width: { sm: "60%", xs: "100%" }, // Responsive width
-          height: "50%",
+          height: { sm: "50%", xs: "100%" },
+
           padding: "20px",
           borderRadius: "44px",
           backgroundColor: "rgba(184, 184, 184, 0.90)",

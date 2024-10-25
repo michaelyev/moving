@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-
 import React, { useState } from 'react';
 import Button from '@mui/joy/Button';
 import Stack from '@mui/joy/Stack';
@@ -8,12 +5,22 @@ import { Box, Typography } from '@mui/material';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import AddIcon from '@mui/icons-material/Add';
 import Sheet from '@mui/joy/Sheet';
-import { GoogleMapModal } from './MapsModal'; // Assuming the Maps modal is exported from 'GoogleMapModal'
+import { GoogleMapModal } from './MapsModal';
 
-export const AddressInput: React.FC = () => {
+interface AddressInputProps {
+  setValue: (name: string, value: string) => void;
+  pickupAddressName: string;
+  dropOffAddressName: string;
+}
+
+export const AddressInput: React.FC<AddressInputProps> = ({ setValue, pickupAddressName, dropOffAddressName }) => {
   const [openModal, setOpenModal] = useState(false);
+  const [addressType, setAddressType] = useState<'pickup' | 'dropOff'>('pickup'); // Store which address type is active
+  const [pickupAddress, setPickupAddress] = useState<string | null>(null);
+  const [dropOffAddress, setDropOffAddress] = useState<string | null>(null);
 
-  const handleOpenMapModal = () => {
+  const handleOpenMapModal = (type: 'pickup' | 'dropOff') => {
+    setAddressType(type); // Set the type (pickup/drop-off)
     setOpenModal(true); // Opens the modal
   };
 
@@ -21,9 +28,15 @@ export const AddressInput: React.FC = () => {
     setOpenModal(false); // Closes the modal
   };
 
-  const handleLocationsSelect = (locations: any) => {
-    console.log('Selected locations:', locations);
-    handleCloseModal(); // Closes modal after locations are selected
+  const handleLocationsSelect = (location: { address: string, position: { lat: number, lng: number } }) => {
+    if (addressType === 'pickup') {
+      setPickupAddress(location.address); // Update pickup address
+      setValue(pickupAddressName, location.address); // Update form state for pickup
+    } else {
+      setDropOffAddress(location.address); // Update drop-off address
+      setValue(dropOffAddressName, location.address); // Update form state for drop-off
+    }
+    handleCloseModal(); // Close the modal after selection
   };
 
   return (
@@ -48,7 +61,7 @@ export const AddressInput: React.FC = () => {
           spacing={2}
           sx={{ width: "100%" }}
         >
-          {/* Pickup From */}
+          {/* Pickup From Button */}
           <Sheet
             sx={{
               display: "flex",
@@ -59,7 +72,7 @@ export const AddressInput: React.FC = () => {
             }}
           >
             <Button
-              onClick={() => handleOpenMapModal()}  // Opens the modal for "Pickup From"
+              onClick={() => handleOpenMapModal('pickup')}  // Opens the modal for "Pickup From"
               sx={{
                 all: "unset",
                 flexDirection: "column",
@@ -84,7 +97,7 @@ export const AddressInput: React.FC = () => {
                 Pickup From
               </Typography>
               <Typography fontWeight="light" color="#615D5D">
-                Zip, City or State
+                {pickupAddress || 'Zip, City or State'}
               </Typography>
             </Button>
 
@@ -109,7 +122,7 @@ export const AddressInput: React.FC = () => {
             </Button>
           </Sheet>
 
-          {/* Drop Off To */}
+          {/* Drop Off To Button */}
           <Sheet
             sx={{
               display: "flex",
@@ -120,7 +133,7 @@ export const AddressInput: React.FC = () => {
             }}
           >
             <Button
-              onClick={() => handleOpenMapModal()}  // Opens the modal for "Drop Off To"
+              onClick={() => handleOpenMapModal('dropOff')}  // Opens the modal for "Drop Off To"
               sx={{
                 all: "unset",
                 flexDirection: "column",
@@ -145,7 +158,7 @@ export const AddressInput: React.FC = () => {
                 Drop Off To
               </Typography>
               <Typography fontWeight="light" color="#615D5D">
-                Zip, City or State
+                {dropOffAddress || 'Zip, City or State'}
               </Typography>
             </Button>
 
@@ -171,10 +184,14 @@ export const AddressInput: React.FC = () => {
           </Sheet>
         </Stack>
       </Box>
+
       {openModal && (
         <GoogleMapModal
+          activeAddressType={addressType} // Pass active address type (pickup or drop-off)
           onLocationsSelect={handleLocationsSelect}
           onClose={handleCloseModal} // Close the modal after selection
+          dropOffAddress = {dropOffAddress}
+          pickupAddress = {pickupAddress}
         />
       )}
     </>

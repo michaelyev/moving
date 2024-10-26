@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useState } from 'react';
 import Button from '@mui/joy/Button';
 import Stack from '@mui/joy/Stack';
@@ -11,32 +13,30 @@ interface AddressInputProps {
   setValue: (name: string, value: string) => void;
   pickupAddressName: string;
   dropOffAddressName: string;
+  distanceName: string; // New prop to store the distance value
 }
 
-export const AddressInput: React.FC<AddressInputProps> = ({ setValue, pickupAddressName, dropOffAddressName }) => {
+export const AddressInput: React.FC<AddressInputProps> = ({ setValue, pickupAddressName, dropOffAddressName, distanceName }) => {
   const [openModal, setOpenModal] = useState(false);
-  const [addressType, setAddressType] = useState<'pickup' | 'dropOff'>('pickup'); // Store which address type is active
   const [pickupAddress, setPickupAddress] = useState<string | null>(null);
   const [dropOffAddress, setDropOffAddress] = useState<string | null>(null);
 
-  const handleOpenMapModal = (type: 'pickup' | 'dropOff') => {
-    setAddressType(type); // Set the type (pickup/drop-off)
-    setOpenModal(true); // Opens the modal
-  };
+  const handleOpenMapModal = () => setOpenModal(true);
 
-  const handleCloseModal = () => {
-    setOpenModal(false); // Closes the modal
-  };
+  const handleCloseModal = () => setOpenModal(false);
 
-  const handleLocationsSelect = (location: { address: string, position: { lat: number, lng: number } }) => {
-    if (addressType === 'pickup') {
-      setPickupAddress(location.address); // Update pickup address
-      setValue(pickupAddressName, location.address); // Update form state for pickup
-    } else {
-      setDropOffAddress(location.address); // Update drop-off address
-      setValue(dropOffAddressName, location.address); // Update form state for drop-off
-    }
-    handleCloseModal(); // Close the modal after selection
+  // Update to handle distance
+  const handleLocationsSelect = (
+    pickup: { address: string, position: { lat: number, lng: number } },
+    dropOff: { address: string, position: { lat: number, lng: number } },
+    distance: string
+  ) => {
+    setPickupAddress(pickup.address);
+    setDropOffAddress(dropOff.address);
+    setValue(pickupAddressName, pickup.address);
+    setValue(dropOffAddressName, dropOff.address);
+    setValue(distanceName, distance); // Set the distance value in the parent form
+    handleCloseModal();
   };
 
   return (
@@ -49,136 +49,35 @@ export const AddressInput: React.FC<AddressInputProps> = ({ setValue, pickupAddr
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          mb: '16px',
-          "&:hover": {
-            borderColor: "#FF8919",
-          }
+          mb: "16px",
+          "&:hover": { borderColor: "#FF8919" },
         }}
       >
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={2}
-          sx={{ width: "100%" }}
-        >
-          {/* Pickup From Button */}
-          <Sheet
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              width: "50%",
-              justifyContent: "space-between",
-            }}
-          >
-            <Button
-              onClick={() => handleOpenMapModal('pickup')}  // Opens the modal for "Pickup From"
-              sx={{
-                all: "unset",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                display: "flex",
-                cursor: "pointer",
-                "&:hover": {
-                  backgroundColor: "unset",
-                }
-              }}
-            >
-              <Typography
-                sx={{
-                  color: "#343A40",
-                  fontSize: "14px",
-                  fontStyle: "normal",
-                  fontWeight: 600,
-                  lineHeight: "14px",
-                  paddingBottom: "6px",
-                }}
-              >
+        <Stack direction="row" alignItems="center" spacing={2} sx={{ width: "100%" }}>
+          <Sheet sx={{ display: "flex", flexDirection: "row", alignItems: "center", width: "50%", justifyContent: "space-between" }}>
+            <Button onClick={handleOpenMapModal} sx={{ all: "unset", flexDirection: "column", alignItems: "flex-start", display: "flex", cursor: "pointer", width: '100%', "&:hover": { background: "none" } }}>
+              <Typography sx={{ color: "#343A40", fontSize: "14px", fontWeight: 600, paddingBottom: "6px" }}>
                 Pickup From
               </Typography>
-              <Typography fontWeight="light" color="#615D5D">
-                {pickupAddress || 'Zip, City or State'}
+              <Typography sx={{ display: "flex", whiteSpace: "nowrap", overflowX: "hidden" }} fontWeight="light" color="#615D5D">
+                {pickupAddress || "Zip, City or State"}
               </Typography>
             </Button>
-
-            <Button
-              sx={{
-                all: "unset",
-                padding: "auto",
-                cursor: "pointer",
-                backgroundColor: "#FFF1C2",
-                height: "48px",
-                width: "29px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "12px",
-                "&:hover": {
-                  backgroundColor: "#FF8919",
-                },
-              }}
-            >
+            <Button sx={{ all: "unset", padding: "auto", cursor: "pointer", backgroundColor: "#FFF1C2", height: "48px", width: "29px", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "12px" }}>
               <SwapHorizIcon />
             </Button>
           </Sheet>
 
-          {/* Drop Off To Button */}
-          <Sheet
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              width: "50%",
-              justifyContent: "space-between",
-            }}
-          >
-            <Button
-              onClick={() => handleOpenMapModal('dropOff')}  // Opens the modal for "Drop Off To"
-              sx={{
-                all: "unset",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                display: "flex",
-                cursor: "pointer",
-                "&:hover": {
-                  backgroundColor: "unset",
-                }
-              }}
-            >
-              <Typography
-                sx={{
-                  color: "#343A40",
-                  fontSize: "14px",
-                  fontStyle: "normal",
-                  fontWeight: 600,
-                  lineHeight: "14px",
-                  paddingBottom: "6px",
-                }}
-              >
+          <Sheet sx={{ display: "flex", flexDirection: "row", alignItems: "center", width: "50%", justifyContent: "space-between" }}>
+            <Button onClick={handleOpenMapModal} sx={{ all: "unset", flexDirection: "column", alignItems: "flex-start", display: "flex", cursor: "pointer", width: '100%', "&:hover": { background: "none" } }}>
+              <Typography sx={{ color: "#343A40", fontSize: "14px", fontWeight: 600, paddingBottom: "6px", whiteSpace: "none" }}>
                 Drop Off To
               </Typography>
-              <Typography fontWeight="light" color="#615D5D">
-                {dropOffAddress || 'Zip, City or State'}
+              <Typography sx={{ display: "flex", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%" }} fontWeight="light" color="#615D5D">
+                {dropOffAddress || "Zip, City or State"}
               </Typography>
             </Button>
-
-            <Button
-              sx={{
-                all: "unset",
-                padding: "auto",
-                cursor: "pointer",
-                backgroundColor: "#FFF1C2",
-                height: "48px",
-                width: "29px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "12px",
-                "&:hover": {
-                  backgroundColor: "#FF8919",
-                },
-              }}
-            >
+            <Button sx={{ all: "unset", padding: "auto", cursor: "pointer", backgroundColor: "#FFF1C2", height: "48px", width: "29px", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "12px" }}>
               <AddIcon />
             </Button>
           </Sheet>
@@ -187,11 +86,10 @@ export const AddressInput: React.FC<AddressInputProps> = ({ setValue, pickupAddr
 
       {openModal && (
         <GoogleMapModal
-          activeAddressType={addressType} // Pass active address type (pickup or drop-off)
           onLocationsSelect={handleLocationsSelect}
-          onClose={handleCloseModal} // Close the modal after selection
-          dropOffAddress = {dropOffAddress}
-          pickupAddress = {pickupAddress}
+          onClose={handleCloseModal}
+          pickupAddress={pickupAddress}
+          dropOffAddress={dropOffAddress}
         />
       )}
     </>

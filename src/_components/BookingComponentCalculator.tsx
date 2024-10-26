@@ -1,6 +1,5 @@
 import { Button, Sheet } from "@mui/joy";
 
-
 export const Booking = () => {
   
     return (

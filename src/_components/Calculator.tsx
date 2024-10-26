@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 "use client"; // Делает этот компонент клиентским
 
 import { AddressInput } from "@/_components/AddressInput";

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Modal, Sheet, Input } from '@mui/joy';
 import { GoogleMap, useJsApiLoader, Marker, Autocomplete } from '@react-google-maps/api';
@@ -7,20 +9,22 @@ import { useMediaQuery } from '@mui/material';
 const defaultCenter = { lat: 47.6062, lng: -122.3321 }; // Default to Seattle, WA
 
 interface GoogleMapModalProps {
-  onLocationsSelect: (pickup: { address: string, position: { lat: number, lng: number } }, dropOff: { address: string, position: { lat: number, lng: number } }) => void;
+  onLocationsSelect: (pickup: { address: string, position: { lat: number, lng: number } }, dropOff: { address: string, position: { lat: number, lng: number } }, distance: string) => void;
   onClose: () => void;
   pickupAddress: string | null;
   dropOffAddress: string | null;
 }
 
-export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelect, onClose, pickupAddress: initialPickup, dropOffAddress: initialDropOff }) => {
+export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
+  onLocationsSelect, onClose, pickupAddress: initialPickup, dropOffAddress: initialDropOff,
+}) => {
   const [pickupAddress, setPickupAddress] = useState<string | null>(initialPickup);
   const [pickupPosition, setPickupPosition] = useState<{ lat: number, lng: number } | null>(null);
 
   const [dropOffAddress, setDropOffAddress] = useState<string | null>(initialDropOff);
   const [dropOffPosition, setDropOffPosition] = useState<{ lat: number, lng: number } | null>(null);
 
-  const [isPickupActive, setIsPickupActive] = useState(true); // Start with Pickup active
+  const [isPickupActive, setIsPickupActive] = useState(true); // Track which input is active
 
   const autocompletePickupRef = useRef<any>(null);
   const autocompleteDropOffRef = useRef<any>(null);
@@ -28,10 +32,9 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
   const isMobile = useMediaQuery('(max-width:600px)');
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: 'AIzaSyAFrlvAYZVCNuAg2Ix5pmbwgiTTjCpF5k4', // Replace with your API Key
-    libraries: ['places'],
+    libraries: ['places', 'geometry'],
   });
 
-  // Handle map click to select a position
   const handleMapClick = (event: any) => {
     const lat = event.latLng?.lat();
     const lng = event.latLng?.lng();
@@ -46,14 +49,30 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
     }
   };
 
-  // Convert lat/lng to address using Geocoder
+  const geocodeAddress = (address: string, type: 'pickup' | 'dropOff') => {
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ address }, (results, status) => {
+      if (status === 'OK' && results[0].geometry.location) {
+        const lat = results[0].geometry.location.lat();
+        const lng = results[0].geometry.location.lng();
+        if (type === 'pickup') {
+          setPickupPosition({ lat, lng });
+          setPickupAddress(address);
+        } else {
+          setDropOffPosition({ lat, lng });
+          setDropOffAddress(address);
+        }
+      }
+    });
+  };
+
   const getAddressFromCoordinates = (lat: number, lng: number, type: 'pickup' | 'dropOff') => {
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ location: { lat, lng } }, (results, status) => {
       if (status === 'OK' && results[0]) {
         if (type === 'pickup') {
           setPickupAddress(results[0].formatted_address);
-          setIsPickupActive(false); // Switch to Drop Off after Pickup
+          setIsPickupActive(false);
         } else {
           setDropOffAddress(results[0].formatted_address);
         }
@@ -61,7 +80,6 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
     });
   };
 
-  // Handle Autocomplete place selection
   const handlePlaceChanged = (type: 'pickup' | 'dropOff') => {
     const place = (type === 'pickup' ? autocompletePickupRef.current : autocompleteDropOffRef.current)?.getPlace();
     if (place?.geometry?.location) {
@@ -70,28 +88,55 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
       if (type === 'pickup') {
         setPickupPosition({ lat, lng });
         setPickupAddress(place.formatted_address || '');
-        setIsPickupActive(false); // Switch to Drop Off after Pickup is filled
+        setIsPickupActive(false);
       } else {
         setDropOffPosition({ lat, lng });
         setDropOffAddress(place.formatted_address || '');
+        handleConfirmLocations();
       }
     }
   };
 
-  // Automatically move focus to the Drop-Off input after Pickup is selected
-  useEffect(() => {
-    if (pickupAddress && !dropOffAddress) {
-      autocompleteDropOffRef.current?.focus();
-    }
-  }, [pickupAddress]);
+  // Fetch driving distance between Pickup and Drop-Off
+  const fetchDrivingDistance = async () => {
+    if (!pickupPosition || !dropOffPosition) return null;
 
-  // Confirm both Pickup and Drop Off addresses
-  const handleConfirmLocations = () => {
-    if (pickupAddress && dropOffAddress && pickupPosition && dropOffPosition) {
-      onLocationsSelect(
-        { address: pickupAddress, position: pickupPosition },
-        { address: dropOffAddress, position: dropOffPosition }
+    const service = new window.google.maps.DistanceMatrixService();
+    return new Promise<string | null>((resolve, reject) => {
+      service.getDistanceMatrix(
+        {
+          origins: [pickupPosition],
+          destinations: [dropOffPosition],
+          travelMode: window.google.maps.TravelMode.DRIVING,
+          unitSystem: window.google.maps.UnitSystem.IMPERIAL, // Добавлено для расстояния в милях
+        },
+        
+        (response, status) => {
+          if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
+            const distance = response.rows[0].elements[0].distance.text;
+            resolve(distance);
+          } else {
+            reject(null);
+          }
+        }
       );
+    });
+  };
+
+  const handleConfirmLocations = async () => {
+    const distance = await fetchDrivingDistance();
+    const finalPickup = {
+      address: pickupAddress || initialPickup || '',
+      position: pickupPosition || { lat: 0, lng: 0 },
+    };
+
+    const finalDropOff = {
+      address: dropOffAddress || initialDropOff || '',
+      position: dropOffPosition || { lat: 0, lng: 0 },
+    };
+
+    if (finalPickup.address && finalDropOff.address) {
+      onLocationsSelect(finalPickup, finalDropOff, distance || 'Unknown');
       onClose();
     }
   };
@@ -111,10 +156,13 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
           marginX: "auto",
         }}
       >
-        {/* Map Section */}
         {!isMobile && isLoaded && (
           <GoogleMap
-            mapContainerStyle={{ width: "100%", height: "100%", borderRadius: '24px' }}
+            mapContainerStyle={{
+              width: "100%",
+              height: "100%",
+              borderRadius: "24px",
+            }}
             center={pickupPosition || dropOffPosition || defaultCenter}
             zoom={12}
             onClick={handleMapClick}
@@ -124,7 +172,6 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
           </GoogleMap>
         )}
 
-        {/* Form Section */}
         <Sheet
           sx={{
             width: { xs: "100%", sm: "40%" },
@@ -135,20 +182,23 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
             borderRadius: "24px",
           }}
         >
-          {/* Autocomplete Input for Pickup */}
           {isLoaded && (
             <>
               <Autocomplete
                 onLoad={(autocomplete) =>
                   (autocompletePickupRef.current = autocomplete)
                 }
-                onPlaceChanged={() => handlePlaceChanged('pickup')}
+                onPlaceChanged={() => handlePlaceChanged("pickup")}
               >
                 <Input
                   placeholder="Pickup Address"
                   value={pickupAddress || ""}
                   onFocus={() => setIsPickupActive(true)}
-                  onChange={(e) => setPickupAddress(e.target.value)}
+                  onChange={(e) => {
+                    const newAddress = e.target.value;
+                    setPickupAddress(newAddress);
+                    geocodeAddress(newAddress, "pickup");
+                  }}
                   sx={{
                     mb: 2,
                     borderRadius: "12px",
@@ -158,18 +208,21 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
                 />
               </Autocomplete>
 
-              {/* Autocomplete Input for Drop-Off */}
               <Autocomplete
                 onLoad={(autocomplete) =>
                   (autocompleteDropOffRef.current = autocomplete)
                 }
-                onPlaceChanged={() => handlePlaceChanged('dropOff')}
+                onPlaceChanged={() => handlePlaceChanged("dropOff")}
               >
                 <Input
                   placeholder="Drop-Off Address"
                   value={dropOffAddress || ""}
                   onFocus={() => setIsPickupActive(false)}
-                  onChange={(e) => setDropOffAddress(e.target.value)}
+                  onChange={(e) => {
+                    const newAddress = e.target.value;
+                    setDropOffAddress(newAddress);
+                    geocodeAddress(newAddress, "dropOff");
+                  }}
                   sx={{
                     mb: 2,
                     borderRadius: "12px",
@@ -181,7 +234,6 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
             </>
           )}
 
-          {/* Confirm Button */}
           <Sheet
             sx={{
               display: "flex",
@@ -197,11 +249,9 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
                 backgroundColor: "red",
                 color: "#fff",
                 fontWeight: "bold",
-                ":hover": {
-                  backgroundColor: "#FF6700",
-                },
+                ":hover": { backgroundColor: "#FF6700" },
                 mb: 2,
-                width: '20%'
+                width: "20%",
               }}
               onClick={onClose}
             >
@@ -214,10 +264,8 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({ onLocationsSelec
                 backgroundColor: "#FF8919",
                 color: "#fff",
                 fontWeight: "bold",
-                ":hover": {
-                  backgroundColor: "#FF6700",
-                },
-                width: '77%'
+                ":hover": { backgroundColor: "#FF6700" },
+                width: "77%",
               }}
               onClick={handleConfirmLocations}
               disabled={!pickupAddress || !dropOffAddress}

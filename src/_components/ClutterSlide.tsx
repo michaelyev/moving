@@ -2,6 +2,7 @@
 
 'use client'; // Required for state management in Next.js
 
+import React from 'react'
 import Box from '@mui/joy/Box';
 import Slider from '@mui/joy/Slider';
 import { Typography } from '@mui/material';

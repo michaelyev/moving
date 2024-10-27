@@ -26,8 +26,8 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
 
   const [isPickupActive, setIsPickupActive] = useState(true); // Track which input is active
 
-  const autocompletePickupRef = useRef<any>(null);
-  const autocompleteDropOffRef = useRef<any>(null);
+  const autocompletePickupRef = useRef<HTMLInputElement | null>(null);
+  const autocompleteDropOffRef = useRef<HTMLInputElement | null>(null);
 
   const isMobile = useMediaQuery('(max-width:600px)');
   const { isLoaded } = useJsApiLoader({
@@ -35,7 +35,7 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
     libraries: ['places', 'geometry'],
   });
 
-  const handleMapClick = (event: any) => {
+  const handleMapClick = (event: void) => {
     const lat = event.latLng?.lat();
     const lng = event.latLng?.lng();
     if (lat && lng) {

@@ -43,7 +43,7 @@ export const Booking = () => {
             },
           }}
         >
-          Got a better deal ?
+          Want a better deal ?
         </Button>
       </Sheet>
     );

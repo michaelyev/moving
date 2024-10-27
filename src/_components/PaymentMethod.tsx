@@ -43,7 +43,7 @@ export const PaymentMethodPicker = ({ setValue }) => {
           width={14}
           src="icons/interface-home-5--door-entrance-home-house-map-roof-round-window.svg"
         />
-        Payment Method
+        Payment
       </Button>
 
       {/* Модальное окно с выбором метода оплаты */}

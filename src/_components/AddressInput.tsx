@@ -34,15 +34,20 @@ export const AddressInput: React.FC<AddressInputProps> = ({
   const handleLocationsSelect = (
     pickup: { address: string; position: { lat: number; lng: number } },
     dropOff: { address: string; position: { lat: number; lng: number } },
-    distance: string
+    distance: string,
+    duration: string // добавляем duration
   ) => {
+    console.log("Distance received in AddressInput:", distance);
+    console.log("Duration received in AddressInput:", duration);
+  
     setPickupAddress(pickup.address);
     setDropOffAddress(dropOff.address);
     setValue(pickupAddressName, pickup.address);
     setValue(dropOffAddressName, dropOff.address);
-    setValue(distanceName, distance); // Set the distance value in the parent form
+    setValue(distanceName, distance);
     handleCloseModal();
   };
+  
   return (
     <>
       <Box

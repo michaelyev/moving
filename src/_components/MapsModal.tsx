@@ -9,7 +9,7 @@ import { useMediaQuery } from '@mui/material';
 const defaultCenter = { lat: 47.6062, lng: -122.3321 }; // Default to Seattle, WA
 
 interface GoogleMapModalProps {
-  onLocationsSelect: (pickup: { address: string, position: { lat: number, lng: number } }, dropOff: { address: string, position: { lat: number, lng: number } }, distance: string) => void;
+  onLocationsSelect: (pickup: { address: string, position: { lat: number, lng: number } }, dropOff: { address: string, position: { lat: number, lng: number } }, distance: string, duration: string) => void;
   onClose: () => void;
   pickupAddress: string | null;
   dropOffAddress: string | null;
@@ -99,52 +99,63 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
 
   // Fetch driving distance between Pickup and Drop-Off
   // Fetch driving distance and time between Pickup and Drop-Off
-const fetchDrivingDistance = async () => {
-  if (!pickupPosition || !dropOffPosition) return { distance: null, duration: null };
-
-  const service = new window.google.maps.DistanceMatrixService();
-  return new Promise((resolve, reject) => {
-    service.getDistanceMatrix(
-      {
-        origins: [pickupPosition],
-        destinations: [dropOffPosition],
-        travelMode: window.google.maps.TravelMode.DRIVING,
-        unitSystem: window.google.maps.UnitSystem.IMPERIAL, // For miles
-      },
-      (response, status) => {
-        if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
-          const distance = response.rows[0].elements[0].distance.text; // e.g., "10 mi"
-          const duration = response.rows[0].elements[0].duration.text; // e.g., "20 mins"
-          resolve({ distance, duration });
-        } else {
-          reject({ distance: null, duration: null });
-        }
-      }
-    );
-  });
-};
-
-
-const handleConfirmLocations = async () => {
-  const { distance, duration } = await fetchDrivingDistance();
+  const fetchDrivingDistance = async () => {
+    if (!pickupPosition || !dropOffPosition) return { distance: null, duration: null };
   
-  const finalPickup = {
-    address: pickupAddress || initialPickup || '',
-    position: pickupPosition || { lat: 0, lng: 0 },
+    const service = new window.google.maps.DistanceMatrixService();
+    return new Promise((resolve, reject) => {
+      service.getDistanceMatrix(
+        {
+          origins: [pickupPosition],
+          destinations: [dropOffPosition],
+          travelMode: window.google.maps.TravelMode.DRIVING,
+          unitSystem: window.google.maps.UnitSystem.IMPERIAL,
+        },
+        (response, status) => {
+          console.log("Original API Response:", response);
+  
+          if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
+            const distanceInMiles = parseFloat((response.rows[0].elements[0].distance.value / 1609.34).toFixed(1)); // Convert meters to miles
+            const durationInMinutes = Math.round(response.rows[0].elements[0].duration.value / 60); // Convert seconds to minutes
+  
+            console.log("Distance in miles:", distanceInMiles);
+            console.log("Duration in minutes:", durationInMinutes);
+  
+            resolve({ distance: distanceInMiles, duration: durationInMinutes });
+          } else {
+            console.error("Error fetching distance matrix:", status);
+            console.error("Element status:", response.rows[0].elements[0].status); // Log element status
+            reject({ distance: null, duration: null });
+          }
+        }
+      );
+    });
   };
+  
 
-  const finalDropOff = {
-    address: dropOffAddress || initialDropOff || '',
-    position: dropOffPosition || { lat: 0, lng: 0 },
+  const handleConfirmLocations = async () => {
+    const { distance, duration } = await fetchDrivingDistance();
+    
+    const finalPickup = {
+      address: pickupAddress || initialPickup || '',
+      position: pickupPosition || { lat: 0, lng: 0 },
+    };
+  
+    const finalDropOff = {
+      address: dropOffAddress || initialDropOff || '',
+      position: dropOffPosition || { lat: 0, lng: 0 },
+    };
+  
+    console.log("Distance:", distance);
+    console.log("Duration:", duration);
+  
+    if (finalPickup.address && finalDropOff.address) {
+      // Pass both distance and duration to the parent component
+      onLocationsSelect(finalPickup, finalDropOff, distance || 'Unknown', duration || 'Unknown');
+      onClose();
+    }
   };
-
-  if (finalPickup.address && finalDropOff.address) {
-    // Pass both distance and duration to the parent component
-    onLocationsSelect(finalPickup, finalDropOff, distance || 'Unknown', duration || 'Unknown');
-    onClose();
-  }
-};
-
+  
 
   return (
     <Modal open onClose={onClose}>

@@ -1,4 +1,4 @@
-"use client"; // Required for working with state in Next.js app
+"use client";
 
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -18,9 +18,9 @@ import { PaymentMethodPicker } from "@/_components/PaymentMethod";
 
 function calculateMovingCost(data) {
   const baseRates = {
-    2: 150,
-    3: 200,
-    4: 250,
+    2: 135,
+    3: 175,
+    4: 230,
   };
 
   const additionalFactors = {
@@ -33,8 +33,12 @@ function calculateMovingCost(data) {
   };
 
   let minHours = 2;
-  let movers = 2;
+  let movers = data.movers || 2;
 
+  const distance = data.distance; // Предполагаем, что distance уже в милях
+  const durationInMinutes = data.duration; // Предполагаем, что duration уже в минутах
+
+  // House calculation based on square feet
   if (data.propertyType?.pickupProperty?.type === "House") {
     const sqFt = parseInt(data.propertyType.pickupProperty.details?.squareFeet) || 0;
 
@@ -79,15 +83,11 @@ function calculateMovingCost(data) {
   let hourlyRate = baseRates[movers] || 150;
   let additionalTime = 0;
 
-  if (
-    data.propertyType?.pickupProperty?.details &&
-    data.propertyType.pickupProperty.details.floor > 1 &&
-    data.propertyType.pickupProperty.details.freightElevator === "no"
-  ) {
-    const floor = parseInt(data.propertyType.pickupProperty.details.floor) || 1;
-    additionalTime += (floor - 1) * additionalFactors.floor.increment;
+  const pickupDetails = data.propertyType?.pickupProperty?.details;
+  if (pickupDetails?.floor > 1 && pickupDetails.freightElevator === "no") {
+    additionalTime += (pickupDetails.floor - 1) * additionalFactors.floor.increment;
     hourlyRate *= additionalFactors.floor.multiplier;
-  } else if (data.propertyType?.pickupProperty?.details?.freightElevator === "yes") {
+  } else if (pickupDetails?.freightElevator === "yes") {
     hourlyRate *= additionalFactors.freightElevator;
   }
 
@@ -100,17 +100,12 @@ function calculateMovingCost(data) {
     additionalTime += (parseInt(data.heavyItems[item].quantity) || 0) * additionalFactors.heavyItems;
   }
 
-  const durationHours = Math.round(parseFloat(data.duration) / 60) || 0;
-  const doubleDriveTime = durationHours * 2;
-  const packingMultiplier = additionalFactors.packingOption[data.packingOption] || 1;
-
-  let totalHours = minHours + additionalTime + doubleDriveTime;
-  const extraMovers = data.movers - movers;
-  if (extraMovers > 0) {
-    const efficiencyFactor = 0.1;
-    totalHours *= Math.max(1 - extraMovers * efficiencyFactor, 0.5);
+  let totalHours = minHours + additionalTime + (durationInMinutes / 60);
+  if (distance <= 50) {
+    totalHours += (durationInMinutes / 60) * 2;
   }
 
+  const packingMultiplier = additionalFactors.packingOption[data.packingOption] || 1;
   const totalHourlyRate = baseRates[data.movers] * packingMultiplier;
   const totalCost = Math.round(totalHourlyRate * totalHours);
 
@@ -138,7 +133,6 @@ export default function Home() {
     },
   });
 
-  const [selectedTime, setSelectedTime] = useState("7:00 AM");
   const [movingCost, setMovingCost] = useState(null);
   const [minMovers, setMinMovers] = useState(2);
 
@@ -154,28 +148,46 @@ export default function Home() {
   const packingOption = watch("packingOption");
 
   useEffect(() => {
-    if (addressFrom && addressTo && propertyType) {
-      const { totalCost, movers: calculatedMovers } = calculateMovingCost({
-        addressFrom,
-        addressTo,
-        distance,
-        duration,
-        propertyType,
-        clutterLevel,
-        movers,
-        assemblyItems,
-        heavyItems,
-        packingOption,
-      });
-      setMovingCost(totalCost);
+    const calculateAndSetCost = () => {
+      try {
+        const { totalCost, movers: calculatedMovers } = calculateMovingCost({
+          addressFrom,
+          addressTo,
+          distance,
+          duration,
+          propertyType,
+          clutterLevel,
+          movers,
+          assemblyItems,
+          heavyItems,
+          packingOption,
+        });
 
-      // Automatically adjust movers for large properties
-      if (calculatedMovers !== movers) {
-        setMinMovers(calculatedMovers);
-        setValue("movers", calculatedMovers);
+        setMovingCost(totalCost);
+
+        if (calculatedMovers !== movers) {
+          setMinMovers(calculatedMovers);
+          setValue("movers", calculatedMovers);
+        }
+      } catch (error) {
+        console.error("Error calculating moving cost:", error);
       }
-    }
-  }, [addressFrom, addressTo, propertyType, distance, duration, clutterLevel, assemblyItems, heavyItems, packingOption]);
+    };
+
+    calculateAndSetCost();
+  }, [
+    addressFrom,
+    addressTo,
+    distance,
+    duration,
+    propertyType,
+    clutterLevel,
+    movers,
+    assemblyItems,
+    heavyItems,
+    packingOption,
+    setValue,
+  ]);
 
   const onSubmit = (data) => {
     const { totalCost } = calculateMovingCost(data);
@@ -188,7 +200,7 @@ export default function Home() {
         width: { xs: "100%", sm: "448px", p: 0 },
         marginX: "auto",
         background: "unset",
-        position: "relative", // Make parent relative to position children absolutely within it
+        position: "relative",
       }}
     >
       <Sheet
@@ -261,8 +273,8 @@ export default function Home() {
                 <CalendarComponent
                   value={field.value}
                   onChange={field.onChange}
-                  time={selectedTime}
-                  onTimeChange={(e) => setSelectedTime(e.target.value)}
+                  time="7:00 AM"
+                  onTimeChange={() => {}}
                 />
               )}
             />
@@ -345,39 +357,24 @@ export default function Home() {
           >
             <Button
               sx={{
-                background: movingCost
-                  ? "rgba(72, 134, 255, 0.40)"
-                  : "rgba(255, 137, 25, 0.40)",
+                background: movingCost ? "rgba(72, 134, 255, 0.40)" : "rgba(255, 137, 25, 0.40)",
                 borderRadius: "100px",
                 width: "42%",
                 minHeight: "40px",
                 transition: "background-color 0.5s ease",
                 animation: movingCost ? "fadeIn 0.5s ease" : "none",
-                "@keyframes fadeIn": {
-                  from: { opacity: 0 },
-                  to: { opacity: 1 },
-                },
                 "&:hover": {
                   backgroundColor: movingCost ? "#4876FF" : "#FF881A",
                 },
               }}
               type="button"
             >
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "8px" }}
-              >
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <span>Book for</span>
                 {movingCost !== null ? (
                   <span>${movingCost}</span>
                 ) : (
-                  <div
-                    style={{
-                      background: "#FFF1C2",
-                      borderRadius: "8px",
-                      height: "21px",
-                      width: "50px",
-                    }}
-                  ></div>
+                  <div style={{ background: "#FFF1C2", borderRadius: "8px", height: "21px", width: "50px" }}></div>
                 )}
               </div>
             </Button>
@@ -389,13 +386,6 @@ export default function Home() {
                 minHeight: "40px",
                 backgroundColor: "white",
                 color: "black",
-                animation: "pulse 1.5s infinite",
-                transition: "background-color 0.3s ease-in-out",
-                "@keyframes pulse": {
-                  "0%": { transform: "scale(1)" },
-                  "50%": { transform: "scale(1.05)" },
-                  "100%": { transform: "scale(1)" },
-                },
                 "&:hover": {
                   backgroundColor: "#FF881A",
                   boxShadow: "0 4px 15px rgba(255, 137, 25, 0.5)",

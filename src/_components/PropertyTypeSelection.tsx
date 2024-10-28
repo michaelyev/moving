@@ -250,16 +250,19 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
 // Стили
 const modalStyles = {
   width: { xs: "90%", sm: "400px" },
-  marginX: "auto",
-  marginTop: "10%",
+  position: "absolute", // Position absolutely within the parent
+  bottom: 0, // Stick to the bottom of the parent container
+  left: "50%",
+  transform: "translateX(-50%)", // Center horizontally within the parent
   background: "white",
-  borderRadius: "24px",
+  borderRadius: "24px 24px 0 0", // Rounded top corners
   padding: "24px",
-  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+  boxShadow: "0px -4px 12px rgba(0, 0, 0, 0.1)",
   display: "flex",
   flexDirection: "column",
   gap: "16px",
 };
+
 
 const cancelButtonStyle = {
   height: "48px",

@@ -1,7 +1,10 @@
-// @ts-nocheck
-
 "use client"; // Required for working with state in Next.js app
 
+import { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import Sheet from "@mui/joy/Sheet";
+import Button from "@mui/joy/Button";
+import BoltIcon from "@mui/icons-material/Bolt";
 import { AddressInput } from "@/_components/AddressInput";
 import { CalendarComponent } from "@/_components/Calendar";
 import { ClutterSlide } from "@/_components/ClutterSlide";
@@ -9,78 +12,119 @@ import { Movers } from "@/_components/Movers";
 import { PackagingButtons } from "@/_components/PackagingButtons";
 import PhoneNumberInput from "@/_components/PhoneNumberInput";
 import { PropertyTypeSelection } from "@/_components/PropertyTypeSelection";
-import Sheet from "@mui/joy/Sheet";
-import BoltIcon from "@mui/icons-material/Bolt";
-import { useForm, Controller } from "react-hook-form";
-import { useEffect, useState } from "react";
 import { HeavyItemsPicker } from "@/_components/HeavyItems";
 import { AssemblyDisassemblyPicker } from "@/_components/AssemblyDisassembly";
 import { PaymentMethodPicker } from "@/_components/PaymentMethod";
-import { Button } from "@mui/joy";
 
 function calculateMovingCost(data) {
   const baseRates = {
-    2: 140,  // Hourly rate for 2 movers
-    3: 190,  // Hourly rate for 3 movers
-    4: 240   // Hourly rate for 4 movers
+    2: 150,
+    3: 200,
+    4: 250,
   };
 
   const additionalFactors = {
     floor: { multiplier: 1.2, increment: 1 },
     freightElevator: 0.9,
-    clutterLevel: { 1: 0, 2: 0.5, 3: 1, 4: 1.5, 5: 2, 6: 2.5, 7: 3, 8: 3.5, 9: 4 }, // 9 positions
+    clutterLevel: { 1: 0, 2: 0.5, 3: 1, 4: 1.5, 5: 2, 6: 2.5, 7: 3, 8: 3.5, 9: 4 },
     heavyItems: 0.5,
     assemblyItems: 0.3,
-    distanceRate: 0.5,
-    packingOption: { None: 1, Basic: 1.1, Premium: 1.2 }, // Packaging multiplier
+    packingOption: { None: 1, Partial: 1.1, Full: 1.2 },
   };
 
+  let minHours = 2;
   let movers = 2;
-  if (data.propertyType?.pickupProperty?.type === "Apartment") {
-    const rooms = data.propertyType.pickupProperty.details.rooms;
-    if (rooms >= 3) movers = 3;
-    if (rooms >= 4) movers = 4;
-  } else if (data.propertyType?.pickupProperty?.type === "House") {
-    const sqFt = parseInt(data.propertyType.pickupProperty.details.squareFeet);
-    if (sqFt > 1500) movers = 3;
-    if (sqFt > 2500) movers = 4;
+
+  if (data.propertyType?.pickupProperty?.type === "House") {
+    const sqFt = parseInt(data.propertyType.pickupProperty.details?.squareFeet) || 0;
+
+    if (sqFt > 3000) {
+      movers = 4;
+      minHours = 10;
+    } else if (sqFt > 2000) {
+      movers = 3;
+      minHours = 8;
+    } else if (sqFt > 1000) {
+      movers = 2;
+      minHours = 6;
+    } else {
+      movers = 2;
+      minHours = 4;
+    }
+
+    const extraSqFt = Math.max(0, sqFt - (movers === 4 ? 3000 : movers === 3 ? 2000 : 1000));
+    minHours += Math.ceil(extraSqFt / 10) * 0.1;
+  } else if (data.propertyType?.pickupProperty?.type === "Apartment") {
+    const floor = parseInt(data.propertyType.pickupProperty.details?.floor) || 1;
+
+    if (floor >= 10) {
+      movers = 3;
+      minHours = 6;
+    } else if (floor >= 5) {
+      movers = 3;
+      minHours = 5;
+    } else if (floor >= 2) {
+      movers = 2;
+      minHours = 4;
+    } else {
+      movers = 2;
+      minHours = 3;
+    }
+
+    if (floor > 10) {
+      minHours += (floor - 10) * 0.1;
+    }
   }
 
-  let hourlyRate = baseRates[movers];
+  let hourlyRate = baseRates[movers] || 150;
   let additionalTime = 0;
 
-  if (data.propertyType?.pickupProperty.details.floor > 1 && data.propertyType.pickupProperty.details.freightElevator === "no") {
-    additionalTime += (data.propertyType.pickupProperty.details.floor - 1) * additionalFactors.floor.increment;
+  if (
+    data.propertyType?.pickupProperty?.details &&
+    data.propertyType.pickupProperty.details.floor > 1 &&
+    data.propertyType.pickupProperty.details.freightElevator === "no"
+  ) {
+    const floor = parseInt(data.propertyType.pickupProperty.details.floor) || 1;
+    additionalTime += (floor - 1) * additionalFactors.floor.increment;
     hourlyRate *= additionalFactors.floor.multiplier;
-  } else if (data.propertyType.pickupProperty.details.freightElevator === "yes") {
+  } else if (data.propertyType?.pickupProperty?.details?.freightElevator === "yes") {
     hourlyRate *= additionalFactors.freightElevator;
   }
 
-  additionalTime += additionalFactors.clutterLevel[data.clutterLevel] || 0;
+  additionalTime += additionalFactors.clutterLevel[parseInt(data.clutterLevel)] || 0;
+
   for (const item in data.assemblyItems) {
-    additionalTime += data.assemblyItems[item].quantity * additionalFactors.assemblyItems;
+    additionalTime += (parseInt(data.assemblyItems[item].quantity) || 0) * additionalFactors.assemblyItems;
   }
   for (const item in data.heavyItems) {
-    additionalTime += data.heavyItems[item].quantity * additionalFactors.heavyItems;
+    additionalTime += (parseInt(data.heavyItems[item].quantity) || 0) * additionalFactors.heavyItems;
   }
 
-  const distanceMiles = parseFloat(data.distance);
-  additionalTime += distanceMiles * additionalFactors.distanceRate;
-
-  // Apply packaging multiplier
+  const durationHours = Math.round(parseFloat(data.duration) / 60) || 0;
+  const doubleDriveTime = durationHours * 2;
   const packingMultiplier = additionalFactors.packingOption[data.packingOption] || 1;
-  const totalHourlyRate = hourlyRate * packingMultiplier;
-  const estimatedHours = 1 + additionalTime;
 
-  return Math.round(totalHourlyRate * estimatedHours);
+  let totalHours = minHours + additionalTime + doubleDriveTime;
+  const extraMovers = data.movers - movers;
+  if (extraMovers > 0) {
+    const efficiencyFactor = 0.1;
+    totalHours *= Math.max(1 - extraMovers * efficiencyFactor, 0.5);
+  }
+
+  const totalHourlyRate = baseRates[data.movers] * packingMultiplier;
+  const totalCost = Math.round(totalHourlyRate * totalHours);
+
+  return { totalCost, movers: data.movers };
 }
 
+
 export default function Home() {
-  const { control, watch, setValue } = useForm({
+  const { control, watch, handleSubmit, setValue } = useForm({
     defaultValues: {
       addressFrom: "",
       addressTo: "",
       distance: "",
+      duration: "",
       propertyType: null,
       apartmentDetails: {},
       houseDetails: {},
@@ -96,11 +140,12 @@ export default function Home() {
 
   const [selectedTime, setSelectedTime] = useState("7:00 AM");
   const [movingCost, setMovingCost] = useState(null);
+  const [minMovers, setMinMovers] = useState(2);
 
-  // Watch for changes in necessary fields to trigger cost calculation
   const addressFrom = watch("addressFrom");
   const addressTo = watch("addressTo");
   const distance = watch("distance");
+  const duration = watch("duration");
   const propertyType = watch("propertyType");
   const clutterLevel = watch("clutterLevel");
   const movers = watch("movers");
@@ -110,10 +155,11 @@ export default function Home() {
 
   useEffect(() => {
     if (addressFrom && addressTo && propertyType) {
-      const cost = calculateMovingCost({
+      const { totalCost, movers: calculatedMovers } = calculateMovingCost({
         addressFrom,
         addressTo,
         distance,
+        duration,
         propertyType,
         clutterLevel,
         movers,
@@ -121,9 +167,20 @@ export default function Home() {
         heavyItems,
         packingOption,
       });
-      setMovingCost(cost);
+      setMovingCost(totalCost);
+
+      // Automatically adjust movers for large properties
+      if (calculatedMovers !== movers) {
+        setMinMovers(calculatedMovers);
+        setValue("movers", calculatedMovers);
+      }
     }
-  }, [addressFrom, addressTo, propertyType, distance, clutterLevel, movers, assemblyItems, heavyItems, packingOption]);
+  }, [addressFrom, addressTo, propertyType, distance, duration, clutterLevel, assemblyItems, heavyItems, packingOption]);
+
+  const onSubmit = (data) => {
+    const { totalCost } = calculateMovingCost(data);
+    console.log("Form Data Submitted:", { ...data, movingCost: totalCost });
+  };
 
   return (
     <Sheet
@@ -131,6 +188,7 @@ export default function Home() {
         width: { xs: "100%", sm: "448px", p: 0 },
         marginX: "auto",
         background: "unset",
+        position: "relative", // Make parent relative to position children absolutely within it
       }}
     >
       <Sheet
@@ -153,7 +211,7 @@ export default function Home() {
         Instant Quote No Email
       </Sheet>
 
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Sheet
           sx={{
             width: { xs: "100%", sm: 416 },
@@ -212,7 +270,9 @@ export default function Home() {
             <Controller
               name="movers"
               control={control}
-              render={({ field }) => <Movers {...field} />}
+              render={({ field }) => (
+                <Movers {...field} minMovers={minMovers} />
+              )}
             />
           </Sheet>
 
@@ -285,22 +345,27 @@ export default function Home() {
           >
             <Button
               sx={{
-                background: "rgba(255, 137, 25, 0.40)",
+                background: movingCost
+                  ? "rgba(72, 134, 255, 0.40)"
+                  : "rgba(255, 137, 25, 0.40)",
                 borderRadius: "100px",
                 width: "42%",
                 minHeight: "40px",
+                transition: "background-color 0.5s ease",
                 animation: movingCost ? "fadeIn 0.5s ease" : "none",
                 "@keyframes fadeIn": {
                   from: { opacity: 0 },
                   to: { opacity: 1 },
                 },
                 "&:hover": {
-                  backgroundColor: "#FF881A",
+                  backgroundColor: movingCost ? "#4876FF" : "#FF881A",
                 },
               }}
               type="button"
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
                 <span>Book for</span>
                 {movingCost !== null ? (
                   <span>${movingCost}</span>

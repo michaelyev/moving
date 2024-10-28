@@ -16,7 +16,7 @@ interface GoogleMapModalProps {
 }
 
 export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
-  onLocationsSelect, onClose, pickupAddress: initialPickup, dropOffAddress: initialDropOff,
+  onLocationsSelect, onClose, pickupAddress: initialPickup, dropOffAddress: initialDropOff, duration
 }) => {
   const [pickupAddress, setPickupAddress] = useState<string | null>(initialPickup);
   const [pickupPosition, setPickupPosition] = useState<{ lat: number, lng: number } | null>(null);
@@ -98,48 +98,53 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
   };
 
   // Fetch driving distance between Pickup and Drop-Off
-  const fetchDrivingDistance = async () => {
-    if (!pickupPosition || !dropOffPosition) return null;
+  // Fetch driving distance and time between Pickup and Drop-Off
+const fetchDrivingDistance = async () => {
+  if (!pickupPosition || !dropOffPosition) return { distance: null, duration: null };
 
-    const service = new window.google.maps.DistanceMatrixService();
-    return new Promise<string | null>((resolve, reject) => {
-      service.getDistanceMatrix(
-        {
-          origins: [pickupPosition],
-          destinations: [dropOffPosition],
-          travelMode: window.google.maps.TravelMode.DRIVING,
-          unitSystem: window.google.maps.UnitSystem.IMPERIAL, // Добавлено для расстояния в милях
-        },
-        
-        (response, status) => {
-          if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
-            const distance = response.rows[0].elements[0].distance.text;
-            resolve(distance);
-          } else {
-            reject(null);
-          }
+  const service = new window.google.maps.DistanceMatrixService();
+  return new Promise((resolve, reject) => {
+    service.getDistanceMatrix(
+      {
+        origins: [pickupPosition],
+        destinations: [dropOffPosition],
+        travelMode: window.google.maps.TravelMode.DRIVING,
+        unitSystem: window.google.maps.UnitSystem.IMPERIAL, // For miles
+      },
+      (response, status) => {
+        if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
+          const distance = response.rows[0].elements[0].distance.text; // e.g., "10 mi"
+          const duration = response.rows[0].elements[0].duration.text; // e.g., "20 mins"
+          resolve({ distance, duration });
+        } else {
+          reject({ distance: null, duration: null });
         }
-      );
-    });
+      }
+    );
+  });
+};
+
+
+const handleConfirmLocations = async () => {
+  const { distance, duration } = await fetchDrivingDistance();
+  
+  const finalPickup = {
+    address: pickupAddress || initialPickup || '',
+    position: pickupPosition || { lat: 0, lng: 0 },
   };
 
-  const handleConfirmLocations = async () => {
-    const distance = await fetchDrivingDistance();
-    const finalPickup = {
-      address: pickupAddress || initialPickup || '',
-      position: pickupPosition || { lat: 0, lng: 0 },
-    };
-
-    const finalDropOff = {
-      address: dropOffAddress || initialDropOff || '',
-      position: dropOffPosition || { lat: 0, lng: 0 },
-    };
-
-    if (finalPickup.address && finalDropOff.address) {
-      onLocationsSelect(finalPickup, finalDropOff, distance || 'Unknown');
-      onClose();
-    }
+  const finalDropOff = {
+    address: dropOffAddress || initialDropOff || '',
+    position: dropOffPosition || { lat: 0, lng: 0 },
   };
+
+  if (finalPickup.address && finalDropOff.address) {
+    // Pass both distance and duration to the parent component
+    onLocationsSelect(finalPickup, finalDropOff, distance || 'Unknown', duration || 'Unknown');
+    onClose();
+  }
+};
+
 
   return (
     <Modal open onClose={onClose}>

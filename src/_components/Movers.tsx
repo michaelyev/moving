@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { useState, useEffect } from 'react';
 import Button from '@mui/joy/Button';
 import Sheet from '@mui/joy/Sheet';
@@ -7,13 +5,20 @@ import { Typography } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
 
-export const Movers = ({ value, onChange }) => {
-  const [movers, setMovers] = useState(value || 2);  // Initialize with value from form
+export const Movers = ({ value, onChange, minMovers = 2 }) => {
+  const [movers, setMovers] = useState(Math.max(value || 2, minMovers));
 
-  // Update form field when state changes
+  // Sync state with form field when updated
   useEffect(() => {
-    onChange(movers);  // Update form value via onChange
+    onChange(movers);
   }, [movers, onChange]);
+
+  // Ensure movers don't go below the minMovers threshold
+  useEffect(() => {
+    if (movers < minMovers) {
+      setMovers(minMovers);
+    }
+  }, [minMovers, movers]);
 
   const handleIncrement = () => {
     if (movers < 4) {
@@ -22,7 +27,7 @@ export const Movers = ({ value, onChange }) => {
   };
 
   const handleDecrement = () => {
-    if (movers > 2) {
+    if (movers > minMovers) {
       setMovers(movers - 1);
     }
   };

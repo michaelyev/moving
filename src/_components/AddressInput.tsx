@@ -14,6 +14,7 @@ interface AddressInputProps {
   pickupAddressName: string;
   dropOffAddressName: string;
   distanceName: string; // New prop to store the distance value
+  durationTime: string
 }
 
 export const AddressInput: React.FC<AddressInputProps> = ({
@@ -21,6 +22,8 @@ export const AddressInput: React.FC<AddressInputProps> = ({
   pickupAddressName,
   dropOffAddressName,
   distanceName,
+  durationTime
+
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [pickupAddress, setPickupAddress] = useState<string | null>(null);
@@ -45,6 +48,7 @@ export const AddressInput: React.FC<AddressInputProps> = ({
     setValue(pickupAddressName, pickup.address);
     setValue(dropOffAddressName, dropOff.address);
     setValue(distanceName, distance);
+    setValue(durationTime, duration)
     handleCloseModal();
   };
   

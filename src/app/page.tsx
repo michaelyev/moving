@@ -193,7 +193,7 @@ export default function Home() {
     const { totalCost } = calculateMovingCost(data);
     console.log("Form Data Submitted:", { ...data, movingCost: totalCost });
   };
-
+console.log(duration, distance)
   return (
     <Sheet
       sx={{
@@ -245,6 +245,7 @@ export default function Home() {
                 pickupAddressName="addressFrom"
                 dropOffAddressName="addressTo"
                 distanceName="distance"
+                durationTime='duration'
                 {...field}
               />
             )}

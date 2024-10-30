@@ -1,6 +1,5 @@
 // @ts-nocheck
-
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button, Modal, Sheet, Input } from '@mui/joy';
 import { GoogleMap, useJsApiLoader, Marker, Autocomplete } from '@react-google-maps/api';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
@@ -16,26 +15,30 @@ interface GoogleMapModalProps {
 }
 
 export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
-  onLocationsSelect, onClose, pickupAddress: initialPickup, dropOffAddress: initialDropOff, duration
+  onLocationsSelect, onClose, pickupAddress: initialPickup, dropOffAddress: initialDropOff
 }) => {
   const [pickupAddress, setPickupAddress] = useState<string | null>(initialPickup);
   const [pickupPosition, setPickupPosition] = useState<{ lat: number, lng: number } | null>(null);
-
   const [dropOffAddress, setDropOffAddress] = useState<string | null>(initialDropOff);
   const [dropOffPosition, setDropOffPosition] = useState<{ lat: number, lng: number } | null>(null);
+  const [isPickupActive, setIsPickupActive] = useState(true);
 
-  const [isPickupActive, setIsPickupActive] = useState(true); // Track which input is active
-
-  const autocompletePickupRef = useRef<HTMLInputElement | null>(null);
-  const autocompleteDropOffRef = useRef<HTMLInputElement | null>(null);
+  const autocompletePickupRef = useRef(null);
+  const autocompleteDropOffRef = useRef(null);
 
   const isMobile = useMediaQuery('(max-width:600px)');
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'AIzaSyAFrlvAYZVCNuAg2Ix5pmbwgiTTjCpF5k4', // Replace with your API Key
+    googleMapsApiKey: 'AIzaSyAFrlvAYZVCNuAg2Ix5pmbwgiTTjCpF5k4', // Замените на ваш ключ API
     libraries: ['places', 'geometry'],
   });
 
-  const handleMapClick = (event: void) => {
+  // Устанавливаем начальные значения адресов и координат при первом рендере
+  useEffect(() => {
+    if (initialPickup) geocodeAddress(initialPickup, 'pickup');
+    if (initialDropOff) geocodeAddress(initialDropOff, 'dropOff');
+  }, [initialPickup, initialDropOff]);
+
+  const handleMapClick = (event) => {
     const lat = event.latLng?.lat();
     const lng = event.latLng?.lng();
     if (lat && lng) {
@@ -49,7 +52,7 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
     }
   };
 
-  const geocodeAddress = (address: string, type: 'pickup' | 'dropOff') => {
+  const geocodeAddress = (address, type) => {
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ address }, (results, status) => {
       if (status === 'OK' && results[0].geometry.location) {
@@ -66,7 +69,7 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
     });
   };
 
-  const getAddressFromCoordinates = (lat: number, lng: number, type: 'pickup' | 'dropOff') => {
+  const getAddressFromCoordinates = (lat, lng, type) => {
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ location: { lat, lng } }, (results, status) => {
       if (status === 'OK' && results[0]) {
@@ -80,7 +83,7 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
     });
   };
 
-  const handlePlaceChanged = (type: 'pickup' | 'dropOff') => {
+  const handlePlaceChanged = (type) => {
     const place = (type === 'pickup' ? autocompletePickupRef.current : autocompleteDropOffRef.current)?.getPlace();
     if (place?.geometry?.location) {
       const lat = place.geometry.location.lat();
@@ -97,11 +100,9 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
     }
   };
 
-  // Fetch driving distance between Pickup and Drop-Off
-  // Fetch driving distance and time between Pickup and Drop-Off
   const fetchDrivingDistance = async () => {
     if (!pickupPosition || !dropOffPosition) return { distance: null, duration: null };
-  
+
     const service = new window.google.maps.DistanceMatrixService();
     return new Promise((resolve, reject) => {
       service.getDistanceMatrix(
@@ -112,50 +113,37 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
           unitSystem: window.google.maps.UnitSystem.IMPERIAL,
         },
         (response, status) => {
-          console.log("Original API Response:", response);
-  
           if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
-            const distanceInMiles = parseFloat((response.rows[0].elements[0].distance.value / 1609.34).toFixed(1)); // Convert meters to miles
-            const durationInMinutes = Math.round(response.rows[0].elements[0].duration.value / 60); // Convert seconds to minutes
-  
-            console.log("Distance in miles:", distanceInMiles);
-            console.log("Duration in minutes:", durationInMinutes);
-  
-            resolve({ distance: distanceInMiles, duration: durationInMinutes });
+            const distance = (response.rows[0].elements[0].distance.value / 1609.34).toFixed(1); // Конвертируем метры в мили
+            const duration = Math.round(response.rows[0].elements[0].duration.value / 60); // Конвертируем секунды в минуты
+            resolve({ distance, duration });
           } else {
-            console.error("Error fetching distance matrix:", status);
-            console.error("Element status:", response.rows[0].elements[0].status); // Log element status
+            console.error("Distance API error:", status);
             reject({ distance: null, duration: null });
           }
         }
       );
     });
   };
-  
 
   const handleConfirmLocations = async () => {
     const { distance, duration } = await fetchDrivingDistance();
-    
+
     const finalPickup = {
       address: pickupAddress || initialPickup || '',
       position: pickupPosition || { lat: 0, lng: 0 },
     };
-  
+
     const finalDropOff = {
       address: dropOffAddress || initialDropOff || '',
       position: dropOffPosition || { lat: 0, lng: 0 },
     };
-  
-    console.log("Distance:", distance);
-    console.log("Duration:", duration);
-  
+
     if (finalPickup.address && finalDropOff.address) {
-      // Pass both distance and duration to the parent component
       onLocationsSelect(finalPickup, finalDropOff, distance || 'Unknown', duration || 'Unknown');
       onClose();
     }
   };
-  
 
   return (
     <Modal open onClose={onClose}>

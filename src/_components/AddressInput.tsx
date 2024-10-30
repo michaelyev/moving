@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from "react";
 import Button from "@mui/joy/Button";
 import Stack from "@mui/joy/Stack";
@@ -37,11 +38,13 @@ export const AddressInput: React.FC<AddressInputProps> = ({
     distance: string,
     duration: string
   ) => {
+    // Сохраняем адреса и координаты в состоянии и передаем их в форму
     setPickupAddress(pickup.address);
     setPickupPosition(pickup.position);
     setDropOffAddress(dropOff.address);
     setDropOffPosition(dropOff.position);
 
+    // Обновляем значения в родительской форме
     setValue(pickupAddressName, pickup.address);
     setValue(dropOffAddressName, dropOff.address);
     setValue(distanceName, distance);
@@ -49,14 +52,14 @@ export const AddressInput: React.FC<AddressInputProps> = ({
     handleCloseModal();
   };
 
-  // Fetch distance and duration whenever addresses or positions change
+  // Запрос расстояния и времени при изменении координат
   useEffect(() => {
     const fetchDistanceAndDuration = async (retry = 0) => {
       if (!pickupPosition || !dropOffPosition) return;
-  
+
       console.log("Pickup Position:", pickupPosition);
       console.log("Drop Off Position:", dropOffPosition);
-  
+
       const service = new window.google.maps.DistanceMatrixService();
       service.getDistanceMatrix(
         {
@@ -67,37 +70,30 @@ export const AddressInput: React.FC<AddressInputProps> = ({
         },
         (response, status) => {
           console.log("Distance Matrix API Response:", response);
-  
+
           if (status === "OK" && response.rows[0].elements[0].status === "OK") {
-            const distance = (response.rows[0].elements[0].distance.value / 1609.34).toFixed(1); // Meters to miles
-            const duration = Math.round(response.rows[0].elements[0].duration.value / 60); // Seconds to minutes
+            const distance = (response.rows[0].elements[0].distance.value / 1609.34).toFixed(1); // Конвертация метров в мили
+            const duration = Math.round(response.rows[0].elements[0].duration.value / 60); // Конвертация секунд в минуты
             
-            console.log("Calculated Distance:", distance);
-            console.log("Calculated Duration:", duration);
-  
-            // Set the values in the form
             setValue(distanceName, distance);
             setValue(durationTime, duration);
-          } else if (retry < 2) { // Retry logic if the status is not OK
+          } else if (retry < 2) { // Логика повторного запроса при ошибке
             console.warn("Retrying distance matrix request...");
             fetchDistanceAndDuration(retry + 1);
           } else {
             console.error("Failed to fetch distance and duration:", status);
-            if (response?.rows[0]?.elements[0]?.status) {
-              console.error("Element Status:", response.rows[0].elements[0].status);
-            }
             setValue(distanceName, "Unknown");
             setValue(durationTime, "Unknown");
           }
         }
       );
     };
-  
+
     if (pickupPosition && dropOffPosition) {
       fetchDistanceAndDuration();
     }
   }, [pickupPosition, dropOffPosition, setValue, distanceName, durationTime]);
-  
+
   return (
     <>
       <Box

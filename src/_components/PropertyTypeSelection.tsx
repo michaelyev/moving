@@ -45,19 +45,20 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
 
   const handleConfirmDetails = () => {
     const data = openApartment
-      ? { type: 'Apartment', details: apartmentDetails }
+      ? { type: 'Apartment', details: { ...apartmentDetails, bedrooms: apartmentDetails.rooms } }
       : { type: 'House', details: houseDetails };
-
+  
     if (step === 'pickup') {
       onChange({ pickupProperty: data, dropOffProperty: value?.dropOffProperty });
       setStep('drop-off');
-      setOpenChoiceModal(true); // Открываем выбор drop-off типа
+      setOpenChoiceModal(true);
     } else {
       onChange({ pickupProperty: value?.pickupProperty, dropOffProperty: data });
-      setOpenChoiceModal(false); // Закрываем модалку после выбора drop-off
+      setOpenChoiceModal(false);
     }
     resetSelection();
   };
+  
 
   const isApartmentConfirmDisabled = !apartmentDetails.rooms && !apartmentDetails.floor && !apartmentDetails.freightElevator;
   const isHouseConfirmDisabled = !houseDetails.squareFeet && !houseDetails.stories;

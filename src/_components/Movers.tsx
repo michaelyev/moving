@@ -5,15 +5,19 @@ import { Typography } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
 
-export const Movers = ({ value, onChange, minMovers = 2 }) => {
-  const [movers, setMovers] = useState(Math.max(value || 2, minMovers));
+interface MoversProps {
+  value: number;
+  onChange: (value: number) => void;
+  minMovers?: number;
+}
 
-  // Sync state with form field when updated
+export const Movers = ({ value, onChange, minMovers = 2 }: MoversProps) => {
+  const [movers, setMovers] = useState<number>(Math.max(value || 2, minMovers));
+
   useEffect(() => {
     onChange(movers);
   }, [movers, onChange]);
 
-  // Ensure movers don't go below the minMovers threshold
   useEffect(() => {
     if (movers < minMovers) {
       setMovers(minMovers);

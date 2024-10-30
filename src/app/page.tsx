@@ -34,20 +34,53 @@ function calculateMovingCost(data) {
 
   let minHours = 2;
   let movers = data.movers || 2;
+  let minMovers = 2;
 
-  const distance = data.distance; // Предполагаем, что distance уже в милях
-  const durationInMinutes = data.duration; // Предполагаем, что duration уже в минутах
+  const distance = data.distance;
+  const durationInMinutes = data.duration;
 
-  // House calculation based on square feet
-  if (data.propertyType?.pickupProperty?.type === "House") {
+  // Минимальные часы для каждого количества грузчиков
+  const minHoursByMovers = {
+    2: 4,
+    3: 3,
+    4: 2.5,
+  };
+
+  // Расчёт минимальных часов для квартир и домов
+  if (data.propertyType?.pickupProperty?.type === "Apartment") {
+    const floor = parseInt(data.propertyType.pickupProperty.details?.floor) || 1;
+    const bedrooms = parseInt(data.propertyType.pickupProperty.details?.bedrooms) || 1;
+
+    minHours = 2 + bedrooms * (movers === 2 ? 1.5 : movers === 3 ? 1.2 : 1.0);
+
+    if (bedrooms >= 3 || floor >= 5) {
+      movers = 4;
+      minMovers = 4;
+    } else if (bedrooms === 2 || floor >= 2) {
+      movers = 3;
+      minMovers = 3;
+    } else {
+      movers = 2;
+      minMovers = 2;
+    }
+
+    if (floor >= 5 && movers <= 3) {
+      minHours += 1;
+    } else if (floor >= 10 && movers <= 2) {
+      minHours += 2;
+    }
+  } else if (data.propertyType?.pickupProperty?.type === "House") {
     const sqFt = parseInt(data.propertyType.pickupProperty.details?.squareFeet) || 0;
+    const stories = parseInt(data.propertyType.pickupProperty.details?.stories) || 1;
 
     if (sqFt > 3000) {
       movers = 4;
       minHours = 10;
+      minMovers = 4;
     } else if (sqFt > 2000) {
       movers = 3;
       minHours = 8;
+      minMovers = 3;
     } else if (sqFt > 1000) {
       movers = 2;
       minHours = 6;
@@ -58,25 +91,9 @@ function calculateMovingCost(data) {
 
     const extraSqFt = Math.max(0, sqFt - (movers === 4 ? 3000 : movers === 3 ? 2000 : 1000));
     minHours += Math.ceil(extraSqFt / 10) * 0.1;
-  } else if (data.propertyType?.pickupProperty?.type === "Apartment") {
-    const floor = parseInt(data.propertyType.pickupProperty.details?.floor) || 1;
 
-    if (floor >= 10) {
-      movers = 3;
-      minHours = 6;
-    } else if (floor >= 5) {
-      movers = 3;
-      minHours = 5;
-    } else if (floor >= 2) {
-      movers = 2;
-      minHours = 4;
-    } else {
-      movers = 2;
-      minHours = 3;
-    }
-
-    if (floor > 10) {
-      minHours += (floor - 10) * 0.1;
+    if (stories > 1) {
+      minHours += (stories - 1) * 0.5;
     }
   }
 
@@ -84,6 +101,7 @@ function calculateMovingCost(data) {
   let additionalTime = 0;
 
   const pickupDetails = data.propertyType?.pickupProperty?.details;
+
   if (pickupDetails?.floor > 1 && pickupDetails.freightElevator === "no") {
     additionalTime += (pickupDetails.floor - 1) * additionalFactors.floor.increment;
     hourlyRate *= additionalFactors.floor.multiplier;
@@ -100,17 +118,19 @@ function calculateMovingCost(data) {
     additionalTime += (parseInt(data.heavyItems[item].quantity) || 0) * additionalFactors.heavyItems;
   }
 
-  let totalHours = minHours + additionalTime + (durationInMinutes / 60);
+  let totalHours = Math.max(minHours + additionalTime + (durationInMinutes / 60), minHoursByMovers[movers]);
   if (distance <= 50) {
     totalHours += (durationInMinutes / 60) * 2;
   }
 
   const packingMultiplier = additionalFactors.packingOption[data.packingOption] || 1;
-  const totalHourlyRate = baseRates[data.movers] * packingMultiplier;
+  const totalHourlyRate = hourlyRate * packingMultiplier;
+
   const totalCost = Math.round(totalHourlyRate * totalHours);
 
-  return { totalCost, movers: data.movers };
+  return { totalCost, movers, minMovers };
 }
+
 
 
 export default function Home() {
@@ -130,6 +150,7 @@ export default function Home() {
       clutterLevel: 1,
       packingOption: "None",
       phoneNumber: "",
+      heavyItems: ''
     },
   });
 
@@ -147,53 +168,62 @@ export default function Home() {
   const heavyItems = watch("heavyItems");
   const packingOption = watch("packingOption");
 
-  useEffect(() => {
-    const calculateAndSetCost = () => {
-      try {
-        const { totalCost, movers: calculatedMovers } = calculateMovingCost({
-          addressFrom,
-          addressTo,
-          distance,
-          duration,
-          propertyType,
-          clutterLevel,
-          movers,
-          assemblyItems,
-          heavyItems,
-          packingOption,
-        });
+  const bedrooms = propertyType?.pickupProperty?.details?.bedrooms || 1;
+const floor = propertyType?.pickupProperty?.details?.floor || 1;
 
-        setMovingCost(totalCost);
+useEffect(() => {
+  const calculateAndSetCost = () => {
+    try {
+      const { totalCost, movers: calculatedMovers, minMovers: calculatedMinMovers } = calculateMovingCost({
+        addressFrom,
+        addressTo,
+        distance: parseFloat(distance) || 0,
+        duration: parseFloat(duration) || 0,
+        propertyType,
+        clutterLevel,
+        movers,
+        assemblyItems,
+        heavyItems,
+        packingOption,
+      });
 
-        if (calculatedMovers !== movers) {
-          setMinMovers(calculatedMovers);
-          setValue("movers", calculatedMovers);
-        }
-      } catch (error) {
-        console.error("Error calculating moving cost:", error);
+      setMovingCost(totalCost);
+
+      // Ensure minMovers is updated if property type or details change
+      if (calculatedMinMovers !== minMovers) {
+        setMinMovers(calculatedMinMovers);
+        setValue("movers", calculatedMinMovers); // Update movers to new minMovers
       }
-    };
+    } catch (error) {
+      console.error("Error calculating moving cost:", error);
+    }
+  };
 
+  if (distance && duration) {
     calculateAndSetCost();
-  }, [
-    addressFrom,
-    addressTo,
-    distance,
-    duration,
-    propertyType,
-    clutterLevel,
-    movers,
-    assemblyItems,
-    heavyItems,
-    packingOption,
-    setValue,
-  ]);
+  }
+}, [
+  addressFrom,
+  addressTo,
+  distance,
+  duration,
+  bedrooms,  // Explicitly tracking bedroom changes
+  floor,     // Explicitly tracking floor changes
+  clutterLevel,
+  propertyType,
+  movers,
+  assemblyItems,
+  heavyItems,
+  packingOption,
+  setValue,
+]);
+
 
   const onSubmit = (data) => {
     const { totalCost } = calculateMovingCost(data);
     console.log("Form Data Submitted:", { ...data, movingCost: totalCost });
   };
-console.log(duration, distance)
+
   return (
     <Sheet
       sx={{

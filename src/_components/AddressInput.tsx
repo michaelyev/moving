@@ -1,6 +1,4 @@
-// @ts-nocheck
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/joy/Button";
 import Stack from "@mui/joy/Stack";
 import { Box, Typography } from "@mui/material";
@@ -13,8 +11,8 @@ interface AddressInputProps {
   setValue: (name: string, value: string) => void;
   pickupAddressName: string;
   dropOffAddressName: string;
-  distanceName: string; // New prop to store the distance value
-  durationTime: string
+  distanceName: string;
+  durationTime: string;
 }
 
 export const AddressInput: React.FC<AddressInputProps> = ({
@@ -22,35 +20,83 @@ export const AddressInput: React.FC<AddressInputProps> = ({
   pickupAddressName,
   dropOffAddressName,
   distanceName,
-  durationTime
-
+  durationTime,
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [pickupAddress, setPickupAddress] = useState<string | null>(null);
+  const [pickupPosition, setPickupPosition] = useState<{ lat: number, lng: number } | null>(null);
   const [dropOffAddress, setDropOffAddress] = useState<string | null>(null);
+  const [dropOffPosition, setDropOffPosition] = useState<{ lat: number, lng: number } | null>(null);
 
   const handleOpenMapModal = () => setOpenModal(true);
-
   const handleCloseModal = () => setOpenModal(false);
 
-  // Update to handle distance
   const handleLocationsSelect = (
     pickup: { address: string; position: { lat: number; lng: number } },
     dropOff: { address: string; position: { lat: number; lng: number } },
     distance: string,
-    duration: string // добавляем duration
+    duration: string
   ) => {
-    console.log("Distance received in AddressInput:", distance);
-    console.log("Duration received in AddressInput:", duration);
-  
     setPickupAddress(pickup.address);
+    setPickupPosition(pickup.position);
     setDropOffAddress(dropOff.address);
+    setDropOffPosition(dropOff.position);
+
     setValue(pickupAddressName, pickup.address);
     setValue(dropOffAddressName, dropOff.address);
     setValue(distanceName, distance);
-    setValue(durationTime, duration)
+    setValue(durationTime, duration);
     handleCloseModal();
   };
+
+  // Fetch distance and duration whenever addresses or positions change
+  useEffect(() => {
+    const fetchDistanceAndDuration = async (retry = 0) => {
+      if (!pickupPosition || !dropOffPosition) return;
+  
+      console.log("Pickup Position:", pickupPosition);
+      console.log("Drop Off Position:", dropOffPosition);
+  
+      const service = new window.google.maps.DistanceMatrixService();
+      service.getDistanceMatrix(
+        {
+          origins: [pickupPosition],
+          destinations: [dropOffPosition],
+          travelMode: window.google.maps.TravelMode.DRIVING,
+          unitSystem: window.google.maps.UnitSystem.IMPERIAL,
+        },
+        (response, status) => {
+          console.log("Distance Matrix API Response:", response);
+  
+          if (status === "OK" && response.rows[0].elements[0].status === "OK") {
+            const distance = (response.rows[0].elements[0].distance.value / 1609.34).toFixed(1); // Meters to miles
+            const duration = Math.round(response.rows[0].elements[0].duration.value / 60); // Seconds to minutes
+            
+            console.log("Calculated Distance:", distance);
+            console.log("Calculated Duration:", duration);
+  
+            // Set the values in the form
+            setValue(distanceName, distance);
+            setValue(durationTime, duration);
+          } else if (retry < 2) { // Retry logic if the status is not OK
+            console.warn("Retrying distance matrix request...");
+            fetchDistanceAndDuration(retry + 1);
+          } else {
+            console.error("Failed to fetch distance and duration:", status);
+            if (response?.rows[0]?.elements[0]?.status) {
+              console.error("Element Status:", response.rows[0].elements[0].status);
+            }
+            setValue(distanceName, "Unknown");
+            setValue(durationTime, "Unknown");
+          }
+        }
+      );
+    };
+  
+    if (pickupPosition && dropOffPosition) {
+      fetchDistanceAndDuration();
+    }
+  }, [pickupPosition, dropOffPosition, setValue, distanceName, durationTime]);
   
   return (
     <>

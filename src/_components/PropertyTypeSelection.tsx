@@ -12,14 +12,14 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 
 export const PropertyTypeSelection = ({ onChange, value }) => {
   const [step, setStep] = useState('pickup'); // "pickup" or "drop-off"
-  const [openChoiceModal, setOpenChoiceModal] = useState(false); // Модалка для выбора drop-off типа
+  const [openChoiceModal, setOpenChoiceModal] = useState(false);
   const [openApartment, setOpenApartment] = useState(false);
   const [openHouse, setOpenHouse] = useState(false);
-  const [editMode, setEditMode] = useState(false); // режим редактирования
+  const [editMode, setEditMode] = useState(false);
 
   const [apartmentDetails, setApartmentDetails] = useState({
     rooms: 0,
-    floor: 0,
+    floor: 1,
     freightElevator: null,
   });
 
@@ -29,7 +29,7 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
   });
 
   const resetSelection = () => {
-    setApartmentDetails({ rooms: 0, floor: 0, freightElevator: null });
+    setApartmentDetails({ rooms: 0, floor: 1, freightElevator: null });
     setHouseDetails({ squareFeet: '', stories: 1 });
     setOpenApartment(false);
     setOpenHouse(false);
@@ -45,9 +45,9 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
 
   const handleConfirmDetails = () => {
     const data = openApartment
-      ? { type: 'Apartment', details: { ...apartmentDetails, bedrooms: apartmentDetails.rooms } }
+      ? { type: 'Apartment', details: apartmentDetails }
       : { type: 'House', details: houseDetails };
-  
+
     if (step === 'pickup') {
       onChange({ pickupProperty: data, dropOffProperty: value?.dropOffProperty });
       setStep('drop-off');
@@ -58,7 +58,6 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
     }
     resetSelection();
   };
-  
 
   const isApartmentConfirmDisabled = !apartmentDetails.rooms && !apartmentDetails.floor && !apartmentDetails.freightElevator;
   const isHouseConfirmDisabled = !houseDetails.squareFeet && !houseDetails.stories;
@@ -66,7 +65,7 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
   const startEditSelection = () => {
     setEditMode(true);
     setStep('pickup');
-    onChange({ pickupProperty: null, dropOffProperty: null }); // Сбрасываем оба выбора
+    onChange({ pickupProperty: null, dropOffProperty: null });
   };
 
   const ChoiceModal = () => (
@@ -121,7 +120,7 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
           <div>
             <Typography>Floor</Typography>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Button onClick={() => setApartmentDetails(prev => ({ ...prev, floor: Math.max(0, prev.floor - 1) }))}>
+              <Button onClick={() => setApartmentDetails(prev => ({ ...prev, floor: Math.max(1, prev.floor - 1) }))}>
                 <RemoveOutlinedIcon />
               </Button>
               <Typography>{apartmentDetails.floor}</Typography>
@@ -132,19 +131,23 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
           </div>
         </Sheet>
 
-        <Typography>Elevator</Typography>
-        <Sheet sx={{ display: 'flex', gap: '16px', alignItems: 'center', background: 'unset' }}>
-          <Checkbox
-            checked={apartmentDetails.freightElevator === 'yes'}
-            onChange={() => setApartmentDetails(prev => ({ ...prev, freightElevator: 'yes' }))}
-          />
-          <Typography>Yes</Typography>
-          <Checkbox
-            checked={apartmentDetails.freightElevator === 'no'}
-            onChange={() => setApartmentDetails(prev => ({ ...prev, freightElevator: 'no' }))}
-          />
-          <Typography>No</Typography>
-        </Sheet>
+        {apartmentDetails.floor > 1 && (
+          <>
+            <Typography>Elevator</Typography>
+            <Sheet sx={{ display: 'flex', gap: '16px', alignItems: 'center', background: 'unset' }}>
+              <Checkbox
+                checked={apartmentDetails.freightElevator === 'yes'}
+                onChange={() =>
+                  setApartmentDetails(prev => ({
+                    ...prev,
+                    freightElevator: prev.freightElevator === 'yes' ? null : 'yes'
+                  }))
+                }
+              />
+              <Typography>Yes</Typography>
+            </Sheet>
+          </>
+        )}
 
         <Sheet sx={{ display: 'flex', gap: '3%', marginTop: 'auto', width: '100%' }}>
           <Button onClick={() => setOpenApartment(false)} sx={cancelButtonStyle}>
@@ -197,14 +200,12 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
 
   return (
     <div>
-      {/* Если ничего не выбрано и не в режиме редактирования, показываем "Select Your Home Type" */}
       {!value?.pickupProperty && !value?.dropOffProperty && (
         <Typography variant="subtitle2" sx={{ fontWeight: "bold", pb: '8px', marginX: "auto", width: '100%' }}>
           Select Your Home Type
         </Typography>
       )}
 
-      {/* Кнопки для выбора pickup и drop-off только если еще не выбрано оба свойства */}
       {(editMode || step === 'pickup' || step === 'drop-off') && !value?.pickupProperty && !value?.dropOffProperty && (
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
           <Button onClick={() => handleTypeSelect('Apartment')} sx={selectionButtonStyle}>
@@ -229,10 +230,8 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
         </div>
       )}
 
-      {/* Модалка выбора для drop-off, отображается после выбора pickup */}
       {ChoiceModal()}
 
-      {/* Кнопка для изменения выбора, если все выбрано */}
       {value?.pickupProperty && value?.dropOffProperty && (
         <Typography sx={{ fontSize: '16px', textAlign: 'center', color: '#4CAF50', fontWeight: 'bold', marginTop: '16px' }}>
           All properties selected! Click below to change.
@@ -248,22 +247,21 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
   );
 };
 
-// Стили
+// Styles
 const modalStyles = {
   width: { xs: "90%", sm: "400px" },
-  position: "absolute", // Position absolutely within the parent
-  bottom: 0, // Stick to the bottom of the parent container
+  position: "absolute",
+  bottom: 0,
   left: "50%",
-  transform: "translateX(-50%)", // Center horizontally within the parent
+  transform: "translateX(-50%)",
   background: "white",
-  borderRadius: "24px 24px 0 0", // Rounded top corners
+  borderRadius: "24px 24px 0 0",
   padding: "24px",
   boxShadow: "0px -4px 12px rgba(0, 0, 0, 0.1)",
   display: "flex",
   flexDirection: "column",
   gap: "16px",
 };
-
 
 const cancelButtonStyle = {
   height: "48px",
@@ -290,7 +288,7 @@ const selectionButtonStyle = {
   height: "40px",
   display: "flex",
   alignItems: "center",
-  width: "48%",
+  width: "42%",
   borderRadius: "12px",
   backgroundColor: "#4886FF",
   gap: "10px",

@@ -85,7 +85,7 @@ export const CalendarComponent = ({ value, onChange, time, onTimeChange }) => {
             Move Date
           </Typography>
           <Typography fontWeight="light" color="#615D5D">
-            {value ? `${value.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} at ${time}` : 'Select Date & Time'}
+            {value ? `${value.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${time}` : 'Date & Time'}
           </Typography>
         </Button>
 

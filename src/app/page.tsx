@@ -36,86 +36,115 @@ function calculateMovingCost(data) {
   let movers = data.movers || 2;
   let minMovers = 2;
 
-  const distance = data.distance;
-  const durationInMinutes = data.duration;
+  const distance = parseFloat(data.distance) || 0;
+  const durationInMinutes = data.duration || 0;
 
-  // Минимальные часы для каждого количества грузчиков
   const minHoursByMovers = {
     2: 4,
     3: 3,
     4: 2.5,
   };
 
-  // Расчёт минимальных часов для квартир и домов
-  if (data.propertyType?.pickupProperty?.type === "Apartment") {
-    const floor = parseInt(data.propertyType.pickupProperty.details?.floor) || 1;
-    const bedrooms = parseInt(data.propertyType.pickupProperty.details?.bedrooms) || 1;
+  const calculatePickupDetails = (property) => {
+    let time = 0;
+    let rateMultiplier = 1;
 
-    minHours = 2 + bedrooms * (movers === 2 ? 1.5 : movers === 3 ? 1.2 : 1.0);
+    if (property.type === "Apartment") {
+      const floor = parseInt(property.details?.floor) || 1;
+      const rooms = parseInt(property.details?.rooms) || 1;
 
-    if (bedrooms >= 3 || floor >= 5) {
-      movers = 4;
-      minMovers = 4;
-    } else if (bedrooms === 2 || floor >= 2) {
-      movers = 3;
-      minMovers = 3;
-    } else {
-      movers = 2;
-      minMovers = 2;
+      time = 2 + rooms * (movers === 2 ? 1.5 : movers === 3 ? 1.2 : 1.0);
+
+      if (rooms >= 3 || floor >= 5) {
+        movers = 4;
+        minMovers = 4;
+      } else if (rooms === 2 || floor >= 2) {
+        movers = 3;
+        minMovers = 3;
+      } else {
+        movers = 2;
+        minMovers = 2;
+      }
+
+      if (floor >= 5 && movers <= 3) {
+        time += 1;
+      } else if (floor >= 10 && movers <= 2) {
+        time += 2;
+      }
+
+      if (floor > 1 && property.details.freightElevator === null) {
+        time += (floor - 1) * additionalFactors.floor.increment;
+        rateMultiplier *= additionalFactors.floor.multiplier;
+      } else if (property.details.freightElevator === "yes") {
+        rateMultiplier *= additionalFactors.freightElevator;
+      }
+    } else if (property.type === "House") {
+      const sqFt = parseInt(property.details?.squareFeet) || 0;
+      const stories = parseInt(property.details?.stories) || 1;
+
+      if (sqFt > 3000) {
+        movers = 4;
+        minHours = 10;
+        minMovers = 4;
+      } else if (sqFt > 2000) {
+        movers = 3;
+        minHours = 8;
+        minMovers = 3;
+      } else if (sqFt > 1000) {
+        movers = 2;
+        minHours = 6;
+      } else {
+        movers = 2;
+        minMovers = 2;
+      }
+
+      const extraSqFt = Math.max(0, sqFt - (movers === 4 ? 3000 : movers === 3 ? 2000 : 1000));
+      time += Math.ceil(extraSqFt / 10) * 0.1;
+
+      if (stories > 1) {
+        time += (stories - 1) * 0.5;
+      }
     }
 
-    if (floor >= 5 && movers <= 3) {
-      minHours += 1;
-    } else if (floor >= 10 && movers <= 2) {
-      minHours += 2;
-    }
-  } else if (data.propertyType?.pickupProperty?.type === "House") {
-    const sqFt = parseInt(data.propertyType.pickupProperty.details?.squareFeet) || 0;
-    const stories = parseInt(data.propertyType.pickupProperty.details?.stories) || 1;
+    return { time, rateMultiplier };
+  };
 
-    if (sqFt > 3000) {
-      movers = 4;
-      minHours = 10;
-      minMovers = 4;
-    } else if (sqFt > 2000) {
-      movers = 3;
-      minHours = 8;
-      minMovers = 3;
-    } else if (sqFt > 1000) {
-      movers = 2;
-      minHours = 6;
-    } else {
-      movers = 2;
-      minHours = 4;
+  const calculateDropOffDetails = (property) => {
+    let time = 0;
+    let rateMultiplier = 1;
+
+    if (property.type === "Apartment") {
+      const floor = parseInt(property.details?.floor) || 1;
+
+      if (floor > 1 && property.details.freightElevator === null) {
+        time += (floor - 1) * additionalFactors.floor.increment;
+        rateMultiplier *= additionalFactors.floor.multiplier;
+      } else if (property.details.freightElevator === "yes") {
+        rateMultiplier *= additionalFactors.freightElevator;
+      }
+    } else if (property.type === "House") {
+      rateMultiplier *= 0.9;
     }
 
-    const extraSqFt = Math.max(0, sqFt - (movers === 4 ? 3000 : movers === 3 ? 2000 : 1000));
-    minHours += Math.ceil(extraSqFt / 10) * 0.1;
+    return { time, rateMultiplier };
+  };
 
-    if (stories > 1) {
-      minHours += (stories - 1) * 0.5;
-    }
-  }
+  const pickupData = calculatePickupDetails(data.propertyType.pickupProperty);
+  const dropOffData = calculateDropOffDetails(data.propertyType.dropOffProperty);
 
-  let hourlyRate = baseRates[movers] || 150;
-  let additionalTime = 0;
-
-  const pickupDetails = data.propertyType?.pickupProperty?.details;
-
-  if (pickupDetails?.floor > 1 && pickupDetails.freightElevator === "no") {
-    additionalTime += (pickupDetails.floor - 1) * additionalFactors.floor.increment;
-    hourlyRate *= additionalFactors.floor.multiplier;
-  } else if (pickupDetails?.freightElevator === "yes") {
-    hourlyRate *= additionalFactors.freightElevator;
-  }
+  let additionalTime = pickupData.time + dropOffData.time;
 
   additionalTime += additionalFactors.clutterLevel[parseInt(data.clutterLevel)] || 0;
 
-  for (const item in data.assemblyItems) {
-    additionalTime += (parseInt(data.assemblyItems[item].quantity) || 0) * additionalFactors.assemblyItems;
+  if (typeof data.assemblyItems === 'object') {
+    for (const item in data.assemblyItems) {
+      additionalTime += (parseInt(data.assemblyItems[item].quantity) || 0) * additionalFactors.assemblyItems;
+    }
   }
-  for (const item in data.heavyItems) {
-    additionalTime += (parseInt(data.heavyItems[item].quantity) || 0) * additionalFactors.heavyItems;
+  if (typeof data.heavyItems === 'object') {
+    for (const item in data.heavyItems) {
+      additionalTime += (parseInt(data.heavyItems[item].quantity) || 0) * additionalFactors.heavyItems;
+    }
   }
 
   let totalHours = Math.max(minHours + additionalTime + (durationInMinutes / 60), minHoursByMovers[movers]);
@@ -124,14 +153,12 @@ function calculateMovingCost(data) {
   }
 
   const packingMultiplier = additionalFactors.packingOption[data.packingOption] || 1;
-  const totalHourlyRate = hourlyRate * packingMultiplier;
+  const totalHourlyRate = baseRates[movers] * pickupData.rateMultiplier * dropOffData.rateMultiplier * packingMultiplier;
 
   const totalCost = Math.round(totalHourlyRate * totalHours);
 
   return { totalCost, movers, minMovers };
 }
-
-
 
 export default function Home() {
   const { control, watch, handleSubmit, setValue } = useForm({
@@ -141,8 +168,6 @@ export default function Home() {
       distance: "",
       duration: "",
       propertyType: null,
-      apartmentDetails: {},
-      houseDetails: {},
       assemblyItems: {},
       date: null,
       time: "7:00 AM",
@@ -150,7 +175,7 @@ export default function Home() {
       clutterLevel: 1,
       packingOption: "None",
       phoneNumber: "",
-      heavyItems: ''
+      heavyItems: '',
     },
   });
 
@@ -169,55 +194,53 @@ export default function Home() {
   const packingOption = watch("packingOption");
 
   const bedrooms = propertyType?.pickupProperty?.details?.bedrooms || 1;
-const floor = propertyType?.pickupProperty?.details?.floor || 1;
+  const floor = propertyType?.pickupProperty?.details?.floor || 1;
 
-useEffect(() => {
-  const calculateAndSetCost = () => {
-    try {
-      const { totalCost, movers: calculatedMovers, minMovers: calculatedMinMovers } = calculateMovingCost({
-        addressFrom,
-        addressTo,
-        distance: parseFloat(distance) || 0,
-        duration: parseFloat(duration) || 0,
-        propertyType,
-        clutterLevel,
-        movers,
-        assemblyItems,
-        heavyItems,
-        packingOption,
-      });
+  useEffect(() => {
+    const calculateAndSetCost = () => {
+      try {
+        const { totalCost, movers: calculatedMovers, minMovers: calculatedMinMovers } = calculateMovingCost({
+          addressFrom,
+          addressTo,
+          distance: parseFloat(distance) || 0,
+          duration: parseFloat(duration) || 0,
+          propertyType,
+          clutterLevel,
+          movers,
+          assemblyItems,
+          heavyItems,
+          packingOption,
+        });
 
-      setMovingCost(totalCost);
+        setMovingCost(totalCost);
 
-      // Ensure minMovers is updated if property type or details change
-      if (calculatedMinMovers !== minMovers) {
-        setMinMovers(calculatedMinMovers);
-        setValue("movers", calculatedMinMovers); // Update movers to new minMovers
+        if (calculatedMinMovers !== minMovers) {
+          setMinMovers(calculatedMinMovers);
+          setValue("movers", calculatedMinMovers); // Update movers to new minMovers
+        }
+      } catch (error) {
+        console.error("Error calculating moving cost:", error);
       }
-    } catch (error) {
-      console.error("Error calculating moving cost:", error);
+    };
+
+    if (distance && duration) {
+      calculateAndSetCost();
     }
-  };
-
-  if (distance && duration) {
-    calculateAndSetCost();
-  }
-}, [
-  addressFrom,
-  addressTo,
-  distance,
-  duration,
-  bedrooms,  // Explicitly tracking bedroom changes
-  floor,     // Explicitly tracking floor changes
-  clutterLevel,
-  propertyType,
-  movers,
-  assemblyItems,
-  heavyItems,
-  packingOption,
-  setValue,
-]);
-
+  }, [
+    addressFrom,
+    addressTo,
+    distance,
+    duration,
+    bedrooms,
+    floor,
+    clutterLevel,
+    propertyType,
+    movers,
+    assemblyItems,
+    heavyItems,
+    packingOption,
+    setValue,
+  ]);
 
   const onSubmit = (data) => {
     const { totalCost } = calculateMovingCost(data);
@@ -225,14 +248,7 @@ useEffect(() => {
   };
 
   return (
-    <Sheet
-      sx={{
-        width: { xs: "100%", sm: "448px", p: 0 },
-        marginX: "auto",
-        background: "unset",
-        position: "relative",
-      }}
-    >
+    <Sheet sx={{ width: { xs: "100%", sm: "448px" }, marginX: "auto", background: "unset", position: "relative" }}>
       <Sheet
         sx={{
           marginX: "auto",
@@ -275,7 +291,7 @@ useEffect(() => {
                 pickupAddressName="addressFrom"
                 dropOffAddressName="addressTo"
                 distanceName="distance"
-                durationTime='duration'
+                durationTime="duration"
                 {...field}
               />
             )}
@@ -289,14 +305,7 @@ useEffect(() => {
             )}
           />
 
-          <Sheet
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              pb: "16px",
-            }}
-          >
+          <Sheet sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: "16px" }}>
             <Controller
               name="date"
               control={control}
@@ -336,26 +345,12 @@ useEffect(() => {
             )}
           />
 
-          <Sheet
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              pb: "16px",
-            }}
-          >
+          <Sheet sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: "16px" }}>
             <HeavyItemsPicker setValue={setValue} control={control} />
             <AssemblyDisassemblyPicker setValue={setValue} />
           </Sheet>
 
-          <Sheet
-            sx={{
-              display: "flex",
-              alignItems: "end",
-              justifyContent: "space-between",
-              pb: "16px",
-            }}
-          >
+          <Sheet sx={{ display: "flex", alignItems: "end", justifyContent: "space-between", pb: "16px" }}>
             <Controller
               name="phoneNumber"
               control={control}

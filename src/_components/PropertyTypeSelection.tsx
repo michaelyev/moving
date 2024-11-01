@@ -1,17 +1,17 @@
 // @ts-nocheck
 
-import { useState } from 'react';
-import Modal from '@mui/joy/Modal';
-import Button from '@mui/joy/Button';
-import Sheet from '@mui/joy/Sheet';
-import { Typography, Checkbox } from '@mui/material';
-import Image from 'next/image';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
-import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import { useState } from "react";
+import Modal from "@mui/joy/Modal";
+import Button from "@mui/joy/Button";
+import Sheet from "@mui/joy/Sheet";
+import { Typography, Checkbox } from "@mui/material";
+import Image from "next/image";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
+import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 
 export const PropertyTypeSelection = ({ onChange, value }) => {
-  const [step, setStep] = useState('pickup'); // "pickup" or "drop-off"
+  const [step, setStep] = useState("pickup"); // "pickup" or "drop-off"
   const [openChoiceModal, setOpenChoiceModal] = useState(false);
   const [openApartment, setOpenApartment] = useState(false);
   const [openHouse, setOpenHouse] = useState(false);
@@ -24,19 +24,19 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
   });
 
   const [houseDetails, setHouseDetails] = useState({
-    squareFeet: '',
+    squareFeet: "",
     stories: 1,
   });
 
   const resetSelection = () => {
     setApartmentDetails({ rooms: 0, floor: 1, freightElevator: null });
-    setHouseDetails({ squareFeet: '', stories: 1 });
+    setHouseDetails({ squareFeet: "", stories: 1 });
     setOpenApartment(false);
     setOpenHouse(false);
   };
 
   const handleTypeSelect = (type) => {
-    if (type === 'Apartment') {
+    if (type === "Apartment") {
       setOpenApartment(true);
     } else {
       setOpenHouse(true);
@@ -45,38 +45,53 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
 
   const handleConfirmDetails = () => {
     const data = openApartment
-      ? { type: 'Apartment', details: apartmentDetails }
-      : { type: 'House', details: houseDetails };
+      ? { type: "Apartment", details: apartmentDetails }
+      : { type: "House", details: houseDetails };
 
-    if (step === 'pickup') {
-      onChange({ pickupProperty: data, dropOffProperty: value?.dropOffProperty });
-      setStep('drop-off');
+    if (step === "pickup") {
+      onChange({
+        pickupProperty: data,
+        dropOffProperty: value?.dropOffProperty,
+      });
+      setStep("drop-off");
       setOpenChoiceModal(true);
     } else {
-      onChange({ pickupProperty: value?.pickupProperty, dropOffProperty: data });
+      onChange({
+        pickupProperty: value?.pickupProperty,
+        dropOffProperty: data,
+      });
       setOpenChoiceModal(false);
     }
     resetSelection();
   };
 
-  const isApartmentConfirmDisabled = !apartmentDetails.rooms && !apartmentDetails.floor && !apartmentDetails.freightElevator;
-  const isHouseConfirmDisabled = !houseDetails.squareFeet && !houseDetails.stories;
+  const isApartmentConfirmDisabled =
+    !apartmentDetails.rooms &&
+    !apartmentDetails.floor &&
+    !apartmentDetails.freightElevator;
+  const isHouseConfirmDisabled =
+    !houseDetails.squareFeet && !houseDetails.stories;
 
   const startEditSelection = () => {
     setEditMode(true);
-    setStep('pickup');
+    setStep("pickup");
     onChange({ pickupProperty: null, dropOffProperty: null });
   };
 
   const ChoiceModal = () => (
     <Modal open={openChoiceModal} onClose={() => setOpenChoiceModal(false)}>
       <Sheet sx={modalStyles}>
-        <Typography sx={{ fontWeight: "bold", fontSize: "18px", textAlign: "center" }}>
+        <Typography
+          sx={{ fontWeight: "bold", fontSize: "18px", textAlign: "center" }}
+        >
           Select Drop-off Property
         </Typography>
 
-        <Sheet sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Button onClick={() => handleTypeSelect('Apartment')} sx={selectionButtonStyle}>
+        <Sheet sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+          <Button
+            onClick={() => handleTypeSelect("Apartment")}
+            sx={selectionButtonStyle}
+          >
             <Image
               alt=""
               height={14}
@@ -86,7 +101,10 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
             Apartment
           </Button>
 
-          <Button onClick={() => handleTypeSelect('House')} sx={selectionButtonStyle}>
+          <Button
+            onClick={() => handleTypeSelect("House")}
+            sx={selectionButtonStyle}
+          >
             <Image
               alt=""
               height={14}
@@ -103,57 +121,104 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
   const ApartmentModal = () => (
     <Modal open={openApartment} onClose={() => setOpenApartment(false)}>
       <Sheet sx={modalStyles}>
-        <Typography sx={{ fontWeight: 600, fontSize: "18px", textAlign: "center" }}>Apartment Details</Typography>
-        <Sheet sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography
+          sx={{ fontWeight: 600, fontSize: "18px", textAlign: "center" }}
+        >
+          Apartment Details
+        </Typography>
+        <Sheet sx={{ display: "flex", justifyContent: "space-between" }}>
           <div>
             <Typography>Bedrooms</Typography>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Button onClick={() => setApartmentDetails(prev => ({ ...prev, rooms: Math.max(0, prev.rooms - 1) }))}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Button
+                onClick={() =>
+                  setApartmentDetails((prev) => ({
+                    ...prev,
+                    rooms: Math.max(0, prev.rooms - 1),
+                  }))
+                }
+              >
                 <RemoveOutlinedIcon />
               </Button>
               <Typography>{apartmentDetails.rooms}</Typography>
-              <Button onClick={() => setApartmentDetails(prev => ({ ...prev, rooms: prev.rooms + 1 }))}>
+              <Button
+                onClick={() =>
+                  setApartmentDetails((prev) => ({
+                    ...prev,
+                    rooms: prev.rooms + 1,
+                  }))
+                }
+              >
                 <AddOutlinedIcon />
               </Button>
             </div>
           </div>
           <div>
             <Typography>Floor</Typography>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Button onClick={() => setApartmentDetails(prev => ({ ...prev, floor: Math.max(1, prev.floor - 1) }))}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Button
+                onClick={() =>
+                  setApartmentDetails((prev) => ({
+                    ...prev,
+                    floor: Math.max(1, prev.floor - 1),
+                  }))
+                }
+              >
                 <RemoveOutlinedIcon />
               </Button>
               <Typography>{apartmentDetails.floor}</Typography>
-              <Button onClick={() => setApartmentDetails(prev => ({ ...prev, floor: prev.floor + 1 }))}>
+              <Button
+                onClick={() =>
+                  setApartmentDetails((prev) => ({
+                    ...prev,
+                    floor: prev.floor + 1,
+                  }))
+                }
+              >
                 <AddOutlinedIcon />
               </Button>
             </div>
           </div>
         </Sheet>
 
-        {apartmentDetails.floor > 1 && (
-          <>
-            <Typography>Elevator</Typography>
-            <Sheet sx={{ display: 'flex', gap: '16px', alignItems: 'center', background: 'unset' }}>
-              <Checkbox
-                checked={apartmentDetails.freightElevator === 'yes'}
-                onChange={() =>
-                  setApartmentDetails(prev => ({
-                    ...prev,
-                    freightElevator: prev.freightElevator === 'yes' ? null : 'yes'
-                  }))
-                }
-              />
-              <Typography>Yes</Typography>
-            </Sheet>
-          </>
-        )}
+        <>
+          <Typography>Elevator</Typography>
+          <Sheet
+            sx={{
+              display: "flex",
+              gap: "16px",
+              alignItems: "center",
+              background: "unset",
+            }}
+          >
+            <Checkbox
+              checked={apartmentDetails.freightElevator === "yes"}
+              onChange={() =>
+                setApartmentDetails((prev) => ({
+                  ...prev,
+                  freightElevator:
+                    prev.freightElevator === "yes" ? null : "yes",
+                }))
+              }
+            />
+            <Typography>Yes</Typography>
+          </Sheet>
+        </>
 
-        <Sheet sx={{ display: 'flex', gap: '3%', marginTop: 'auto', width: '100%' }}>
-          <Button onClick={() => setOpenApartment(false)} sx={cancelButtonStyle}>
+        <Sheet
+          sx={{ display: "flex", gap: "3%", marginTop: "auto", width: "100%" }}
+        >
+          <Button
+            onClick={() => setOpenApartment(false)}
+            sx={cancelButtonStyle}
+          >
             <KeyboardReturnIcon />
           </Button>
-          <Button onClick={handleConfirmDetails} sx={confirmButtonStyle} disabled={isApartmentConfirmDisabled}>
+          <Button
+            onClick={handleConfirmDetails}
+            sx={confirmButtonStyle}
+            disabled={isApartmentConfirmDisabled}
+          >
             Confirm
           </Button>
         </Sheet>
@@ -164,33 +229,74 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
   const HouseModal = () => (
     <Modal open={openHouse} onClose={() => setOpenHouse(false)}>
       <Sheet sx={modalStyles}>
-        <Typography sx={{ fontWeight: 600, fontSize: "18px", textAlign: "center" }}>House Details</Typography>
+        <Typography
+          sx={{ fontWeight: 600, fontSize: "18px", textAlign: "center" }}
+        >
+          House Details
+        </Typography>
         <Sheet>
           <Typography>How Many Square Feet</Typography>
           <input
             type="text"
             value={houseDetails.squareFeet}
-            onChange={(e) => setHouseDetails(prev => ({ ...prev, squareFeet: e.target.value }))}
-            style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #E0E0E0' }}
+            onChange={(e) =>
+              setHouseDetails((prev) => ({
+                ...prev,
+                squareFeet: e.target.value,
+              }))
+            }
+            style={{
+              width: "100%",
+              padding: "8px",
+              borderRadius: "8px",
+              border: "1px solid #E0E0E0",
+            }}
           />
         </Sheet>
 
         <Typography>Number of Stories</Typography>
-        <Sheet sx={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'unset' }}>
-          <Button onClick={() => setHouseDetails(prev => ({ ...prev, stories: Math.max(0, prev.stories - 1) }))}>
+        <Sheet
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            background: "unset",
+          }}
+        >
+          <Button
+            onClick={() =>
+              setHouseDetails((prev) => ({
+                ...prev,
+                stories: Math.max(0, prev.stories - 1),
+              }))
+            }
+          >
             <RemoveOutlinedIcon />
           </Button>
           <Typography>{houseDetails.stories}</Typography>
-          <Button onClick={() => setHouseDetails(prev => ({ ...prev, stories: houseDetails.stories + 1 }))}>
+          <Button
+            onClick={() =>
+              setHouseDetails((prev) => ({
+                ...prev,
+                stories: houseDetails.stories + 1,
+              }))
+            }
+          >
             <AddOutlinedIcon />
           </Button>
         </Sheet>
 
-        <Sheet sx={{ display: 'flex', gap: '3%', marginTop: 'auto', width: '100%' }}>
+        <Sheet
+          sx={{ display: "flex", gap: "3%", marginTop: "auto", width: "100%" }}
+        >
           <Button onClick={() => setOpenHouse(false)} sx={cancelButtonStyle}>
             <KeyboardReturnIcon />
           </Button>
-          <Button onClick={handleConfirmDetails} sx={confirmButtonStyle} disabled={isHouseConfirmDisabled}>
+          <Button
+            onClick={handleConfirmDetails}
+            sx={confirmButtonStyle}
+            disabled={isHouseConfirmDisabled}
+          >
             Confirm
           </Button>
         </Sheet>
@@ -201,41 +307,70 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
   return (
     <div>
       {!value?.pickupProperty && !value?.dropOffProperty && (
-        <Typography variant="subtitle2" sx={{ fontWeight: "bold", pb: '8px', marginX: "auto", width: '100%' }}>
+        <Typography
+          variant="subtitle2"
+          sx={{ fontWeight: "bold", pb: "8px", marginX: "auto", width: "100%" }}
+        >
           Select Your Home Type
         </Typography>
       )}
 
-      {(editMode || step === 'pickup' || step === 'drop-off') && !value?.pickupProperty && !value?.dropOffProperty && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <Button onClick={() => handleTypeSelect('Apartment')} sx={selectionButtonStyle}>
-            <Image
-              alt=""
-              height={14}
-              width={14}
-              src="icons/interface-login-key--entry-key-lock-login-pass-unlock.svg"
-            />
-            Apartment
-          </Button>
+      {(editMode || step === "pickup" || step === "drop-off") &&
+        !value?.pickupProperty &&
+        !value?.dropOffProperty && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "16px",
+            }}
+          >
+            <Button
+              onClick={() => handleTypeSelect("Apartment")}
+              sx={selectionButtonStyle}
+            >
+              <Image
+                alt=""
+                height={14}
+                width={14}
+                src="icons/interface-login-key--entry-key-lock-login-pass-unlock.svg"
+              />
+              Apartment
+            </Button>
 
-          <Button onClick={() => handleTypeSelect('House')} sx={selectionButtonStyle}>
-            <Image
-              alt=""
-              height={14}
-              width={14}
-              src="icons/interface-home-5--door-entrance-home-house-map-roof-round-window.svg"
-            />
-            House
-          </Button>
-        </div>
-      )}
+            <Button
+              onClick={() => handleTypeSelect("House")}
+              sx={selectionButtonStyle}
+            >
+              <Image
+                alt=""
+                height={14}
+                width={14}
+                src="icons/interface-home-5--door-entrance-home-house-map-roof-round-window.svg"
+              />
+              House
+            </Button>
+          </div>
+        )}
 
       {ChoiceModal()}
 
       {value?.pickupProperty && value?.dropOffProperty && (
-        <Typography sx={{ fontSize: '16px', textAlign: 'center', color: '#4CAF50', fontWeight: 'bold', marginTop: '16px' }}>
+        <Typography
+          sx={{
+            fontSize: "16px",
+            textAlign: "center",
+            color: "#4CAF50",
+            fontWeight: "bold",
+            marginTop: "16px",
+          }}
+        >
           All properties selected! Click below to change.
-          <Button variant="text" onClick={startEditSelection} sx={{ marginTop: '8px', color: '#FF6700' }}>
+          <Button
+            variant="text"
+            onClick={startEditSelection}
+            sx={{ marginTop: "8px", color: "#FF6700" }}
+          >
             Edit Selection
           </Button>
         </Typography>

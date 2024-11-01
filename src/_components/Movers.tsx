@@ -35,6 +35,7 @@ export const Movers = ({ onChange, minMovers = 2 }: MoversProps) => {
           flexDirection: "column",
           justifyContent: "space-between",
           height: "100%",
+          width: '100%',
           alignItems: "flex-start",
         }}
       >

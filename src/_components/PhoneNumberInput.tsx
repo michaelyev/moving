@@ -36,7 +36,7 @@ const PhoneNumberInput = ({ value, onChange }) => {
         width: "55%",
         justifyContent: "space-between",
         border: "1px solid",
-        borderColor: phoneNumber && !isComplete ? "red" : "#E0E0E0", // Красный бордер при ошибке
+        borderColor: phoneNumber && !isComplete ? "green" : "#E0E0E0", // Красный бордер при ошибке
         borderRadius: "12px",
         padding: "8px 16px",
         "&:hover": {

@@ -59,7 +59,7 @@ export const ClutterSlide = ({ value, onChange }) => {
           step={1}
           marks
           min={1}
-          max={9}
+          max={5}
           valueLabelDisplay="auto"
         />
 

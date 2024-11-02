@@ -15,149 +15,138 @@ import { PropertyTypeSelection } from "@/_components/PropertyTypeSelection";
 import { HeavyItemsPicker } from "@/_components/HeavyItems";
 import { AssemblyDisassemblyPicker } from "@/_components/AssemblyDisassembly";
 import { PaymentMethodPicker } from "@/_components/PaymentMethod";
+import { SummaryModal } from "@/_components/SummaryModal"; // Импорт модального окна
 
 function calculateMovingCost(data) {
   const baseRates = {
     2: 135,
     3: 175,
     4: 230,
+    5: 290,
   };
 
   const additionalFactors = {
-    floor: { multiplier: 1.2, increment: 1 },
-    freightElevator: 0.9,
-    clutterLevel: { 1: 0, 2: 0.5, 3: 1, 4: 1.5, 5: 2, 6: 2.5, 7: 3, 8: 3.5, 9: 4 },
-    heavyItems: 0.5,
-    assemblyItems: 0.3,
-    packingOption: { None: 1, Partial: 1.1, Full: 1.2 },
+    floorTimeIncrement: 0.5,
+    freightElevatorMultiplier: 0.85,
+    clutterLevel: { 1: 0, 2: 0.6, 3: 1.2, 4: 1.8, 5: 2.5, 6: 3.2, 7: 3.9, 8: 4.6, 9: 5.2 },
+    heavyItemsTime: 0.6,
+    assemblyItemsTime: 0.35,
+    packingOptionMultiplier: { None: 1, Partial: 1.1, Full: 1.2 },
+    packingTimeAddition: { None: 0, Partial: 0.5, Full: 1 },
+    travelTimeRate: 1.5,
   };
 
-  let minHours = 2;
-  let movers = data.movers || 2;
-  let minMovers = 2;
-
-  const distance = parseFloat(data.distance) || 0;
+  const minimumCost = 200;
+  let movers;
+  const rooms = data.propertyType.pickupProperty.details?.rooms || 1; 
+  const floor = parseInt(data.propertyType.pickupProperty.details?.floor) || 1;
+  const isApartment = data.propertyType.pickupProperty.type === "Apartment";
   const durationInMinutes = data.duration || 0;
 
-  const minHoursByMovers = {
-    2: 4,
-    3: 3,
-    4: 2.5,
-  };
+  // Определение количества грузчиков в зависимости от размера квартиры
+  if (isApartment) {
+    if (rooms <= 1) {
+      movers = 2; // Минимум 2 грузчика для студий и 1-комнатных квартир
+    } else if (rooms <= 3) {
+      movers = 3;
+    } else {
+      movers = 4;
+    }
+  } else {
+    movers = 2;
+  }
 
-  const calculatePickupDetails = (property) => {
+  let minMovers = movers;
+  let workHours = 0; // Только рабочие часы (без учета времени в пути)
+  let totalHours = 0;
+
+  // Функция для расчета базового времени на перемещение объекта недвижимости
+  const calculatePropertyDetails = (property) => {
     let time = 0;
     let rateMultiplier = 1;
+    const floor = parseInt(property.details?.floor) || 1;
 
     if (property.type === "Apartment") {
-      const floor = parseInt(property.details?.floor) || 1;
       const rooms = parseInt(property.details?.rooms) || 1;
+      time += 1 + rooms * (movers === 2 ? 0.75 : movers === 3 ? 0.6 : 0.5);
 
-      time = 2 + rooms * (movers === 2 ? 1.5 : movers === 3 ? 1.2 : 1.0);
-
-      if (rooms >= 3 || floor >= 5) {
-        movers = 4;
-        minMovers = 4;
-      } else if (rooms === 2 || floor >= 2) {
-        movers = 3;
-        minMovers = 3;
-      } else {
-        movers = 2;
-        minMovers = 2;
+      if (property.details.freightElevator === "yes" && floor > 1) {
+        movers = Math.max(2, movers - 1);
+        rateMultiplier *= additionalFactors.freightElevatorMultiplier;
       }
 
-      if (floor >= 5 && movers <= 3) {
-        time += 1;
-      } else if (floor >= 10 && movers <= 2) {
-        time += 2;
+      if (floor > 1 && !property.details.freightElevator) {
+        time += (floor - 1) * additionalFactors.floorTimeIncrement;
       }
 
-      if (floor > 1 && property.details.freightElevator === null) {
-        time += (floor - 1) * additionalFactors.floor.increment;
-        rateMultiplier *= additionalFactors.floor.multiplier;
-      } else if (property.details.freightElevator === "yes") {
-        rateMultiplier *= additionalFactors.freightElevator;
-      }
+      // Снижение рабочего времени на 50% для квартир
+      time *= 0.5;
     } else if (property.type === "House") {
       const sqFt = parseInt(property.details?.squareFeet) || 0;
       const stories = parseInt(property.details?.stories) || 1;
 
       if (sqFt > 3000) {
         movers = 4;
-        minHours = 10;
         minMovers = 4;
       } else if (sqFt > 2000) {
         movers = 3;
-        minHours = 8;
         minMovers = 3;
-      } else if (sqFt > 1000) {
-        movers = 2;
-        minHours = 6;
       } else {
         movers = 2;
         minMovers = 2;
       }
 
       const extraSqFt = Math.max(0, sqFt - (movers === 4 ? 3000 : movers === 3 ? 2000 : 1000));
-      time += Math.ceil(extraSqFt / 10) * 0.1;
+      time += Math.ceil(extraSqFt / 20) * 0.1;
 
       if (stories > 1) {
-        time += (stories - 1) * 0.5;
+        time += (stories - 1) * 0.25;
       }
     }
-
     return { time, rateMultiplier };
   };
 
-  const calculateDropOffDetails = (property) => {
-    let time = 0;
-    let rateMultiplier = 1;
+  // Расчет времени для точки забора и доставки
+  const pickupData = calculatePropertyDetails(data.propertyType.pickupProperty);
+  const dropOffData = calculatePropertyDetails(data.propertyType.dropOffProperty);
 
-    if (property.type === "Apartment") {
-      const floor = parseInt(property.details?.floor) || 1;
-
-      if (floor > 1 && property.details.freightElevator === null) {
-        time += (floor - 1) * additionalFactors.floor.increment;
-        rateMultiplier *= additionalFactors.floor.multiplier;
-      } else if (property.details.freightElevator === "yes") {
-        rateMultiplier *= additionalFactors.freightElevator;
-      }
-    } else if (property.type === "House") {
-      rateMultiplier *= 0.9;
-    }
-
-    return { time, rateMultiplier };
-  };
-
-  const pickupData = calculatePickupDetails(data.propertyType.pickupProperty);
-  const dropOffData = calculateDropOffDetails(data.propertyType.dropOffProperty);
-
+  // Расчет рабочего времени без учета времени на дорогу
   let additionalTime = pickupData.time + dropOffData.time;
-
   additionalTime += additionalFactors.clutterLevel[parseInt(data.clutterLevel)] || 0;
 
+  // Добавление времени для тяжелых предметов и сборки/разборки
   if (typeof data.assemblyItems === 'object') {
     for (const item in data.assemblyItems) {
-      additionalTime += (parseInt(data.assemblyItems[item].quantity) || 0) * additionalFactors.assemblyItems;
+      additionalTime += (parseInt(data.assemblyItems[item].quantity) || 0) * additionalFactors.assemblyItemsTime;
     }
   }
   if (typeof data.heavyItems === 'object') {
     for (const item in data.heavyItems) {
-      additionalTime += (parseInt(data.heavyItems[item].quantity) || 0) * additionalFactors.heavyItems;
+      additionalTime += (parseInt(data.heavyItems[item].quantity) || 0) * additionalFactors.heavyItemsTime;
     }
   }
 
-  let totalHours = Math.max(minHours + additionalTime + (durationInMinutes / 60), minHoursByMovers[movers]);
-  if (distance <= 50) {
-    totalHours += (durationInMinutes / 60) * 2;
+  // Учет дополнительных часов для упаковки
+  workHours = additionalTime + additionalFactors.packingTimeAddition[data.packingOption] || 0;
+
+  // Корректировка рабочего времени при добавлении дополнительных грузчиков
+  if (workHours > 8) {
+    const originalMovers = movers;
+    movers = Math.min(movers + 1, 5);
+    minMovers = movers;
+    workHours = workHours * (originalMovers / movers);
   }
 
-  const packingMultiplier = additionalFactors.packingOption[data.packingOption] || 1;
-  const totalHourlyRate = baseRates[movers] * pickupData.rateMultiplier * dropOffData.rateMultiplier * packingMultiplier;
+  // Расчет времени на дорогу и общего времени
+  const travelTime = (durationInMinutes / 60) * additionalFactors.travelTimeRate;
+  totalHours = workHours + travelTime;
 
-  const totalCost = Math.round(totalHourlyRate * totalHours);
+  // Окончательный расчет стоимости
+  const packingMultiplier = additionalFactors.packingOptionMultiplier[data.packingOption] || 1;
+  const totalHourlyRate = baseRates[minMovers] * pickupData.rateMultiplier * dropOffData.rateMultiplier * packingMultiplier;
+  const totalCost = Math.max(minimumCost, Math.round(totalHourlyRate * totalHours));
 
-  return { totalCost, movers, minMovers };
+  return { totalCost, totalHours, workHours, movers, minMovers };
 }
 
 export default function Home() {
@@ -180,7 +169,10 @@ export default function Home() {
   });
 
   const [movingCost, setMovingCost] = useState(null);
+  const [totalHours, setTotalHours] = useState(0);
+  const [movers, setMovers] = useState(2);
   const [minMovers, setMinMovers] = useState(2);
+  const [isModalOpen, setModalOpen] = useState(false); // Статус модального окна
 
   const addressFrom = watch("addressFrom");
   const addressTo = watch("addressTo");
@@ -188,7 +180,6 @@ export default function Home() {
   const duration = watch("duration");
   const propertyType = watch("propertyType");
   const clutterLevel = watch("clutterLevel");
-  const movers = watch("movers");
   const assemblyItems = watch("assemblyItems");
   const heavyItems = watch("heavyItems");
   const packingOption = watch("packingOption");
@@ -199,30 +190,32 @@ export default function Home() {
   useEffect(() => {
     const calculateAndSetCost = () => {
       try {
-        const { totalCost, movers: calculatedMovers, minMovers: calculatedMinMovers } = calculateMovingCost({
+        const { totalCost, totalHours: hours, movers: calculatedMovers, minMovers: calculatedMinMovers } = calculateMovingCost({
           addressFrom,
           addressTo,
           distance: parseFloat(distance) || 0,
           duration: parseFloat(duration) || 0,
           propertyType,
           clutterLevel,
-          movers,
+          movers,           // Убедитесь, что это добавлено
           assemblyItems,
           heavyItems,
           packingOption,
         });
-
+  
         setMovingCost(totalCost);
-
+        setTotalHours(hours);
+        setMovers(calculatedMovers);
+  
         if (calculatedMinMovers !== minMovers) {
           setMinMovers(calculatedMinMovers);
-          setValue("movers", calculatedMinMovers); // Update movers to new minMovers
+          setValue("movers", calculatedMinMovers);
         }
       } catch (error) {
         console.error("Error calculating moving cost:", error);
       }
     };
-
+  
     if (distance && duration) {
       calculateAndSetCost();
     }
@@ -231,16 +224,15 @@ export default function Home() {
     addressTo,
     distance,
     duration,
-    bedrooms,
-    floor,
-    clutterLevel,
     propertyType,
-    movers,
+    clutterLevel,
+    movers,           // Добавьте зависимость на количество грузчиков
     assemblyItems,
     heavyItems,
     packingOption,
     setValue,
   ]);
+  
 
   const onSubmit = (data) => {
     const { totalCost } = calculateMovingCost(data);
@@ -248,7 +240,14 @@ export default function Home() {
   };
 
   return (
-    <Sheet sx={{ width: { xs: "100%", sm: "448px" }, marginX: "auto", background: "unset", position: "relative" }}>
+    <Sheet
+      sx={{
+        width: { xs: "100%", sm: "448px" },
+        marginX: "auto",
+        background: "unset",
+        position: "relative",
+      }}
+    >
       <Sheet
         sx={{
           marginX: "auto",
@@ -305,7 +304,14 @@ export default function Home() {
             )}
           />
 
-          <Sheet sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: "16px" }}>
+          <Sheet
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              pb: "16px",
+            }}
+          >
             <Controller
               name="date"
               control={control}
@@ -345,12 +351,26 @@ export default function Home() {
             )}
           />
 
-          <Sheet sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: "16px" }}>
+          <Sheet
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              pb: "16px",
+            }}
+          >
             <HeavyItemsPicker setValue={setValue} control={control} />
             <AssemblyDisassemblyPicker setValue={setValue} />
           </Sheet>
 
-          <Sheet sx={{ display: "flex", alignItems: "end", justifyContent: "space-between", pb: "16px" }}>
+          <Sheet
+            sx={{
+              display: "flex",
+              alignItems: "end",
+              justifyContent: "space-between",
+              pb: "16px",
+            }}
+          >
             <Controller
               name="phoneNumber"
               control={control}
@@ -381,9 +401,30 @@ export default function Home() {
               marginX: "auto",
             }}
           >
+            <Button onClick={() => setModalOpen(true)}>Order Summary</Button>
+            {movingCost && (
+              <SummaryModal
+                open={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                data={{
+                  totalCost: movingCost,
+                  totalHours,
+                  workHours: totalHours,
+                  movers,
+                  distance,
+                  duration,
+                  clutterLevel,
+                  assemblyItems,
+                  heavyItems,
+                  packingOption,
+                }}
+              />
+            )}
             <Button
               sx={{
-                background: movingCost ? "rgba(72, 134, 255, 0.40)" : "rgba(255, 137, 25, 0.40)",
+                background: movingCost
+                  ? "rgba(72, 134, 255, 0.40)"
+                  : "rgba(255, 137, 25, 0.40)",
                 borderRadius: "100px",
                 width: "42%",
                 minHeight: "40px",
@@ -395,12 +436,21 @@ export default function Home() {
               }}
               type="button"
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
                 <span>Book for</span>
                 {movingCost !== null ? (
                   <span>${movingCost}</span>
                 ) : (
-                  <div style={{ background: "#FFF1C2", borderRadius: "8px", height: "21px", width: "50px" }}></div>
+                  <div
+                    style={{
+                      background: "#FFF1C2",
+                      borderRadius: "8px",
+                      height: "21px",
+                      width: "50px",
+                    }}
+                  ></div>
                 )}
               </div>
             </Button>
@@ -425,6 +475,7 @@ export default function Home() {
               Get a better deal
             </Button>
           </Sheet>
+          <p>{totalHours ? `${totalHours.toFixed(2)} hours` : "0 hours"}</p>
         </Sheet>
       </form>
     </Sheet>

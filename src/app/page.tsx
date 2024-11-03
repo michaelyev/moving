@@ -51,16 +51,16 @@ function calculateMovingCost(data) {
   };
 
   const minimumCost = 200;
-  let movers: number;
+  let movers;
   const rooms = data.propertyType.pickupProperty.details?.rooms || 1;
   const floor = parseInt(data.propertyType.pickupProperty.details?.floor) || 1;
   const isApartment = data.propertyType.pickupProperty.type === "Apartment";
   const durationInMinutes = data.duration || 0;
 
-  // Определение количества грузчиков в зависимости от размера квартиры
+  // Determine number of movers based on apartment size
   if (isApartment) {
     if (rooms <= 1) {
-      movers = 2; // Минимум 2 грузчика для студий и 1-комнатных квартир
+      movers = 2;
     } else if (rooms <= 3) {
       movers = 3;
     } else {
@@ -71,10 +71,9 @@ function calculateMovingCost(data) {
   }
 
   let minMovers = movers;
-  let workHours = 0; // Только рабочие часы (без учета времени в пути)
-  let totalHours = 0;
+  let workHours = 0;
+  let travelHours = 0;
 
-  // Функция для расчета базового времени на перемещение объекта недвижимости
   const calculatePropertyDetails = (property) => {
     let time = 0;
     let rateMultiplier = 1;
@@ -93,7 +92,7 @@ function calculateMovingCost(data) {
         time += (floor - 1) * additionalFactors.floorTimeIncrement;
       }
 
-      // Снижение рабочего времени на 50% для квартир
+      // Reduce working time by 50% for apartments
       time *= 0.5;
     } else if (property.type === "House") {
       const sqFt = parseInt(property.details?.squareFeet) || 0;
@@ -123,18 +122,15 @@ function calculateMovingCost(data) {
     return { time, rateMultiplier };
   };
 
-  // Расчет времени для точки забора и доставки
+  // Calculate time for pickup and drop-off locations
   const pickupData = calculatePropertyDetails(data.propertyType.pickupProperty);
-  const dropOffData = calculatePropertyDetails(
-    data.propertyType.dropOffProperty
-  );
+  const dropOffData = calculatePropertyDetails(data.propertyType.dropOffProperty);
 
-  // Расчет рабочего времени без учета времени на дорогу
+  // Calculate base work hours without travel
   let additionalTime = pickupData.time + dropOffData.time;
-  additionalTime +=
-    additionalFactors.clutterLevel[parseInt(data.clutterLevel)] || 0;
+  additionalTime += additionalFactors.clutterLevel[parseInt(data.clutterLevel)] || 0;
 
-  // Добавление времени для тяжелых предметов и сборки/разборки
+  // Add time for heavy items and assembly/disassembly
   if (typeof data.assemblyItems === "object") {
     for (const item in data.assemblyItems) {
       additionalTime +=
@@ -150,12 +146,10 @@ function calculateMovingCost(data) {
     }
   }
 
-  // Учет дополнительных часов для упаковки
-  workHours =
-    additionalTime +
-      additionalFactors.packingTimeAddition[data.packingOption] || 0;
+  // Add packing time and apply only to work hours
+  workHours = additionalTime + additionalFactors.packingTimeAddition[data.packingOption] || 0;
 
-  // Корректировка рабочего времени при добавлении дополнительных грузчиков
+  // Adjust work hours if additional movers are added
   if (workHours > 8) {
     const originalMovers = movers;
     movers = Math.min(movers + 1, 5);
@@ -163,26 +157,21 @@ function calculateMovingCost(data) {
     workHours = workHours * (originalMovers / movers);
   }
 
-  // Расчет времени на дорогу и общего времени
-  const travelTime =
-    (durationInMinutes / 60) * additionalFactors.travelTimeRate;
-  totalHours = workHours + travelTime;
+  // Calculate travel time separately and apply only travel rate
+  travelHours = (durationInMinutes / 60) * additionalFactors.travelTimeRate;
 
-  // Окончательный расчет стоимости
-  const packingMultiplier =
-    additionalFactors.packingOptionMultiplier[data.packingOption] || 1;
-  const totalHourlyRate =
-    baseRates[minMovers] *
-    pickupData.rateMultiplier *
-    dropOffData.rateMultiplier *
-    packingMultiplier;
-  const totalCost = Math.max(
-    minimumCost,
-    Math.round(totalHourlyRate * totalHours)
-  );
+  // Calculate final costs separately for travel and work
+  const workHourlyRate = baseRates[minMovers];
+  const packingMultiplier = additionalFactors.packingOptionMultiplier[data.packingOption] || 1;
+  const workCost = Math.round(workHourlyRate * workHours * packingMultiplier);
+  const travelCost = Math.round(workHourlyRate * travelHours);
 
-  return { totalCost, totalHours, workHours, movers, minMovers };
+  // Ensure total cost meets minimum requirement
+  const totalCost = Math.max(minimumCost, workCost + travelCost);
+
+  return { totalCost, totalHours: workHours + travelHours, workHours, movers, minMovers };
 }
+
 
 export default function Home() {
   const { control, watch, handleSubmit, setValue } = useForm({

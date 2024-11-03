@@ -14,12 +14,11 @@ export const HeavyItemsPicker = ({ setValue }) => {
   // Initialize items with quantity and price but don't show the price
   const [items, setItems] = useState(() => {
     return heavyItemsData.reduce((acc, item) => {
-      acc[item.name] = { quantity: 0, price: item.price }; // Initialize with quantity 0 and store price
+      acc[item.name] = { quantity: 0, price: item.price };
       return acc;
     }, {});
   });
 
-  // Check if any item has a quantity greater than 0
   const hasSelectedItems = () => {
     return Object.values(items).some((item) => item.quantity > 0);
   };
@@ -29,7 +28,7 @@ export const HeavyItemsPicker = ({ setValue }) => {
       ...prev,
       [itemName]: {
         ...prev[itemName],
-        quantity: prev[itemName].quantity + 1, // Increment the quantity
+        quantity: prev[itemName].quantity + 1,
       },
     }));
   };
@@ -39,19 +38,18 @@ export const HeavyItemsPicker = ({ setValue }) => {
       ...prev,
       [itemName]: {
         ...prev[itemName],
-        quantity: prev[itemName].quantity > 0 ? prev[itemName].quantity - 1 : 0, // Decrement the quantity
+        quantity: prev[itemName].quantity > 0 ? prev[itemName].quantity - 1 : 0,
       },
     }));
   };
 
   const handleConfirm = () => {
-    setValue('heavyItems', items); // Pass the items object (including quantity and price) back to the form
-    setOpen(false); // Close the modal
+    setValue('heavyItems', items);
+    setOpen(false);
   };
 
   return (
     <>
-      {/* Blue Button to open modal */}
       <Button
         onClick={() => setOpen(true)}
         sx={{
@@ -63,7 +61,7 @@ export const HeavyItemsPicker = ({ setValue }) => {
           backgroundColor: "#4886FF",
           gap: "10px",
           "&:hover": {
-            backgroundColor: "#FF881A", // Remove the hover background
+            backgroundColor: "#FF881A",
           },
         }}
       >
@@ -76,11 +74,11 @@ export const HeavyItemsPicker = ({ setValue }) => {
         Heavy Items
       </Button>
 
-      {/* Modal with heavy items picker */}
       <Modal open={open} onClose={() => setOpen(false)}>
         <Sheet
           sx={{
             width: { xs: "90%", sm: "400px" },
+            maxHeight: "80vh", // Set maximum height for modal
             marginX: "auto",
             marginTop: "10%",
             background: "white",
@@ -98,58 +96,67 @@ export const HeavyItemsPicker = ({ setValue }) => {
             Pick Heavy Items
           </Typography>
 
-          {heavyItemsData.map((item) => (
-            <Sheet
-              key={item.id}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "4px 0",
-                background: 'unset'
-              }}
-            >
-              <Typography>{item.name}</Typography>
-
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+          {/* Scrollable items container */}
+          <Sheet
+            sx={{
+              maxHeight: "60vh", // Fixed height with scroll
+              overflowY: "auto", // Enable vertical scrolling if content exceeds height
+              paddingRight: "8px", // Add padding for scrollbar space
+            }}
+          >
+            {heavyItemsData.map((item) => (
+              <Sheet
+                key={item.id}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "4px 0",
+                  background: 'unset'
+                }}
               >
-                <Button
-                  onClick={() => handleDecrement(item.name)}
-                  sx={{
-                    backgroundColor: "#FFF1C2",
-                    height: "32px",
-                    width: "32px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "8px",
-                    "&:hover": { backgroundColor: "#FF8919" },
-                  }}
-                >
-                  <Typography fontSize="20px">-</Typography>
-                </Button>
+                <Typography>{item.name}</Typography>
 
-                <Typography>{items[item.name].quantity}</Typography>
-
-                <Button
-                  onClick={() => handleIncrement(item.name)}
-                  sx={{
-                    backgroundColor: "#FFF1C2",
-                    height: "32px",
-                    width: "32px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "8px",
-                    "&:hover": { backgroundColor: "#FF8919" },
-                  }}
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
                 >
-                  <Typography fontSize="20px">+</Typography>
-                </Button>
-              </div>
-            </Sheet>
-          ))}
+                  <Button
+                    onClick={() => handleDecrement(item.name)}
+                    sx={{
+                      backgroundColor: "#FFF1C2",
+                      height: "32px",
+                      width: "32px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: "8px",
+                      "&:hover": { backgroundColor: "#FF8919" },
+                    }}
+                  >
+                    <Typography fontSize="20px">-</Typography>
+                  </Button>
+
+                  <Typography>{items[item.name].quantity}</Typography>
+
+                  <Button
+                    onClick={() => handleIncrement(item.name)}
+                    sx={{
+                      backgroundColor: "#FFF1C2",
+                      height: "32px",
+                      width: "32px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: "8px",
+                      "&:hover": { backgroundColor: "#FF8919" },
+                    }}
+                  >
+                    <Typography fontSize="20px">+</Typography>
+                  </Button>
+                </div>
+              </Sheet>
+            ))}
+          </Sheet>
 
           <Sheet
             sx={{

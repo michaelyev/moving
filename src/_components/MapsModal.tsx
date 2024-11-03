@@ -25,6 +25,7 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
 
   const autocompletePickupRef = useRef(null);
   const autocompleteDropOffRef = useRef(null);
+  const mapRef = useRef(null); // Ref to access the GoogleMap instance
 
   const isMobile = useMediaQuery('(max-width:600px)');
   const { isLoaded } = useJsApiLoader({
@@ -36,6 +37,16 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
     if (initialPickup) geocodeAddress(initialPickup, 'pickup');
     if (initialDropOff) geocodeAddress(initialDropOff, 'dropOff');
   }, [initialPickup, initialDropOff]);
+
+  // Adjust the map view to fit both markers once they are selected
+  useEffect(() => {
+    if (pickupPosition && dropOffPosition && mapRef.current) {
+      const bounds = new window.google.maps.LatLngBounds();
+      bounds.extend(pickupPosition);
+      bounds.extend(dropOffPosition);
+      mapRef.current.fitBounds(bounds);
+    }
+  }, [pickupPosition, dropOffPosition]);
 
   const handleMapClick = (event) => {
     const lat = event.latLng?.lat();
@@ -168,6 +179,7 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
             }}
             center={pickupPosition || dropOffPosition || defaultCenter}
             zoom={12}
+            onLoad={(map) => (mapRef.current = map)}
             onClick={handleMapClick}
           >
             {pickupPosition && <Marker position={pickupPosition} />}

@@ -1,9 +1,10 @@
 // @ts-nocheck
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button, Modal, Sheet, Input } from '@mui/joy';
 import { GoogleMap, useJsApiLoader, Marker, Autocomplete } from '@react-google-maps/api';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { useMediaQuery } from '@mui/material';
+import debounce from 'lodash.debounce';
 
 const defaultCenter = { lat: 47.6062, lng: -122.3321 }; // Default to Seattle, WA
 
@@ -78,6 +79,8 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
       }
     });
   };
+
+  const debouncedGeocodeAddress = useCallback(debounce(geocodeAddress, 500), []);
 
   const getAddressFromCoordinates = (lat, lng, type) => {
     const geocoder = new window.google.maps.Geocoder();
@@ -212,7 +215,7 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
                   onChange={(e) => {
                     const newAddress = e.target.value;
                     setPickupAddress(newAddress);
-                    geocodeAddress(newAddress, "pickup");
+                    debouncedGeocodeAddress(newAddress, "pickup");
                   }}
                   sx={{
                     mb: 2,
@@ -236,7 +239,7 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
                   onChange={(e) => {
                     const newAddress = e.target.value;
                     setDropOffAddress(newAddress);
-                    geocodeAddress(newAddress, "dropOff");
+                    debouncedGeocodeAddress(newAddress, "dropOff");
                   }}
                   sx={{
                     mb: 2,

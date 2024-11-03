@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { useState, useEffect } from "react";
@@ -16,6 +17,9 @@ import { HeavyItemsPicker } from "@/_components/HeavyItems";
 import { AssemblyDisassemblyPicker } from "@/_components/AssemblyDisassembly";
 import { PaymentMethodPicker } from "@/_components/PaymentMethod";
 import { SummaryModal } from "@/_components/SummaryModal"; // Импорт модального окна
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { Typography } from "@mui/joy";
+import Link from "next/link";
 
 function calculateMovingCost(data) {
   const baseRates = {
@@ -28,7 +32,17 @@ function calculateMovingCost(data) {
   const additionalFactors = {
     floorTimeIncrement: 0.5,
     freightElevatorMultiplier: 0.85,
-    clutterLevel: { 1: 0, 2: 0.6, 3: 1.2, 4: 1.8, 5: 2.5, 6: 3.2, 7: 3.9, 8: 4.6, 9: 5.2 },
+    clutterLevel: {
+      1: 0,
+      2: 0.6,
+      3: 1.2,
+      4: 1.8,
+      5: 2.5,
+      6: 3.2,
+      7: 3.9,
+      8: 4.6,
+      9: 5.2,
+    },
     heavyItemsTime: 0.6,
     assemblyItemsTime: 0.35,
     packingOptionMultiplier: { None: 1, Partial: 1.1, Full: 1.2 },
@@ -37,8 +51,8 @@ function calculateMovingCost(data) {
   };
 
   const minimumCost = 200;
-  let movers;
-  const rooms = data.propertyType.pickupProperty.details?.rooms || 1; 
+  let movers: number;
+  const rooms = data.propertyType.pickupProperty.details?.rooms || 1;
   const floor = parseInt(data.propertyType.pickupProperty.details?.floor) || 1;
   const isApartment = data.propertyType.pickupProperty.type === "Apartment";
   const durationInMinutes = data.duration || 0;
@@ -96,7 +110,10 @@ function calculateMovingCost(data) {
         minMovers = 2;
       }
 
-      const extraSqFt = Math.max(0, sqFt - (movers === 4 ? 3000 : movers === 3 ? 2000 : 1000));
+      const extraSqFt = Math.max(
+        0,
+        sqFt - (movers === 4 ? 3000 : movers === 3 ? 2000 : 1000)
+      );
       time += Math.ceil(extraSqFt / 20) * 0.1;
 
       if (stories > 1) {
@@ -108,26 +125,35 @@ function calculateMovingCost(data) {
 
   // Расчет времени для точки забора и доставки
   const pickupData = calculatePropertyDetails(data.propertyType.pickupProperty);
-  const dropOffData = calculatePropertyDetails(data.propertyType.dropOffProperty);
+  const dropOffData = calculatePropertyDetails(
+    data.propertyType.dropOffProperty
+  );
 
   // Расчет рабочего времени без учета времени на дорогу
   let additionalTime = pickupData.time + dropOffData.time;
-  additionalTime += additionalFactors.clutterLevel[parseInt(data.clutterLevel)] || 0;
+  additionalTime +=
+    additionalFactors.clutterLevel[parseInt(data.clutterLevel)] || 0;
 
   // Добавление времени для тяжелых предметов и сборки/разборки
-  if (typeof data.assemblyItems === 'object') {
+  if (typeof data.assemblyItems === "object") {
     for (const item in data.assemblyItems) {
-      additionalTime += (parseInt(data.assemblyItems[item].quantity) || 0) * additionalFactors.assemblyItemsTime;
+      additionalTime +=
+        (parseInt(data.assemblyItems[item].quantity) || 0) *
+        additionalFactors.assemblyItemsTime;
     }
   }
-  if (typeof data.heavyItems === 'object') {
+  if (typeof data.heavyItems === "object") {
     for (const item in data.heavyItems) {
-      additionalTime += (parseInt(data.heavyItems[item].quantity) || 0) * additionalFactors.heavyItemsTime;
+      additionalTime +=
+        (parseInt(data.heavyItems[item].quantity) || 0) *
+        additionalFactors.heavyItemsTime;
     }
   }
 
   // Учет дополнительных часов для упаковки
-  workHours = additionalTime + additionalFactors.packingTimeAddition[data.packingOption] || 0;
+  workHours =
+    additionalTime +
+      additionalFactors.packingTimeAddition[data.packingOption] || 0;
 
   // Корректировка рабочего времени при добавлении дополнительных грузчиков
   if (workHours > 8) {
@@ -138,13 +164,22 @@ function calculateMovingCost(data) {
   }
 
   // Расчет времени на дорогу и общего времени
-  const travelTime = (durationInMinutes / 60) * additionalFactors.travelTimeRate;
+  const travelTime =
+    (durationInMinutes / 60) * additionalFactors.travelTimeRate;
   totalHours = workHours + travelTime;
 
   // Окончательный расчет стоимости
-  const packingMultiplier = additionalFactors.packingOptionMultiplier[data.packingOption] || 1;
-  const totalHourlyRate = baseRates[minMovers] * pickupData.rateMultiplier * dropOffData.rateMultiplier * packingMultiplier;
-  const totalCost = Math.max(minimumCost, Math.round(totalHourlyRate * totalHours));
+  const packingMultiplier =
+    additionalFactors.packingOptionMultiplier[data.packingOption] || 1;
+  const totalHourlyRate =
+    baseRates[minMovers] *
+    pickupData.rateMultiplier *
+    dropOffData.rateMultiplier *
+    packingMultiplier;
+  const totalCost = Math.max(
+    minimumCost,
+    Math.round(totalHourlyRate * totalHours)
+  );
 
   return { totalCost, totalHours, workHours, movers, minMovers };
 }
@@ -164,7 +199,7 @@ export default function Home() {
       clutterLevel: 1,
       packingOption: "None",
       phoneNumber: "",
-      heavyItems: '',
+      heavyItems: "",
     },
   });
 
@@ -190,23 +225,28 @@ export default function Home() {
   useEffect(() => {
     const calculateAndSetCost = () => {
       try {
-        const { totalCost, totalHours: hours, movers: calculatedMovers, minMovers: calculatedMinMovers } = calculateMovingCost({
+        const {
+          totalCost,
+          totalHours: hours,
+          movers: calculatedMovers,
+          minMovers: calculatedMinMovers,
+        } = calculateMovingCost({
           addressFrom,
           addressTo,
           distance: parseFloat(distance) || 0,
           duration: parseFloat(duration) || 0,
           propertyType,
           clutterLevel,
-          movers,           // Убедитесь, что это добавлено
+          movers, // Убедитесь, что это добавлено
           assemblyItems,
           heavyItems,
           packingOption,
         });
-  
+
         setMovingCost(totalCost);
         setTotalHours(hours);
         setMovers(calculatedMovers);
-  
+
         if (calculatedMinMovers !== minMovers) {
           setMinMovers(calculatedMinMovers);
           setValue("movers", calculatedMinMovers);
@@ -215,7 +255,7 @@ export default function Home() {
         console.error("Error calculating moving cost:", error);
       }
     };
-  
+
     if (distance && duration) {
       calculateAndSetCost();
     }
@@ -226,13 +266,12 @@ export default function Home() {
     duration,
     propertyType,
     clutterLevel,
-    movers,           // Добавьте зависимость на количество грузчиков
+    movers, // Добавьте зависимость на количество грузчиков
     assemblyItems,
     heavyItems,
     packingOption,
     setValue,
   ]);
-  
 
   const onSubmit = (data) => {
     const { totalCost } = calculateMovingCost(data);
@@ -396,12 +435,60 @@ export default function Home() {
                 "linear-gradient(90deg, rgba(255, 209, 51, 0.20) 9%, rgba(72, 134, 255, 0.20) 89%)",
               position: "relative",
               right: { xs: "8px", sm: "16px" },
-              justifyContent: "space-between",
               display: "flex",
-              marginX: "auto",
+              flexDirection: "column",
+              alignItems: "center", // Center all content horizontally
             }}
           >
-            <Button onClick={() => setModalOpen(true)}>Order Summary</Button>
+            {movingCost && (
+              <Button
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  maxWidth: "300px",
+                  marginX: "auto",
+                  paddingY: 2,
+                  borderRadius: 8,
+                  all: "unset",
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "transparent",
+                  },
+                  animation: "pulse 1.5s infinite", // Apply the pulse animation
+                  "@keyframes pulse": {
+                    "0%": {
+                      transform: "scale(1)",
+                      opacity: 1,
+                    },
+                    "50%": {
+                      transform: "scale(1.05)",
+                      opacity: 0.8,
+                    },
+                    "100%": {
+                      transform: "scale(1)",
+                      opacity: 1,
+                    },
+                  },
+                }}
+                onClick={() => setModalOpen(true)}
+              >
+                <KeyboardArrowUpIcon
+                  sx={{
+                    fontSize: "1.5rem",
+                    color: "#615D5D",
+                    width: "100%",
+                    "&:hover": {
+                      backgroundColor: "#FF881A",
+                    },
+                    borderRadius: "4px",
+                  }}
+                />
+              </Button>
+            )}
+
             {movingCost && (
               <SummaryModal
                 open={isModalOpen}
@@ -420,62 +507,97 @@ export default function Home() {
                 }}
               />
             )}
-            <Button
+
+            <Sheet
               sx={{
-                background: movingCost
-                  ? "rgba(72, 134, 255, 0.40)"
-                  : "rgba(255, 137, 25, 0.40)",
-                borderRadius: "100px",
-                width: "42%",
-                minHeight: "40px",
-                transition: "background-color 0.5s ease",
-                animation: movingCost ? "fadeIn 0.5s ease" : "none",
-                "&:hover": {
-                  backgroundColor: movingCost ? "#4876FF" : "#FF881A",
-                },
+                justifyContent: "space-between",
+                display: "flex",
+                marginX: "auto",
+                background: "transparent",
+                width: "100%",
+                maxWidth: "416px",
               }}
-              type="button"
             >
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              <Button
+                sx={{
+                  background: movingCost
+                    ? "#FF881A"
+                    : "rgba(255, 137, 25, 0.40)",
+                  borderRadius: "100px",
+                  width: "42%",
+                  minHeight: "40px",
+                  transition: "background-color 0.5s ease",
+                  animation: movingCost ? "fadeIn 0.5s ease" : "none",
+                  "&:hover": {
+                    backgroundColor: movingCost ? "#4876FF" : "#FF881A",
+                  },
+                }}
+                type="button"
               >
-                <span>Book for</span>
-                {movingCost !== null ? (
-                  <span>${movingCost}</span>
-                ) : (
-                  <div
-                    style={{
-                      background: "#FFF1C2",
-                      borderRadius: "8px",
-                      height: "21px",
-                      width: "50px",
-                    }}
-                  ></div>
-                )}
-              </div>
-            </Button>
-            <Button
-              sx={{
-                background: "rgba(255, 137, 25, 0.40)",
-                borderRadius: "100px",
-                width: "42%",
-                minHeight: "40px",
-                backgroundColor: "white",
-                color: "black",
-                "&:hover": {
-                  backgroundColor: "#FF881A",
-                  boxShadow: "0 4px 15px rgba(255, 137, 25, 0.5)",
-                },
-                "&:active": {
-                  transform: "scale(0.98)",
-                },
-              }}
-              type="submit"
-            >
-              Get a better deal
-            </Button>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <span>Book for:</span>
+                  {movingCost !== null ? (
+                    <span>${movingCost}</span>
+                  ) : (
+                    <div
+                      style={{
+                        background: "#FFF1C2",
+                        borderRadius: "8px",
+                        height: "21px",
+                        width: "50px",
+                      }}
+                    ></div>
+                  )}
+                </div>
+              </Button>
+              <Button
+                sx={{
+                  background: "rgba(255, 137, 25, 0.40)",
+                  borderRadius: "100px",
+                  width: "42%",
+                  minHeight: "40px",
+                  backgroundColor: "white",
+                  color: "black",
+                  "&:hover": {
+                    backgroundColor: "#FF881A",
+                    boxShadow: "0 4px 15px rgba(255, 137, 25, 0.5)",
+                  },
+                  "&:active": {
+                    transform: "scale(0.98)",
+                  },
+                }}
+                type="submit"
+              >
+                <Link
+                  href={`sms:2062552708?&body=${encodeURIComponent(
+                    movingCost
+                      ? `Moving Summary:
+      - Cost: $${movingCost}
+      - Distance: ${distance || "N/A"} miles
+      - Duration: ${duration || "N/A"} minutes
+      - Total Hours: ${totalHours || "N/A"}
+      - Movers: ${movers || "N/A"}
+      - Clutter Level: ${clutterLevel || "N/A"}
+      - Packing Option: ${packingOption || "N/A"}
+      - Heavy Items: ${heavyItems ? "Yes" : "No"}
+      - Assembly/Disassembly: ${Object.keys(assemblyItems).length > 0 ? "Yes" : "No"}
+      
+      Can I get a better deal ?`
+                      : "Hello, I need help moving"
+                  )}`}
+                  sx={{
+                    textDecoration: "none",
+                    color: "blue",
+                    fontSize: "1.2em",
+                  }}
+                >
+                  Get a better deal
+                </Link>
+              </Button>
+            </Sheet>
           </Sheet>
-          <p>{totalHours ? `${totalHours.toFixed(2)} hours` : "0 hours"}</p>
         </Sheet>
       </form>
     </Sheet>

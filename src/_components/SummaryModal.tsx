@@ -4,10 +4,42 @@ import Sheet from "@mui/joy/Sheet";
 import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
 
-export function SummaryModal({ open, onClose, data }) {
+// Define the type for the data prop
+type Data = {
+  totalCost: number;
+  totalHours: number;
+  workHours: number;
+  movers: number;
+  distance: number;
+  duration: number;
+  clutterLevel: number;
+  assemblyItems: Record<string, { quantity: number }>;
+  heavyItems: Record<string, { quantity: number }>;
+  packingOption: string;
+};
+
+// Define the props for the SummaryModal component
+type SummaryModalProps = {
+  open: boolean;
+  onClose: () => void;
+  data?: Data | null;
+};
+
+export const SummaryModal: React.FC<SummaryModalProps> = ({ open, onClose, data }) => {
   if (!data) return null;
 
-  const { totalCost, totalHours, workHours, movers, distance, duration, clutterLevel, assemblyItems, heavyItems, packingOption } = data;
+  const {
+    totalCost,
+    totalHours,
+    workHours,
+    movers,
+    distance,
+    duration,
+    clutterLevel,
+    assemblyItems,
+    heavyItems,
+    packingOption,
+  } = data;
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -16,12 +48,12 @@ export function SummaryModal({ open, onClose, data }) {
           maxWidth: 400,
           margin: "auto",
           p: 4,
-          borderRadius: "8px",
+          borderRadius: "24px",
           boxShadow: "0 4px 15px rgba(0, 0, 0, 0.3)",
           bgcolor: "background.paper",
         }}
       >
-        <Typography variant="h6">Order Summary</Typography>
+        <Typography>Order Summary</Typography>
         <Typography mt={2}><strong>Total Cost:</strong> ${totalCost}</Typography>
         <Typography mt={1}><strong>Total Hours:</strong> {totalHours.toFixed(2)} hours</Typography>
         <Typography mt={1}><strong>Work Hours:</strong> {workHours.toFixed(2)} hours</Typography>
@@ -36,4 +68,4 @@ export function SummaryModal({ open, onClose, data }) {
       </Sheet>
     </Modal>
   );
-}
+};

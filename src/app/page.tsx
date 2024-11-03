@@ -282,6 +282,7 @@ export default function Home() {
     <Sheet
       sx={{
         width: { xs: "100%", sm: "448px" },
+        maxHeight: '100%',
         marginX: "auto",
         background: "unset",
         position: "relative",

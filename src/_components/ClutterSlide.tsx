@@ -40,19 +40,15 @@ export const ClutterSlide = ({ value, onChange }) => {
   };
 
   return (
-    <Box
-      sx={{ marginX: 'auto', pb: '8px', width: '100%' }}
-      onPointerDown={handlePointerDown} // Обработка нажатия на обертке
-      onPointerUp={handlePointerUp} // Обработка отпускания на обертке
-    >
-      <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+    <Box sx={{ marginX: "auto", pb: "8px", width: "100%" }}>
+      <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
         Clutter
       </Typography>
 
       {/* Slider with Tooltip displaying clutter image */}
-      <Box sx={{ position: 'relative', width: '95%', mx: 'auto', mt: 2 }}>
+      <Box sx={{ position: "relative", width: "95%", mx: "auto", mt: 2 }}>
         <Slider
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
           aria-label="Clutter level"
           value={clutterLevel}
           onChange={handleSliderChange}
@@ -61,26 +57,28 @@ export const ClutterSlide = ({ value, onChange }) => {
           min={1}
           max={5}
           valueLabelDisplay="auto"
+          onPointerDown={handlePointerDown} // Обработка нажатия на обертке
+          onPointerUp={handlePointerUp} // Обработка отпускания на обертке
         />
 
         {/* Tooltip-style Image Display */}
         {showTooltip && (
           <Sheet
             sx={{
-              position: 'absolute',
-              width: { xs: '90%', sm: '400px' },
-              top: '-250px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: 'white',
-              borderRadius: '12px',
-              padding: '16px',
-              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-              textAlign: 'center',
+              position: "absolute",
+              width: { xs: "90%", sm: "400px" },
+              top: "-250px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              background: "white",
+              borderRadius: "12px",
+              padding: "16px",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+              textAlign: "center",
               zIndex: 1000,
             }}
           >
-            <Typography sx={{ fontWeight: 600, fontSize: '18px', mb: 1 }}>
+            <Typography sx={{ fontWeight: 600, fontSize: "18px", mb: 1 }}>
               Clutter Level: {clutterLevel}
             </Typography>
 
@@ -90,13 +88,20 @@ export const ClutterSlide = ({ value, onChange }) => {
               alt={`Clutter level ${clutterLevel}`}
               width={280}
               height={180}
-              style={{ borderRadius: '8px' }}
+              style={{ borderRadius: "8px" }}
             />
           </Sheet>
         )}
       </Box>
 
-      <Sheet sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1 }}>
+      <Sheet
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mt: 1,
+        }}
+      >
         <Typography fontWeight="light" color="#615D5D">
           Minimal
         </Typography>

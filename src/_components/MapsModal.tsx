@@ -28,11 +28,10 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
 
   const isMobile = useMediaQuery('(max-width:600px)');
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'AIzaSyAFrlvAYZVCNuAg2Ix5pmbwgiTTjCpF5k4', // Замените на ваш ключ API
+    googleMapsApiKey: 'AIzaSyAFrlvAYZVCNuAg2Ix5pmbwgiTTjCpF5k4', // Replace with your API key
     libraries: ['places', 'geometry'],
   });
 
-  // Устанавливаем начальные значения адресов и координат при первом рендере
   useEffect(() => {
     if (initialPickup) geocodeAddress(initialPickup, 'pickup');
     if (initialDropOff) geocodeAddress(initialDropOff, 'dropOff');
@@ -114,8 +113,8 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
         },
         (response, status) => {
           if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
-            const distance = (response.rows[0].elements[0].distance.value / 1609.34).toFixed(1); // Конвертируем метры в мили
-            const duration = Math.round(response.rows[0].elements[0].duration.value / 60); // Конвертируем секунды в минуты
+            const distance = (response.rows[0].elements[0].distance.value / 1609.34).toFixed(1); // Convert meters to miles
+            const duration = Math.round(response.rows[0].elements[0].duration.value / 60); // Convert seconds to minutes
             resolve({ distance, duration });
           } else {
             console.error("Distance API error:", status);
@@ -152,7 +151,7 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
           width: { sm: "60%", xs: "100%" },
           height: { sm: "50%", xs: "100%" },
           padding: "20px",
-          borderRadius: "44px",
+          borderRadius: isMobile ? "0px" : "44px",
           backgroundColor: "rgba(184, 184, 184, 0.90)",
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
@@ -160,11 +159,11 @@ export const GoogleMapModal: React.FC<GoogleMapModalProps> = ({
           marginX: "auto",
         }}
       >
-        {!isMobile && isLoaded && (
+        {isLoaded && (
           <GoogleMap
             mapContainerStyle={{
               width: "100%",
-              height: "100%",
+              height: isMobile ? "300px" : "100%",
               borderRadius: "24px",
             }}
             center={pickupPosition || dropOffPosition || defaultCenter}

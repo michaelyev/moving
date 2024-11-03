@@ -37,14 +37,10 @@ function calculateMovingCost(data) {
       2: 0.6,
       3: 1.2,
       4: 1.8,
-      5: 2.5,
-      6: 3.2,
-      7: 3.9,
-      8: 4.6,
-      9: 5.2,
+      5: 2.5
     },
-    heavyItemsTime: 0.6,
-    assemblyItemsTime: 0.35,
+    heavyItemsTime: 0.5,
+    assemblyItemsTime: 0.5,
     packingOptionMultiplier: { None: 1, Partial: 1.1, Full: 1.2 },
     packingTimeAddition: { None: 0, Partial: 0.5, Full: 1 },
     travelTimeRate: 1.5,
@@ -81,7 +77,7 @@ function calculateMovingCost(data) {
 
     if (property.type === "Apartment") {
       const rooms = parseInt(property.details?.rooms) || 1;
-      time += 1 + rooms * (movers === 2 ? 0.75 : movers === 3 ? 0.6 : 0.5);
+      time += 1 + rooms * (movers === 2 ? 0.8 : movers === 3 ? 0.7 : 0.5);
 
       if (property.details.freightElevator === "yes" && floor > 1) {
         movers = Math.max(2, movers - 1);
@@ -92,8 +88,7 @@ function calculateMovingCost(data) {
         time += (floor - 1) * additionalFactors.floorTimeIncrement;
       }
 
-      // Reduce working time by 50% for apartments
-      time *= 0.5;
+      time *= 0.4;
     } else if (property.type === "House") {
       const sqFt = parseInt(property.details?.squareFeet) || 0;
       const stories = parseInt(property.details?.stories) || 1;
@@ -113,7 +108,7 @@ function calculateMovingCost(data) {
         0,
         sqFt - (movers === 4 ? 3000 : movers === 3 ? 2000 : 1000)
       );
-      time += Math.ceil(extraSqFt / 20) * 0.1;
+      time += Math.ceil(extraSqFt / 20) * 0.13;
 
       if (stories > 1) {
         time += (stories - 1) * 0.25;

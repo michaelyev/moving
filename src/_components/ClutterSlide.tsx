@@ -94,7 +94,7 @@ export const ClutterSlide = ({ value, onChange }) => {
         )}
       </Box>
 
-      <Sheet
+      {/* <Sheet
         sx={{
           display: "flex",
           alignItems: "center",
@@ -108,7 +108,7 @@ export const ClutterSlide = ({ value, onChange }) => {
         <Typography fontWeight="light" color="#615D5D">
           Heavy
         </Typography>
-      </Sheet>
+      </Sheet> */}
     </Box>
   );
 };

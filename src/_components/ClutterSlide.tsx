@@ -46,9 +46,9 @@ export const ClutterSlide = ({ value, onChange }) => {
       </Typography>
 
       {/* Slider with Tooltip displaying clutter image */}
-      <Box sx={{ position: "relative", width: "95%", mx: "auto", mt: 2 }}>
+      <Box sx={{ position: "relative", width:{ sm: "100%", xs: '75%'}, mx: "auto", mt: 2 }}>
         <Slider
-          sx={{ width: "100%" }}
+          sx={{  }}
           aria-label="Clutter level"
           value={clutterLevel}
           onChange={handleSliderChange}

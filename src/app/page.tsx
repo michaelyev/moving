@@ -24,7 +24,7 @@ const Page = () => {
           display: { sm: "none" },
         }}
       >
-        Seattle's Best Moving Company | MoveStream
+        Seattle&apos;s Best Moving Company | MoveStream
       </Typography>
       <Hero />
 

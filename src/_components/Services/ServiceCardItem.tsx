@@ -9,12 +9,13 @@ const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => 
     <Grid
       container
       justifyContent="center"
-      xs={12} sm={6} md={4}
+      xs={12} sm={6} md={3}
+      
     >
       <Card
         sx={{
           height: "100%",
-          width: "380px",
+          width: "365px",
           padding: { xs: 1, sm: 2 },
           display: "flex",
           flexDirection: "column",
@@ -74,7 +75,6 @@ const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => 
           </Typography>
         </CardContent>
 
-        <Button>Order</Button>
       </Card>
     </Grid>
   );

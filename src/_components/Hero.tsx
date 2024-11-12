@@ -44,7 +44,7 @@ export const Hero = () => {
               display: { xs: "none", sm: "block" },
             }}
           >
-            Seattle's Best Moving Company | MoveStream
+            Seattle&apos;s Best Moving Company | MoveStream
           </Typography>
           <Typography level="h2" sx={{ fontSize: "xl", mb: 0.5 }}>
             Professional & Reliable

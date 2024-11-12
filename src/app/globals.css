@@ -59,3 +59,54 @@ table {
     opacity: 1;
   }
 }
+
+
+/* Подключаем шрифт Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Основной цвет */
+:root {
+  --primary-main: #FF881A;
+  --secondary-main: #FFD231;
+  --success-main: #4886FF;
+  /* --info-main: #FFFFFF; */
+  --error-main: #FFF1C2;
+  --font-family: 'Poppins', sans-serif;
+}
+
+/* Типографика */
+h3 {
+  font-weight: 500;
+  font-family: var(--font-family);
+}
+
+h6 {
+  font-weight: 400;
+  font-family: var(--font-family);
+}
+
+/* Общий стиль для всех MuiTypography */
+.MuiTypography-root {
+  color: var(--info-main);
+  font-family: var(--font-family);
+}
+
+/* Кнопки MuiButton */
+.MuiButton-root {
+  text-transform: capitalize;
+}
+
+
+.component_mb {
+  @apply mb-10 max-sm:5;
+}
+
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+
+    padding-left: 0.8rem ;
+    padding-right: 0.8rem ;
+
+}

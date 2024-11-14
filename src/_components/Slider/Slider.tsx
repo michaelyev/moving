@@ -2,8 +2,9 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import { CSSProperties } from "react";
 
-const cardStyle = {
+const cardStyle: CSSProperties = {
   width: "300px",
   height: "320px",
   backgroundColor: "#f5f5f5",
@@ -23,10 +24,10 @@ const InfiniteSwiper = () => {
       spaceBetween={20}
       loop={true} // Enables infinite scrolling
       centeredSlides={false}
-      style={{ marginTop:4 }}
+      style={{ marginTop: 4 }}
     >
       {[...Array(10)].map((_, index) => (
-        <SwiperSlide key={index} style={{ width: "300px", marginTop:4 }}>
+        <SwiperSlide key={index} style={{ width: "300px", marginTop: 4 }}>
           <div style={cardStyle}>
             <h3 style={{ margin: 0, marginBottom: "8px" }}>Card {index + 1}</h3>
             <p style={{ margin: 0, color: "#666" }}>This is a sample card content.</p>

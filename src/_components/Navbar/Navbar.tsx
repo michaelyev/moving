@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import Link from "next/link";
+import Image from "next/image";
 
 const pages = [
   { name: "Services", link: "#services" },
@@ -57,9 +58,9 @@ const Navbar = () => {
               },
             }}
           >
-            movestream
+            MOVESTREAM
           </Typography>
-
+          <Image alt='logo' src="/Subject.png" height={35} width={55} />
           {isMobile ? (
             <Box
               sx={{

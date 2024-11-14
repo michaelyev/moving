@@ -17,6 +17,7 @@ const UniversalCardLayout: React.FC<UniversalCardLayoutProps> = ({
 
     return (
       <Box
+        id='company'
         display="flex"
         height="100%"
         justifyContent="center"

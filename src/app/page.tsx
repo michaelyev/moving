@@ -12,6 +12,7 @@ import Image from "next/image";
 import { Metadata } from "next";
 import Benefits from "@/_components/benefits/Benefits";
 import PricingCalculator from "@/_components/Prices/Prices";
+import InfiniteSwiper from "@/_components/Slider/Slider";
 
 export const metadata: Metadata = {
 	title: "Movestream: Seattle Moving Company",
@@ -50,6 +51,7 @@ const Page = () => {
       <ServiceCard />
       <Benefits />
       <FAQ />
+      <InfiniteSwiper />
     </Container>
   );
 };

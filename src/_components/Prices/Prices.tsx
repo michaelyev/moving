@@ -1,13 +1,13 @@
 // @ts-nocheck
 
 'use client'
-import React, { useState } from "react";
+
+import React from "react";
 import {
   Box,
   Card,
   CardContent,
   Typography,
-  Button,
   Container,
   Grid,
 } from "@mui/material";
@@ -19,6 +19,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   transition: "transform 0.3s ease-in-out",
+  borderRadius: "24px", // Set border radius to 24px
   "&:hover": {
     transform: "translateY(-10px)",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
@@ -32,16 +33,9 @@ const moverOptions = [
 ];
 
 const PricingCalculator = () => {
-  const [selectedPlan, setSelectedPlan] = useState(null);
-
   const renderPricingCard = (option) => (
-    <Grid item xs={12} md={4} key={option.movers}>
-      <StyledCard
-        elevation={selectedPlan === option.movers ? 8 : 2}
-        sx={{
-          border: selectedPlan === option.movers ? "2px solid #2196f3" : "none",
-        }}
-      >
+    <Grid id='pricing' item xs={12} md={4} key={option.movers}>
+      <StyledCard elevation={2}>
         <CardContent>
           <Box display="flex" alignItems="center" gap={1} mb={2}>
             <FaUserFriends size={24} />
@@ -60,7 +54,6 @@ const PricingCalculator = () => {
             <FaHome /> Suitable for houses with {option.bedrooms.house}{" "}
             bedroom(s)
           </Typography>
-          
         </CardContent>
       </StyledCard>
     </Grid>
@@ -69,7 +62,7 @@ const PricingCalculator = () => {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Typography variant="h3" align="center" gutterBottom>
-        Moving Price Calculator
+        Moving Hourly Cost
       </Typography>
       <Typography variant="subtitle1" align="center" color="text.secondary" mb={4}>
         Choose the number of movers based on your needs.

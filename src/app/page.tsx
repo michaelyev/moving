@@ -9,6 +9,15 @@ import ServiceCard from "@/_components/Services/ServicesCard";
 import FAQ from "@/_components/FAQ/Faq";
 import { Hero } from "@/_components/Hero";
 import Image from "next/image";
+import { Metadata } from "next";
+import Benefits from "@/_components/benefits/Benefits";
+import PricingCalculator from "@/_components/Prices/Prices";
+
+export const metadata: Metadata = {
+	title: "Movestream: Seattle Moving Company",
+	description:
+		"Renova offers expert remodeling services in Seattle. Specializing in kitchens, bathrooms, basements, and more. Free consultations & financing options available.",
+};
 
 const Page = () => {
   return (
@@ -20,22 +29,30 @@ const Page = () => {
           textTransform: "uppercase",
           textAlign: "center",
           fontWeight: "bold",
-          marginBottom: 0,
+          marginTop: 2,
           display: { sm: "none" },
         }}
       >
         Seattle&apos;s Best Moving Company | MoveStream
       </Typography>
       <Hero />
+      <PricingCalculator />
 
-      <ServiceCard />
       <Container sx={{ marginTop: 4, padding: "unset" }}>
         {" "}
-        <img src="/IMG_9425.jpeg" width="100%" height="40%" style={{ borderRadius: "24px" }} />
+        <img
+          src="/IMG_9425.jpeg"
+          width="100%"
+          height="40%"
+          style={{ borderRadius: "24px", padding: 0 }}
+        />
       </Container>
+      <ServiceCard />
+      <Benefits />
       <FAQ />
     </Container>
   );
 };
 
 export default Page;
+

@@ -8,13 +8,14 @@ const accordionData = data.accordionData;
 
 const Accordions = () => {
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, borderRadius: '12px' }}>
       {accordionData.map((item, index) => (
-        <Accordion key={index}>
+        <Accordion sx={{borderRadius: '12px'}} key={index}>
           <AccordionSummary
             id={`accordion-summary-${index}`}
             aria-controls={`accordion-content-${index}`}
             expandIcon={<AddIcon />}
+
           >
             <Typography sx={{ color: "#343A40" }}>{item.title}</Typography> {/* Custom color */}
           </AccordionSummary>

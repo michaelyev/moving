@@ -14,7 +14,7 @@ const FAQ = () => {
         borderRadius: 8,
         flexDirection: { xs: "column", sm: "row" },
       }}
-
+      id='faq'
     >
       <Box
         sx={{

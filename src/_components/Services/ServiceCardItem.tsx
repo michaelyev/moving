@@ -1,22 +1,23 @@
 // @ts-nocheck
-
 import { ServiceCardProps } from "@/types/types";
-import { Box, Button, Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => {
   return (
     <Grid
-      container
+      item
+      md={3}
+      display="flex"
       justifyContent="center"
-      xs={12} sm={6} md={3}
-      
+      alignItems="center"
+      id='services'
     >
       <Card
         sx={{
-          height: "100%",
-          width: "365px",
-          padding: { xs: 1, sm: 2 },
+          height: "240px",
+          width: {sm:"320px", xs: '315px'},
+          padding: {  sm: 1, xs:2 },
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -32,7 +33,7 @@ const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => 
             left: 0,
             right: 0,
             height: "8px",
-            backgroundColor: "#FFD231", // Custom color replacing theme `secondary.main`
+            backgroundColor: "#FFD231",
             zIndex: 1,
             borderTopLeftRadius: 8,
             borderTopRightRadius: 8,
@@ -45,7 +46,6 @@ const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => 
             fontWeight={500}
             sx={{
               lineHeight: 1,
-              marginBottom: { xs: 1, sm: 2 },
             }}
           >
             {title}
@@ -66,7 +66,7 @@ const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => 
               paddingLeft: 3,
               lineHeight: 2,
               marginBottom: { xs: 1, sm: 2 },
-              color: "#343A40", // Custom color replacing theme `info.main`
+              color: "#343A40",
             }}
           >
             {features.map((feature, index) => (
@@ -74,7 +74,6 @@ const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => 
             ))}
           </Typography>
         </CardContent>
-
       </Card>
     </Grid>
   );

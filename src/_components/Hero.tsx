@@ -71,20 +71,6 @@ export const Hero = () => {
         >
           <SwiperSlide>
             <img
-              src="/600x400/IMG_9469.jpeg"
-              alt="Slide 3"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-              <img
-                src="/600x400/IMG_9473.jpeg"
-                alt="Slide 3"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </SwiperSlide>
-          <SwiperSlide>
-            <img
               src="/600x400/IMG_9405.jpeg"
               alt="Slide 1"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -92,8 +78,22 @@ export const Hero = () => {
           </SwiperSlide>
           <SwiperSlide>
             <img
+              src="/600x400/IMG_9469.jpeg"
+              alt="Slide 3"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <img
               src="/600x400/IMG_9453.jpeg"
               alt="Slide 2"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <img
+              src="/600x400/IMG_9473.jpeg"
+              alt="Slide 3"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </SwiperSlide>

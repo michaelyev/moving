@@ -11,11 +11,17 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Menu as MenuIcon } from "@mui/icons-material";
+import Link from "next/link";
 
-const pages = ["Services", "Pricing", "FAQ", "Company"];
+const pages = [
+  { name: "Services", link: "#services" },
+  { name: "Pricing", link: "#pricing" },
+  { name: "FAQ", link: "#faq" },
+  { name: "Company", link: "#company" }
+];
 
 const Navbar = () => {
-  const isMobile = useMediaQuery("(max-width:960px)"); // Прямой медиазапрос для мобильных
+  const isMobile = useMediaQuery("(max-width:960px)");
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -23,25 +29,37 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static" color="transparent" elevation={0} >
+    <AppBar position="static" color="transparent" elevation={0}>
       <Container
         maxWidth="lg"
         sx={{
-          background:
-            "#4886FF",
+          background: "#4886FF",
           borderRadius: 8,
-          color: '#FFFFFF',
-
+          color: "#FFFFFF",
         }}
       >
         <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
           <Typography
+            component="a"
+            href="/"
             variant="body1"
             noWrap
-            sx={{ mr: 2, fontWeight: "bold" }}
+            sx={{
+              mr: 2,
+              fontWeight: "bold",
+              color: "inherit",
+              textDecoration: "none",
+              transition: "color 0.3s ease, transform 0.3s ease",
+              "&:hover": {
+                color: "var(--primary-info)",
+                transform: "scale(1.1)",
+                cursor: "pointer",
+              },
+            }}
           >
             movestream
           </Typography>
+
           {isMobile ? (
             <Box
               sx={{
@@ -51,10 +69,17 @@ const Navbar = () => {
                 flex: 1,
               }}
             >
-              <Button onClick={handleDrawerToggle} sx={{ color: "var(--info-main)" }}>
+              <Button
+                onClick={handleDrawerToggle}
+                sx={{ color: "var(--info-main)" }}
+              >
                 <MenuIcon />
               </Button>
-              <MobileMenu open={drawerOpen} onClose={handleDrawerToggle} pages={pages} />
+              <MobileMenu
+                open={drawerOpen}
+                onClose={handleDrawerToggle}
+                pages={pages}
+              />
             </Box>
           ) : (
             <Box
@@ -66,9 +91,11 @@ const Navbar = () => {
               }}
             >
               {pages.map((item) => (
-                <Button key={item} sx={{ fontSize: "1rem", color: "var(--info-main)" }}>
-                  {item}
-                </Button>
+                <Link key={item.name} href={item.link} passHref>
+                  <Button sx={{ fontSize: "1rem", color: "var(--info-main)" }}>
+                    {item.name}
+                  </Button>
+                </Link>
               ))}
             </Box>
           )}
@@ -79,9 +106,25 @@ const Navbar = () => {
               display: { xs: "none", md: "flex" },
             }}
           >
-            <Typography sx={{ color: "var(--info-main)", mr: 2 }}>
-              +1 232 232 454
-            </Typography>
+            <Box
+              component="a"
+              href="tel:+12062552708"
+              sx={{
+                color: "var(--info-main)",
+                mr: 2,
+                textDecoration: "none",
+                fontWeight: "bold",
+                transition: "color 0.3s ease, transform 0.3s ease",
+                "&:hover": {
+                  color: "var(--primary-info)",
+                  transform: "scale(1.1)",
+                  cursor: "pointer",
+                },
+              }}
+            >
+              206-255-2708
+            </Box>
+
             <Button
               sx={{
                 px: 3,
@@ -89,6 +132,11 @@ const Navbar = () => {
                 backgroundColor: "var(--primary-main)",
                 color: "#fff",
                 borderRadius: 8,
+                transition: "background-color 0.3s ease, transform 0.3s ease",
+                "&:hover": {
+                  backgroundColor: "var(--primary-main)",
+                  transform: "scale(1.05)",
+                },
               }}
             >
               Book Now

@@ -38,6 +38,7 @@ const Page = () => {
       </Typography>
       <Hero />
       <PricingCalculator />
+      <InfiniteSwiper />
 
       <Container sx={{ marginTop: 4, padding: "unset" }}>
         {" "}
@@ -51,7 +52,6 @@ const Page = () => {
       <ServiceCard />
       <Benefits />
       <FAQ />
-      <InfiniteSwiper />
     </Container>
   );
 };

@@ -13,7 +13,7 @@ const movingCases = [
     title: '1 Bedroom Apartment',
     bedrooms: 1,
     heavyItems: 2,
-    heavyItemsDetails: "Sofa, Coffee Table", // Based on sample data
+    heavyItemsDetails: "Sofa, Coffee Table",
     assemblyItems: 3,
     assemblyItemsDetails: "Bed, Wardrobe",
     squareFootage: 600,
@@ -119,6 +119,8 @@ const InfiniteSwiper = () => {
       style={{
         width: "100%",
         paddingBottom: 90,
+        borderRadius: '24px',
+        overflow: "hidden"
       }}
     >
       {movingCases.map((item, index) => (
@@ -129,7 +131,7 @@ const InfiniteSwiper = () => {
               height: "500px",
               backgroundColor: "#f5f5f5",
               borderRadius: "24px",
-              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+              boxShadow: "0 10px 20px rgba(0, 0, 0, 0.15), 0 6px 6px rgba(0, 0, 0, 0.1)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",

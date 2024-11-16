@@ -15,7 +15,6 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
   const [openChoiceModal, setOpenChoiceModal] = useState(false);
   const [openApartment, setOpenApartment] = useState(false);
   const [openHouse, setOpenHouse] = useState(false);
-  const [editMode, setEditMode] = useState(false);
 
   const [apartmentDetails, setApartmentDetails] = useState({
     rooms: 0,
@@ -65,6 +64,19 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
     resetSelection();
   };
 
+  const handleCloseDropOffModal = () => {
+    // Сброс состояния, если вторая локация не выбрана
+    if (step === "drop-off" && !value?.dropOffProperty) {
+      setStep("pickup");
+      onChange({
+        pickupProperty: null,
+        dropOffProperty: null,
+      });
+      resetSelection();
+    }
+    setOpenChoiceModal(false);
+  };
+
   const isApartmentConfirmDisabled =
     !apartmentDetails.rooms &&
     !apartmentDetails.floor &&
@@ -72,14 +84,8 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
   const isHouseConfirmDisabled =
     !houseDetails.squareFeet && !houseDetails.stories;
 
-  const startEditSelection = () => {
-    setEditMode(true);
-    setStep("pickup");
-    onChange({ pickupProperty: null, dropOffProperty: null });
-  };
-
   const ChoiceModal = () => (
-    <Modal open={openChoiceModal} onClose={() => setOpenChoiceModal(false)}>
+    <Modal open={openChoiceModal} onClose={handleCloseDropOffModal}>
       <Sheet sx={modalStyles}>
         <Typography
           sx={{ fontWeight: "bold", fontSize: "18px", textAlign: "center" }}
@@ -315,66 +321,43 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
         </Typography>
       )}
 
-      {(editMode || step === "pickup" || step === "drop-off") &&
-        !value?.pickupProperty &&
-        !value?.dropOffProperty && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "16px",
-            }}
-          >
-            <Button
-              onClick={() => handleTypeSelect("Apartment")}
-              sx={selectionButtonStyle}
-            >
-              <Image
-                alt=""
-                height={14}
-                width={14}
-                src="icons/interface-login-key--entry-key-lock-login-pass-unlock.svg"
-              />
-              Apartment
-            </Button>
-
-            <Button
-              onClick={() => handleTypeSelect("House")}
-              sx={selectionButtonStyle}
-            >
-              <Image
-                alt=""
-                height={14}
-                width={14}
-                src="icons/interface-home-5--door-entrance-home-house-map-roof-round-window.svg"
-              />
-              House
-            </Button>
-          </div>
-        )}
-
-      {ChoiceModal()}
-
-      {value?.pickupProperty && value?.dropOffProperty && (
-        <Typography
-          sx={{
-            fontSize: "16px",
-            textAlign: "center",
-            color: "#4CAF50",
-            fontWeight: "bold",
-            marginTop: "16px",
+      {(!value?.pickupProperty || step === "drop-off") && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "16px",
           }}
         >
-          All properties selected! Click below to change.
           <Button
-            variant="text"
-            onClick={startEditSelection}
-            sx={{ marginTop: "8px", color: "#FF6700" }}
+            onClick={() => handleTypeSelect("Apartment")}
+            sx={selectionButtonStyle}
           >
-            Edit Selection
+            <Image
+              alt=""
+              height={14}
+              width={14}
+              src="icons/interface-login-key--entry-key-lock-login-pass-unlock.svg"
+            />
+            Apartment
           </Button>
-        </Typography>
+
+          <Button
+            onClick={() => handleTypeSelect("House")}
+            sx={selectionButtonStyle}
+          >
+            <Image
+              alt=""
+              height={14}
+              width={14}
+              src="icons/interface-home-5--door-entrance-home-house-map-roof-round-window.svg"
+            />
+            House
+          </Button>
+        </div>
       )}
+
+      {ChoiceModal()}
 
       {ApartmentModal()}
       {HouseModal()}
@@ -386,11 +369,11 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
 const modalStyles = {
   width: { xs: "90%", sm: "400px" },
   position: "absolute",
-  bottom: 0,
+  top: "50%",
   left: "50%",
-  transform: "translateX(-50%)",
+  transform: "translate(-50%, -50%)",
   background: "white",
-  borderRadius: "24px 24px 0 0",
+  borderRadius: "24px",
   padding: "24px",
   boxShadow: "0px -4px 12px rgba(0, 0, 0, 0.1)",
   display: "flex",

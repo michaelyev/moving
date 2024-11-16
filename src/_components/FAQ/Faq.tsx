@@ -12,9 +12,10 @@ const FAQ = () => {
       sx={{
         background: "#FFD133",
         borderRadius: 8,
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)", // Shadow for main container
         flexDirection: { xs: "column", sm: "row" },
       }}
-      id='faq'
+      id="faq"
     >
       <Box
         sx={{
@@ -48,8 +49,7 @@ const FAQ = () => {
           variant="body1"
           mt={2}
         >
-          Need more information? <br /> Reach us at <b>206-255-2708</b> <br />{" "}
-
+          Need more information? <br /> Reach us at <b>206-255-2708</b> <br />
         </Typography>
         <Box
           sx={{ display: { xs: "none", md: "flex" } }}
@@ -59,7 +59,15 @@ const FAQ = () => {
           <Typography>for personalized support.</Typography>
         </Box>
       </Box>
-      <Box height="100%" sx={{ flex: 1, mt: { xs: 3, sm: 0 } }}>
+      <Box
+        height="100%"
+        sx={{
+          flex: 1,
+          mt: { xs: 3, sm: 0 },
+          boxShadow: "0 3px 8px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08)", // Shadow for Accordion area
+          borderRadius: 8,
+        }}
+      >
         <Accordions />
         <Typography
           sx={{
@@ -69,7 +77,7 @@ const FAQ = () => {
           variant="body1"
           mt={2}
         >
-          Need more information? <br /> Reach us at <b>+1 232 232 454</b> <br />{" "}
+          Need more information? <br /> Reach us at <b>+1 232 232 454</b> <br />
           or
         </Typography>
         <Box
@@ -83,6 +91,7 @@ const FAQ = () => {
               backgroundColor: "primary.main",
               borderRadius: 8,
               color: "white",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Shadow for button
             }}
           >
             Contact

@@ -21,6 +21,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { Typography } from "@mui/joy";
 import Link from "next/link";
 import { Booking } from "./Booking";
+import { submitData } from "@/lib/formSubmit";
 
 function calculateMovingCost(data) {
   const baseRates = {
@@ -271,9 +272,19 @@ export function MovingCalc() {
     setValue,
   ]);
 
-  const onSubmit = (data) => {
-    console.log("Form Data Submitted:", { ...data});
+  const onSubmit = async (data) => {
+    try {
+      console.log("Form Data Submitted:", data);
+  
+      // Submit data to the server
+      await submitData("moving-form", data);
+  
+      console.log("Submission successful!");
+    } catch (error) {
+      console.error("Failed to submit data:", error);
+    }
   };
+  
 
   useEffect(() => {
     if (enteredNumber) {
@@ -560,7 +571,8 @@ export function MovingCalc() {
               packingOption="Partial"
               heavyItems={true}
               assemblyItems={{ table: 1 }}
-              handleSubmit={handleSubmit(onSubmit)} // Pass the handleSubmit function
+              handleSubmit={handleSubmit} // Pass handleSubmit function
+              onSubmit={onSubmit} // Pass the onSubmit handler
             />
           </Sheet>
         </Sheet>

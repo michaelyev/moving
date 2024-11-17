@@ -1,8 +1,8 @@
 // @ts-nocheck
-
 import React from "react";
 import { Sheet, Button, Typography } from "@mui/joy";
 import Link from "next/link";
+import { isMobile } from "react-device-detect";
 
 export const Booking = ({
   movingCost,
@@ -15,8 +15,49 @@ export const Booking = ({
   packingOption,
   heavyItems,
   assemblyItems,
-  handleSubmit, // Pass handleSubmit function
+  handleSubmit, // Accept handleSubmit as a prop
+  onSubmit, // Pass the parent's onSubmit handler
 }) => {
+  const handleGetBetterDeal = async () => {
+    const data = {
+      movingCost,
+      enteredNumber,
+      distance,
+      duration,
+      totalHours,
+      movers,
+      clutterLevel,
+      packingOption,
+      heavyItems,
+      assemblyItems,
+    };
+
+    if (isMobile) {
+      // Redirect to SMS
+      window.location.href = `sms:2062552708?&body=${encodeURIComponent(
+        movingCost
+          ? `Moving Summary:
+- Cost: $${movingCost}
+- Distance: ${distance || "N/A"} miles
+- Duration: ${duration || "N/A"} minutes
+- Total Hours: ${totalHours || "N/A"}
+- Movers: ${movers || "N/A"}
+- Clutter Level: ${clutterLevel || "N/A"}
+- Packing Option: ${packingOption || "N/A"}
+- Heavy Items: ${heavyItems ? "Yes" : "No"}
+- Assembly/Disassembly: ${
+            Object.keys(assemblyItems).length > 0 ? "Yes" : "No"
+          }
+
+Can I get a better deal?`
+          : "Hello, I need help moving"
+      )}`;
+    } else {
+      // Submit data to the backend
+      handleSubmit(onSubmit)(); // Submit the form
+    }
+  };
+
   return (
     <Sheet
       sx={{
@@ -41,7 +82,7 @@ export const Booking = ({
           },
         }}
         type="button"
-        onClick={handleSubmit} // Call handleSubmit on click
+        onClick={handleSubmit(onSubmit)} // Submit the form
       >
         <div
           style={{
@@ -81,36 +122,13 @@ export const Booking = ({
             transform: "scale(0.98)",
           },
         }}
-        type="submit"
+        type="button"
+        onClick={handleGetBetterDeal}
       >
-        <Link
-          href={`sms:2062552708?&body=${encodeURIComponent(
-            movingCost
-              ? `Moving Summary:
-- Cost: $${movingCost}
-- Distance: ${distance || "N/A"} miles
-- Duration: ${duration || "N/A"} minutes
-- Total Hours: ${totalHours || "N/A"}
-- Movers: ${movers || "N/A"}
-- Clutter Level: ${clutterLevel || "N/A"}
-- Packing Option: ${packingOption || "N/A"}
-- Heavy Items: ${heavyItems ? "Yes" : "No"}
-- Assembly/Disassembly: ${
-                  Object.keys(assemblyItems).length > 0 ? "Yes" : "No"
-                }
-
-Can I get a better deal?`
-              : "Hello, I need help moving"
-          )}`}
-          sx={{
-            textDecoration: "none",
-            color: "blue",
-            fontSize: "1.2em",
-          }}
-        >
-          Get a better deal
-        </Link>
+        Get a better deal
       </Button>
     </Sheet>
   );
 };
+
+

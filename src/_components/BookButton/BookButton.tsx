@@ -5,6 +5,7 @@
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Sheet, Typography, Input, FormLabel, FormHelperText, Button, Box } from "@mui/joy";
+import { submitData } from "@/lib/formSubmit";
 
 export const BookButton = ({ variant = "regular" }) => {
   const [showForm, setShowForm] = useState(false);
@@ -23,21 +24,28 @@ export const BookButton = ({ variant = "regular" }) => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log("Form Submitted: ", data);
-
-    // Close the form
-    setShowForm(false);
-
-    // Show the success popup
-    setShowSuccessPopup(true);
-
-    // Hide the success message after 3 seconds
-    setTimeout(() => setShowSuccessPopup(false), 3000);
-
-    // Reset the form
-    reset();
+  const onSubmit = async (data) => {
+    try {
+      console.log("Form Submitted: ", data);
+      // Submit data to the server
+      await submitData("moving-form", data);
+  
+      // Close the form
+      setShowForm(false);
+  
+      // Show the success popup
+      setShowSuccessPopup(true);
+  
+      // Hide the success message after 3 seconds
+      setTimeout(() => setShowSuccessPopup(false), 3000);
+  
+      // Reset the form
+      reset();
+    } catch (error) {
+      console.error("Failed to submit form:", error);
+    }
   };
+  
 
   return (
     <>

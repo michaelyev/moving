@@ -17,7 +17,7 @@ import InfiniteSwiper from "@/_components/Slider/Slider";
 export const metadata: Metadata = {
 	title: "Movestream: Seattle Moving Company",
 	description:
-		"Renova offers expert remodeling services in Seattle. Specializing in kitchens, bathrooms, basements, and more. Free consultations & financing options available.",
+		"Movestream provides reliable moving services in Seattle. From local moves to heavy lifting, we handle it all with care. Affordable rates, professional movers, and personalized support.",
 };
 
 const Page = () => {

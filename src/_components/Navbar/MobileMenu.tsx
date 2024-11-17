@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
 import Link from "next/link";
+import { BookButton } from "../BookButton/BookButton";
 
 interface MobileMenuProps {
   open: boolean;
@@ -70,17 +71,7 @@ const MobileMenu = ({ open, onClose, pages }: MobileMenuProps) => {
           >
             Call
           </Button>
-          <Button
-            sx={{
-              px: 3,
-              py: 1,
-              backgroundColor: "var(--primary-main)",
-              color: "#fff",
-              borderRadius: 8,
-            }}
-          >
-            Book Now
-          </Button>
+          <BookButton variant="header" />
         </Box>
       </Box>
     </Drawer>

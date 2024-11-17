@@ -1,5 +1,5 @@
 import { Box, Link, Typography } from "@mui/material";
-import data from '@/data.json'
+import data from "@/data.json";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -14,7 +14,7 @@ const Company = ({ isSmallScreen }: ServicesSectionProps) => {
       {companies.map((service) => (
         <Link
           key={service.id}
-          href="#"
+          href={service.link}
           sx={{
             color: "inherit",
             textDecoration: "none",
@@ -43,7 +43,7 @@ const Company = ({ isSmallScreen }: ServicesSectionProps) => {
 
   return (
     <Box>
-      <Typography variant="h6">Services</Typography>
+      <Typography variant="h6">Company</Typography>
       <CompaniesLinks />
     </Box>
   );

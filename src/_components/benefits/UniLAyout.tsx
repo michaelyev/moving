@@ -9,6 +9,7 @@ interface ISectionLayoutProps {
   position?: boolean;
   marginTop?: number;
 }
+
 const SectionLayout = ({
   title,
   subtitle,
@@ -25,14 +26,20 @@ const SectionLayout = ({
     >
       <Typography
         variant="h3"
-        sx={{ typography: { xs: "h4", md: "h3" } }}
+        sx={{
+          typography: { xs: "h4", md: "h3" },
+          textAlign: { xs: "center", md: "left" }, // Center on mobile, left on desktop
+        }}
         lineHeight={1}
       >
         {title}
       </Typography>
       <Typography
         variant="h6"
-        sx={{ typography: { xs: "body1", md: "h6" } }}
+        sx={{
+          typography: { xs: "body1", md: "h6" },
+          textAlign: { xs: "center", md: "left" }, // Center on mobile, left on desktop
+        }}
         lineHeight={2}
         marginBottom={3}
       >

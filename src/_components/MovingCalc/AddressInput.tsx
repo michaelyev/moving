@@ -1,10 +1,8 @@
-// @ts-nocheck
 import React, { useState, useEffect } from "react";
 import Button from "@mui/joy/Button";
 import Stack from "@mui/joy/Stack";
 import { Box, Typography } from "@mui/material";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import AddIcon from "@mui/icons-material/Add";
 import Sheet from "@mui/joy/Sheet";
 import { GoogleMapModal } from "./MapsModal";
 
@@ -25,9 +23,15 @@ export const AddressInput: React.FC<AddressInputProps> = ({
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [pickupAddress, setPickupAddress] = useState<string | null>(null);
-  const [pickupPosition, setPickupPosition] = useState<{ lat: number, lng: number } | null>(null);
+  const [pickupPosition, setPickupPosition] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [dropOffAddress, setDropOffAddress] = useState<string | null>(null);
-  const [dropOffPosition, setDropOffPosition] = useState<{ lat: number, lng: number } | null>(null);
+  const [dropOffPosition, setDropOffPosition] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   const handleOpenMapModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -38,13 +42,11 @@ export const AddressInput: React.FC<AddressInputProps> = ({
     distance: string,
     duration: string
   ) => {
-    // Сохраняем адреса и координаты в состоянии и передаем их в форму
     setPickupAddress(pickup.address);
     setPickupPosition(pickup.position);
     setDropOffAddress(dropOff.address);
     setDropOffPosition(dropOff.position);
 
-    // Обновляем значения в родительской форме
     setValue(pickupAddressName, pickup.address);
     setValue(dropOffAddressName, dropOff.address);
     setValue(distanceName, distance);
@@ -52,13 +54,9 @@ export const AddressInput: React.FC<AddressInputProps> = ({
     handleCloseModal();
   };
 
-  // Запрос расстояния и времени при изменении координат
   useEffect(() => {
     const fetchDistanceAndDuration = async (retry = 0) => {
       if (!pickupPosition || !dropOffPosition) return;
-
-      console.log("Pickup Position:", pickupPosition);
-      console.log("Drop Off Position:", dropOffPosition);
 
       const service = new window.google.maps.DistanceMatrixService();
       service.getDistanceMatrix(
@@ -69,19 +67,18 @@ export const AddressInput: React.FC<AddressInputProps> = ({
           unitSystem: window.google.maps.UnitSystem.IMPERIAL,
         },
         (response, status) => {
-          console.log("Distance Matrix API Response:", response);
-
           if (status === "OK" && response.rows[0].elements[0].status === "OK") {
-            const distance = (response.rows[0].elements[0].distance.value / 1609.34).toFixed(1); // Конвертация метров в мили
-            const duration = Math.round(response.rows[0].elements[0].duration.value / 60); // Конвертация секунд в минуты
-            
+            const distance = (
+              response.rows[0].elements[0].distance.value / 1609.34
+            ).toFixed(1);
+            const duration = Math.round(
+              response.rows[0].elements[0].duration.value / 60
+            );
             setValue(distanceName, distance);
             setValue(durationTime, duration);
-          } else if (retry < 2) { // Логика повторного запроса при ошибке
-            console.warn("Retrying distance matrix request...");
+          } else if (retry < 2) {
             fetchDistanceAndDuration(retry + 1);
           } else {
-            console.error("Failed to fetch distance and duration:", status);
             setValue(distanceName, "Unknown");
             setValue(durationTime, "Unknown");
           }
@@ -100,7 +97,7 @@ export const AddressInput: React.FC<AddressInputProps> = ({
         sx={{
           border: "1px solid #E0E0E0",
           borderRadius: "12px",
-          padding: "8px 16px",
+          padding: "8px ",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -111,16 +108,17 @@ export const AddressInput: React.FC<AddressInputProps> = ({
         <Stack
           direction="row"
           alignItems="center"
+          justifyContent="space-evenly" // Ensures even spacing
           spacing={2}
           sx={{ width: "100%" }}
         >
+          {/* Pickup Section */}
           <Sheet
             sx={{
               display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              width: "50%",
-              justifyContent: "space-between",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              width: "33%", // Take 1/3 of the available space
             }}
           >
             <Button
@@ -131,7 +129,7 @@ export const AddressInput: React.FC<AddressInputProps> = ({
                 alignItems: "flex-start",
                 display: "flex",
                 cursor: "pointer",
-                width: "calc(100% - 29px)",
+                width: "100%",
                 "&:hover": { background: "none" },
               }}
             >
@@ -158,31 +156,33 @@ export const AddressInput: React.FC<AddressInputProps> = ({
                 {pickupAddress || "Zip, City or State"}
               </Typography>
             </Button>
-            <Button
-              sx={{
-                all: "unset",
-                padding: "auto",
-                cursor: "pointer",
-                backgroundColor: "#FFF1C2",
-                height: "48px",
-                width: "29px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "12px",
-              }}
-            >
-              <SwapHorizIcon />
-            </Button>
           </Sheet>
 
+          {/* Central Button */}
+          <Button
+            sx={{
+              all: "unset",
+              padding: "auto",
+              cursor: "pointer",
+              backgroundColor: "#FFF1C2",
+              height: "48px",
+              width: "28px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "12px",
+            }}
+          >
+            <SwapHorizIcon />
+          </Button>
+
+          {/* Drop Off Section */}
           <Sheet
             sx={{
               display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              width: "50%",
-              justifyContent: "space-between",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              width: "33%", // Take 1/3 of the available space
             }}
           >
             <Button
@@ -193,7 +193,7 @@ export const AddressInput: React.FC<AddressInputProps> = ({
                 alignItems: "flex-start",
                 display: "flex",
                 cursor: "pointer",
-                width: "calc(100% - 29px)",
+                width: "100%",
                 "&:hover": { background: "none" },
               }}
             >
@@ -221,25 +221,10 @@ export const AddressInput: React.FC<AddressInputProps> = ({
                 {dropOffAddress || "Zip, City or State"}
               </Typography>
             </Button>
-            <Button
-              sx={{
-                all: "unset",
-                padding: "auto",
-                cursor: "pointer",
-                backgroundColor: "#FFF1C2",
-                height: "48px",
-                width: "29px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "12px",
-              }}
-            >
-              <AddIcon />
-            </Button>
           </Sheet>
         </Stack>
       </Box>
+
       {openModal && (
         <GoogleMapModal
           onLocationsSelect={handleLocationsSelect}

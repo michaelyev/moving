@@ -9,6 +9,7 @@ const Benefits = () => {
       fullHeight={false}
       marginTop={4}
       
+      
     >
       <BenefitsCard />
     </SectionLayout>

@@ -3,24 +3,22 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Typography } from '@mui/material';
 
-const PhoneNumberInput = ({ value, onChange }) => {
+const PhoneNumberInput = ({ value, onChange, movingCost }) => {
   const [phoneNumber, setPhoneNumber] = useState(value || '');
   const [isComplete, setIsComplete] = useState(false);
 
-  // Регулярное выражение для проверки формата номера телефона
-  const phoneRegex = /^\+1 \(\d{3}\) \d{3}-\d{4}$/;
+  // Regular expression for validating 10-digit phone number (e.g., 2222222222)
+  const phoneRegex = /^\d{10}$/;
 
-  // Проверка и обновление состояния при вводе
+  // Handle input changes
   const handleInputChange = (e) => {
-    const input = e.target.value;
+    const input = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
     setPhoneNumber(input);
-    onChange(input); // Отправка наверх
-
-    // Проверка на корректность и полноту ввода
-    setIsComplete(phoneRegex.test(input));
+    setIsComplete(phoneRegex.test(input)); // Update validity status
+    onChange(input); // Notify parent of the change
   };
 
-  // Автоматическая отправка, когда номер полностью введен
+  // Automatically notify parent when the number is valid
   useEffect(() => {
     if (phoneRegex.test(phoneNumber)) {
       onChange(phoneNumber);
@@ -28,33 +26,41 @@ const PhoneNumberInput = ({ value, onChange }) => {
   }, [phoneNumber, onChange]);
 
   return (
-    <Box 
+    <Box
       sx={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        width: "55%",
-        justifyContent: "space-between",
-        border: "1px solid",
-        borderColor: phoneNumber && !isComplete ? "green" : "#E0E0E0", // Красный бордер при ошибке
-        borderRadius: "12px",
-        padding: "8px 16px",
-        "&:hover": {
-          borderColor: "#FF8919",
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '55%',
+        justifyContent: 'space-between',
+        border: '1px solid',
+        borderColor: isComplete
+          ? '#4CAF50' // Green border when valid
+          : movingCost && phoneNumber.length === 0
+          ? '#FF0000' // Red border when movingCost exists and phone number is empty
+          : phoneNumber.length > 0 && !isComplete
+          ? '#FF0000' // Red border when input started but invalid
+          : '#E0E0E0', // Default border
+        borderRadius: '12px',
+        padding: '8px 16px',
+        '&:hover': {
+          borderColor: '#FF8919', // Orange on hover
         },
-        maxHeight: '66px'
+        maxHeight: '66px', // Keep original height
       }}
     >
       <Box>
-        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', pb: 0 }}>Phone number</Typography>
+        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', pb: 0 }}>
+          Phone number
+        </Typography>
         <TextField
-          placeholder="+1 (___) ___-____"
+          placeholder="206XXXXXXX" // Updated placeholder
           variant="standard"
           value={phoneNumber}
           onChange={handleInputChange}
-          error={phoneNumber && !isComplete} // Ошибка, если формат неверен и поле не пустое
+          error={!isComplete && phoneNumber.length > 0} // Show error only when invalid and input started
           InputProps={{
-            disableUnderline: true,
+            disableUnderline: true, // Match original design
           }}
         />
       </Box>

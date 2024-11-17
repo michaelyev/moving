@@ -16,7 +16,7 @@ export function PackagingButtons({ value, onChange }) {
   return (
     <>
       <Typography variant="subtitle2" sx={{ fontWeight: "bold", pb: '8px', marginX: "auto", width: '100%',  }}>
-        Packing needed
+        Box packing needed
       </Typography>
 
       <ButtonGroup

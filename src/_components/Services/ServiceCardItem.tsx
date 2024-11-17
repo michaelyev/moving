@@ -2,6 +2,7 @@
 import { ServiceCardProps } from "@/types/types";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
+import { BookButton } from "../BookButton/BookButton";
 
 const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => {
   return (
@@ -11,13 +12,13 @@ const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => 
       display="flex"
       justifyContent="center"
       alignItems="center"
-      id='services'
+      id="services"
     >
       <Card
         sx={{
-          height: "240px",
-          width: {sm:"320px", xs: '315px'},
-          padding: {  sm: 1, xs:2 },
+          height: "290px",
+          width: { sm: "360px", xs: "360px" },
+          padding: { sm: 1, xs: 2 },
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -39,17 +40,26 @@ const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => 
             borderTopRightRadius: 8,
           }}
         />
-        <CardContent>
+        <CardContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%", // Fill the card height
+          }}
+        >
+          {/* Title */}
           <Typography
             variant="h6"
             component="div"
-            fontWeight={500}
+            fontWeight="bold" // Title is now bold
             sx={{
               lineHeight: 1,
             }}
           >
             {title}
           </Typography>
+
+          {/* Description */}
           <Typography
             variant="body2"
             sx={{
@@ -58,6 +68,8 @@ const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => 
           >
             {description}
           </Typography>
+
+          {/* Features */}
           <Typography
             variant="body1"
             component="ul"
@@ -73,6 +85,11 @@ const ServiceCardItem = ({ description, features, title }: ServiceCardProps) => 
               <li key={index}>{feature}</li>
             ))}
           </Typography>
+
+          {/* Book Now Button */}
+          <Box sx={{ marginTop: "auto" }}> {/* Pushes the button to the bottom */}
+            <BookButton />
+          </Box>
         </CardContent>
       </Card>
     </Grid>

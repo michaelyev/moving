@@ -1,38 +1,48 @@
 import { Box, Link } from "@mui/material";
+import { BookButton } from "../BookButton/BookButton";
 
 const ContactInfo = () => (
   <Box sx={{ lineHeight: 3 }}>
+    {/* Phone Number */}
+    <BookButton variant="regular" />
     <Link
       underline="none"
       display="block"
-      href="#"
+      href="tel:2062552708"
       color="inherit"
       sx={{ lineHeight: 2 }}
     >
-      +1 232 232 454
+      206-255-2708
     </Link>
+
+    {/* Address */}
     <Link
       underline="none"
       display="block"
-      href="#"
+      href="https://www.google.com/maps/place/518+NE+102nd+St,+Seattle,+WA+98125"
+      target="_blank"
+      rel="noopener noreferrer"
       color="inherit"
       sx={{ lineHeight: 2 }}
     >
-      Seattle, Street, 1
+      518 NE 102nd St, Seattle, WA 98125
     </Link>
+
+    {/* Email */}
     <Link
       underline="none"
       display="block"
-      href="#"
+      href="mailto:michael@movestream.us"
       color="inherit"
       sx={{ lineHeight: 2 }}
     >
-      email@email.com
+      michael@movestream.us
     </Link>
+
+    {/* Business Hours */}
     <Link
       underline="none"
       display="block"
-      href="#"
       color="inherit"
       sx={{ lineHeight: 2 }}
     >

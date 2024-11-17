@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import Link from "next/link";
 import Image from "next/image";
+import { BookButton } from "../BookButton/BookButton";
 
 const pages = [
   { name: "Services", link: "#services" },
@@ -126,22 +127,7 @@ const Navbar = () => {
               206-255-2708
             </Box>
 
-            <Button
-              sx={{
-                px: 3,
-                py: 1,
-                backgroundColor: "var(--primary-main)",
-                color: "#fff",
-                borderRadius: 8,
-                transition: "background-color 0.3s ease, transform 0.3s ease",
-                "&:hover": {
-                  backgroundColor: "var(--primary-main)",
-                  transform: "scale(1.05)",
-                },
-              }}
-            >
-              Book Now
-            </Button>
+            <BookButton />
           </Box>
         </Toolbar>
       </Container>

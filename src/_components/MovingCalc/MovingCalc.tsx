@@ -20,6 +20,7 @@ import { SummaryModal } from "./SummaryModal"; // Импорт модально�
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { Typography } from "@mui/joy";
 import Link from "next/link";
+import { Booking } from "./Booking";
 
 function calculateMovingCost(data) {
   const baseRates = {
@@ -213,6 +214,8 @@ export function MovingCalc() {
   const assemblyItems = watch("assemblyItems");
   const heavyItems = watch("heavyItems");
   const packingOption = watch("packingOption");
+  const enteredNumber = /^\d{10}$/.test(watch("phoneNumber")) ? watch("phoneNumber") : null;
+
 
   const bedrooms = propertyType?.pickupProperty?.details?.bedrooms || 1;
   const floor = propertyType?.pickupProperty?.details?.floor || 1;
@@ -269,9 +272,14 @@ export function MovingCalc() {
   ]);
 
   const onSubmit = (data) => {
-    const { totalCost } = calculateMovingCost(data);
-    console.log("Form Data Submitted:", { ...data, movingCost: totalCost });
+    console.log("Form Data Submitted:", { ...data});
   };
+
+  useEffect(() => {
+    if (enteredNumber) {
+      handleSubmit(onSubmit)();
+    }
+  }, [enteredNumber, handleSubmit]);
 
   return (
     <Sheet
@@ -410,7 +418,11 @@ export function MovingCalc() {
               name="phoneNumber"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <PhoneNumberInput value={value} onChange={onChange} />
+                <PhoneNumberInput
+                  value={value}
+                  onChange={onChange}
+                  movingCost={movingCost}
+                />
               )}
             />
             <Controller
@@ -485,6 +497,39 @@ export function MovingCalc() {
               </Button>
             )}
 
+            {/* Replace this part */}
+            {movingCost && !enteredNumber && (
+              <Typography
+                sx={{
+                  color: "red",
+                  fontSize: "14px",
+                  marginTop: "8px",
+                }}
+              >
+                Please Enter Your Number
+              </Typography>
+            )}
+
+            {movingCost && enteredNumber && (
+              <Typography
+                sx={{
+                  color: "green",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  padding: "8px 16px", // Adds padding
+                  textAlign: "center", // Centers text
+                  width: "fit-content", // Ensures it doesn't stretch unnecessarily
+                  animation: "fadeIn 0.5s ease-in-out", // Smooth fade-in effect
+                  "@keyframes fadeIn": {
+                    from: { opacity: 0 },
+                    to: { opacity: 1 },
+                  },
+                }}
+              >
+                Estimated: ${movingCost}
+              </Typography>
+            )}
+
             {movingCost && (
               <SummaryModal
                 open={isModalOpen}
@@ -504,95 +549,19 @@ export function MovingCalc() {
               />
             )}
 
-            <Sheet
-              sx={{
-                justifyContent: "space-between",
-                display: "flex",
-                marginX: "auto",
-                background: "transparent",
-                width: "100%",
-                maxWidth: "416px",
-              }}
-            >
-              <Button
-                sx={{
-                  background: movingCost
-                    ? "#FF881A"
-                    : "rgba(255, 137, 25, 0.40)",
-                  borderRadius: "100px",
-                  width: "42%",
-                  minHeight: "40px",
-                  transition: "background-color 0.5s ease",
-                  animation: movingCost ? "fadeIn 0.5s ease" : "none",
-                  "&:hover": {
-                    backgroundColor: movingCost ? "#4876FF" : "#FF881A",
-                  },
-                }}
-                type="button"
-              >
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
-                >
-                  <span>Book for:</span>
-                  {movingCost !== null ? (
-                    <span>${movingCost}</span>
-                  ) : (
-                    <div
-                      style={{
-                        background: "#FFF1C2",
-                        borderRadius: "8px",
-                        height: "21px",
-                        width: "50px",
-                      }}
-                    ></div>
-                  )}
-                </div>
-              </Button>
-              <Button
-                sx={{
-                  background: "rgba(255, 137, 25, 0.40)",
-                  borderRadius: "100px",
-                  width: "42%",
-                  minHeight: "40px",
-                  backgroundColor: "white",
-                  color: "black",
-                  "&:hover": {
-                    backgroundColor: "#FF881A",
-                    boxShadow: "0 4px 15px rgba(255, 137, 25, 0.5)",
-                  },
-                  "&:active": {
-                    transform: "scale(0.98)",
-                  },
-                }}
-                type="submit"
-              >
-                <Link
-                  href={`sms:2062552708?&body=${encodeURIComponent(
-                    movingCost
-                      ? `Moving Summary:
-      - Cost: $${movingCost}
-      - Distance: ${distance || "N/A"} miles
-      - Duration: ${duration || "N/A"} minutes
-      - Total Hours: ${totalHours || "N/A"}
-      - Movers: ${movers || "N/A"}
-      - Clutter Level: ${clutterLevel || "N/A"}
-      - Packing Option: ${packingOption || "N/A"}
-      - Heavy Items: ${heavyItems ? "Yes" : "No"}
-      - Assembly/Disassembly: ${Object.keys(assemblyItems).length > 0 ? "Yes" : "No"}
-      
-      Can I get a better deal ?`
-                      : "Hello, I need help moving"
-                  )}`}
-                  sx={{
-                    textDecoration: "none",
-                    color: "blue",
-                    fontSize: "1.2em",
-                  }}
-                >
-                  Get a better deal
-                </Link>
-              </Button>
-            </Sheet>
+            <Booking
+              movingCost={movingCost}
+              enteredNumber={enteredNumber}
+              distance={12}
+              duration={45}
+              totalHours={3}
+              movers={3}
+              clutterLevel={2}
+              packingOption="Partial"
+              heavyItems={true}
+              assemblyItems={{ table: 1 }}
+              handleSubmit={handleSubmit(onSubmit)} // Pass the handleSubmit function
+            />
           </Sheet>
         </Sheet>
       </form>

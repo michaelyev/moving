@@ -245,31 +245,23 @@
   "companies": [
     {
       "id": 1,
-      "title": "Pricing"
+      "title": "Pricing",
+      "link": "#pricing"
     },
     {
       "id": 2,
-      "title": "FAQ"
+      "title": "FAQ",
+      "link": "#faq"
     },
     {
       "id": 3,
-      "title": "About us"
-    },
-    {
-      "id": 4,
-      "title": "License"
+      "title": "About us",
+      "link": "#company"
     },
     {
       "id": 5,
-      "title": "Cases"
-    },
-    {
-      "id": 6,
-      "title": "Blog"
-    },
-    {
-      "id": 7,
-      "title": "Contacts"
+      "title": "Price Examples",
+      "link": "#pricing"
     }
   ],
   "details": [

@@ -202,8 +202,8 @@ export const BookButton = ({ variant = "regular" }) => {
           <Typography level="h5" sx={{ fontWeight: "bold", mb: 1 }}>
             Thank you!
           </Typography>
-          <Typography level="body1">We'll be in touch shortly.</Typography>
-        </Box>
+          <Typography level="body1">We&apos;ll be in touch shortly.</Typography>
+          </Box>
       )}
 
       {/* Book Now Button */}

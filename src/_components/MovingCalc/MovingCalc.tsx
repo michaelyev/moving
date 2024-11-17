@@ -563,14 +563,17 @@ export function MovingCalc() {
             <Booking
               movingCost={movingCost}
               enteredNumber={enteredNumber}
-              distance={12}
-              duration={45}
-              totalHours={3}
-              movers={3}
-              clutterLevel={2}
-              packingOption="Partial"
-              heavyItems={true}
-              assemblyItems={{ table: 1 }}
+              addressFrom={addressFrom} // Pass the pickup address
+              addressTo={addressTo} // Pass the drop-off address
+              propertyType={propertyType} // Pass property type details
+              distance={distance}
+              duration={duration}
+              totalHours={totalHours}
+              movers={movers}
+              clutterLevel={clutterLevel}
+              packingOption={packingOption}
+              heavyItems={heavyItems}
+              assemblyItems={assemblyItems}
               handleSubmit={handleSubmit} // Pass handleSubmit function
               onSubmit={onSubmit} // Pass the onSubmit handler
             />

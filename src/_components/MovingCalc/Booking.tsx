@@ -22,6 +22,32 @@ export const Booking = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const prepareFullData = () => ({
+    phoneNumber: enteredNumber || "N/A",
+    heavyItems: heavyItems || [],
+    addressFrom,
+    addressTo,
+    distance,
+    duration,
+    propertyType,
+    movers,
+    clutterLevel,
+    packingOption,
+    time: "7:00 AM", // Replace if dynamically set
+  });
+
+  const generateSmsLink = () => {
+    const fullData = prepareFullData();
+    const smsBody = `
+Moving Summary:
+${JSON.stringify(fullData, null, 2)}
+
+Can I get a better deal?
+`.trim();
+
+    return `sms:2062552708?&body=${encodeURIComponent(smsBody)}`;
+  };
+
   const handleBookNow = () => {
     if (!movingCost) {
       console.error("Cannot proceed without a calculated cost.");
@@ -29,10 +55,8 @@ export const Booking = ({
     }
 
     if (enteredNumber) {
-      // Submit the form if a phone number exists
-      handleSubmit(onSubmit)();
-      // Open the modal
-      setIsModalOpen(true);
+      handleSubmit(onSubmit)(); // Submit form if a phone number exists
+      setIsModalOpen(true); // Open modal
     } else {
       console.error("Phone number is required for booking.");
     }
@@ -44,47 +68,17 @@ export const Booking = ({
       return;
     }
 
-    const smsBody = `
-Moving Summary:
-${movingCost ? `- Cost: $${movingCost}\n` : ""}
-${distance ? `- Distance: ${distance} miles\n` : ""}
-${duration ? `- Duration: ${duration} minutes\n` : ""}
-${totalHours ? `- Total Hours: ${totalHours}\n` : ""}
-${movers ? `- Movers: ${movers}\n` : ""}
-${clutterLevel ? `- Clutter Level: ${clutterLevel}\n` : ""}
-${packingOption ? `- Packing Option: ${packingOption}\n` : ""}
-${heavyItems ? `- Heavy Items: Yes\n` : ""}
-${
-  Object.keys(assemblyItems || {}).length > 0
-    ? `- Assembly/Disassembly: Yes\n`
-    : ""
-}
-${addressFrom ? `- Pickup Address: ${addressFrom}\n` : ""}
-${addressTo ? `- Drop-Off Address: ${addressTo}\n` : ""}
-${
-  propertyType?.pickupProperty?.type
-    ? `- Pickup Property Type: ${propertyType.pickupProperty.type}\n`
-    : ""
-}
-${
-  propertyType?.dropOffProperty?.type
-    ? `- Drop-Off Property Type: ${propertyType.dropOffProperty.type}\n`
-    : ""
-}
-${enteredNumber ? `- Contact Number: ${enteredNumber}\n` : ""}
-
-Can I get a better deal?
-`.trim();
-
     if (isMobile) {
-      // Redirect to SMS even if phone number is absent
-      window.location.href = `sms:2062552708?&body=${encodeURIComponent(
-        smsBody
-      )}`;
-    } else if (enteredNumber) {
-      // Open the modal only if a phone number exists
-      setIsModalOpen(true);
-      handleSubmit(onSubmit)(); // Submit the form if on desktop and phone number exists
+      // Redirect to SMS on mobile devices only
+      const smsLink = generateSmsLink();
+      window.location.href = smsLink;
+    } else {
+      // On desktop, just log an error or perform desktop-specific behavior
+      console.log("SMS functionality is not available on desktop.");
+      if (enteredNumber) {
+        handleSubmit(onSubmit)(); // Submit the form if phone number exists
+        setIsModalOpen(true); // Open modal
+      }
     }
   };
 
@@ -112,7 +106,6 @@ Can I get a better deal?
             width: "42%",
             minHeight: "40px",
             transition: "background-color 0.5s ease",
-            animation: movingCost ? "fadeIn 0.5s ease" : "none",
             "&:hover": {
               backgroundColor: movingCost ? "#4876FF" : "#FF881A",
             },
@@ -128,7 +121,7 @@ Can I get a better deal?
             }}
           >
             <span>Book for:</span>
-            {movingCost !== null && enteredNumber !== null ? (
+            {movingCost !== null && enteredNumber ? (
               <span>${movingCost}</span>
             ) : (
               <div
@@ -158,7 +151,7 @@ Can I get a better deal?
             },
             "&:active": {
               transform: "scale(0.98)",
-            },
+            }, // Fixed closing curly brace here
           }}
           type="button"
           onClick={handleGetBetterDeal}

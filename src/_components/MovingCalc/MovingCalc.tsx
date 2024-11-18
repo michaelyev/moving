@@ -28,7 +28,7 @@ function calculateMovingCost(data) {
     2: 135,
     3: 175,
     4: 230,
-    5: 290,
+    5: 280,
   };
 
   const additionalFactors = {

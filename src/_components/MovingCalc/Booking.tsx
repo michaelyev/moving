@@ -139,7 +139,7 @@ Can I get a better deal?
         {/* Get a Better Deal Button */}
         <Button
           sx={{
-            background: "rgba(255, 137, 25, 0.40)",
+            background: "#FFD133",
             borderRadius: "100px",
             width: "42%",
             minHeight: "40px",

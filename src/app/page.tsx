@@ -13,6 +13,8 @@ import { Metadata } from "next";
 import Benefits from "@/_components/benefits/Benefits";
 import PricingCalculator from "@/_components/Prices/Prices";
 import InfiniteSwiper from "@/_components/Slider/Slider";
+import TeamSwiper from "@/_components/Team/Team";
+import ImageSwiper from "@/_components/GallerySlider/GallerySlider";
 
 export const metadata: Metadata = {
 	title: "Movestream: Seattle Moving Company",
@@ -42,6 +44,7 @@ const Page = () => {
 
       <Container sx={{ marginTop: 4, padding: "unset" }}>
         {" "}
+        
         <img
           src="/IMG_9425.jpeg"
           width="100%"
@@ -51,6 +54,7 @@ const Page = () => {
       </Container>
       <ServiceCard />
       <Benefits />
+      <ImageSwiper />
       <FAQ />
     </Container>
   );

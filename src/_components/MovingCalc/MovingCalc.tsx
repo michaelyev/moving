@@ -25,10 +25,10 @@ import { submitData } from "@/lib/formSubmit";
 
 function calculateMovingCost(data) {
   const baseRates = {
-    2: 135,
-    3: 175,
-    4: 230,
-    5: 280,
+    2: 115,
+    3: 155,
+    4: 200,
+    5: 240,
   };
 
   const additionalFactors = {
@@ -42,9 +42,9 @@ function calculateMovingCost(data) {
       5: 2.5,
     },
     heavyItemsTime: 0.5,
-    assemblyItemsTime: 0.5,
-    packingOptionMultiplier: { None: 1, Partial: 1.1, Full: 1.2 },
-    packingTimeAddition: { None: 0, Partial: 0.5, Full: 1 },
+    assemblyItemsTime: 0.7,
+    packingOptionMultiplier: { None: 1, Partial: 1.2, Full: 1.3 },
+    packingTimeAddition: { None: 0, Partial: 0.75, Full: 1.5 },
     travelTimeRate: 1.5,
   };
 

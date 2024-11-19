@@ -20,7 +20,8 @@ export const Hero = () => {
         alignItems: "flex-start",
         background: "unset",
         padding: "unset",
-        marginY: 4,
+        marginTop: 4,
+        bottom: 0
       }}
     >
       <Sheet
@@ -63,6 +64,7 @@ export const Hero = () => {
           slidesPerView={1}
           navigation
           pagination={{ clickable: true }}
+          loop={true}
           style={{
             height: "300px",
             width: "100%",
@@ -71,28 +73,42 @@ export const Hero = () => {
         >
           <SwiperSlide>
             <img
-              src="/600x400/IMG_9405.jpeg"
+              src="/600x400/IMG_9455.jpeg"
               alt="Slide 1"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </SwiperSlide>
           <SwiperSlide>
             <img
-              src="/600x400/IMG_9469.jpeg"
+              src="/600x400/IMG_9613.jpeg"
+              alt="Slide 1"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <img
+              src="/600x400/IMG_9401.jpeg"
               alt="Slide 3"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </SwiperSlide>
           <SwiperSlide>
             <img
-              src="/600x400/IMG_9453.jpeg"
+              src="/600x400/IMG_9477.jpeg"
               alt="Slide 2"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </SwiperSlide>
           <SwiperSlide>
             <img
-              src="/600x400/IMG_9473.jpeg"
+              src="/600x400/IMG_9456.jpeg"
+              alt="Slide 1"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <img
+              src="/600x400/IMG_9615.jpeg"
               alt="Slide 3"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />

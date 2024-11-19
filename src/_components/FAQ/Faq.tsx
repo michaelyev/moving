@@ -8,7 +8,7 @@ const FAQ = () => {
     <Box
       display="flex"
       height="100%"
-      my={4}
+      mb={4}
       p={3}
       sx={{
         background: "#FFD133",

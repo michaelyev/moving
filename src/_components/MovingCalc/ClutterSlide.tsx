@@ -43,11 +43,11 @@ export const ClutterSlide = ({ value, onChange }) => {
   return (
     <Box sx={{ marginX: "auto", pb: "8px", width: "100%" }}>
       <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
-        Clutter
+        How much stuff you got ?
       </Typography>
 
       {/* Slider with Tooltip displaying clutter image */}
-      <Box sx={{ position: "relative", width: { sm: "100%", xs: '75%' }, mx: "auto", mt: 2 }}>
+      <Box sx={{ position: "relative", width: { sm: "100%", xs: '75%' }, mx: "auto" }}>
         <Slider
           aria-label="Clutter level"
           value={clutterLevel}

@@ -13,7 +13,7 @@ const ServiceCard = () => {
       spacing={4} 
       justifyContent="center" 
       alignItems="center" 
-      sx={{ width: '100%', marginX: 'auto', mt: 4 }}
+      sx={{ width: '100%', marginX: 'auto', my: 4 }}
     >
       {cards.map((card: ServiceCardProps) => (
         <ServiceCardItem

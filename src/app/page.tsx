@@ -53,6 +53,9 @@ const Page = () => {
         />
       </Container>
       <ServiceCard />
+   
+
+
       <Benefits />
       <ImageSwiper />
       <FAQ />

@@ -31,13 +31,14 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static" color="transparent" elevation={0}>
+    <AppBar position="sticky" color="transparent" elevation={0}>
       <Container
         maxWidth="lg"
         sx={{
           background: "#4886FF",
           borderRadius: 8,
           color: "#FFFFFF",
+          mt: {xs:2, sm: 4}
         }}
       >
         <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>

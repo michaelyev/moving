@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { FaUserFriends, FaTruckMoving, FaHome } from "react-icons/fa";
+import { BookButton } from "../BookButton/BookButton";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: "100%",
@@ -50,10 +51,11 @@ const PricingCalculator = () => {
             <FaTruckMoving /> Suitable for apartments with{" "}
             {option.bedrooms.apartment} bedroom(s)
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body2" sx={{pb: 2}}>
             <FaHome /> Suitable for houses with {option.bedrooms.house}{" "}
             bedroom(s)
           </Typography>
+          <BookButton variant="regular" />
         </CardContent>
       </StyledCard>
     </Grid>

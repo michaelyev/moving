@@ -320,8 +320,29 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
           Select Your Home Type
         </Typography>
       )}
-
-      {(!value?.pickupProperty || step === "drop-off") && (
+  
+      {value?.pickupProperty && value?.dropOffProperty ? (
+        <div style={{ textAlign: "center", marginBottom: "16px" }}>
+          <Typography>
+            Pickup: {value.pickupProperty.type} | Drop-off: {value.dropOffProperty.type}
+          </Typography>
+          <Button
+            onClick={() => {
+              resetSelection();
+              setStep("pickup");
+              onChange({ pickupProperty: null, dropOffProperty: null });
+            }}
+            sx={{
+              marginTop: "8px",
+              backgroundColor: "red",
+              color: "#fff",
+              ":hover": { backgroundColor: "#FF6700" },
+            }}
+          >
+            Reselect
+          </Button>
+        </div>
+      ) : (
         <div
           style={{
             display: "flex",
@@ -341,7 +362,7 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
             />
             Apartment
           </Button>
-
+  
           <Button
             onClick={() => handleTypeSelect("House")}
             sx={selectionButtonStyle}
@@ -356,13 +377,14 @@ export const PropertyTypeSelection = ({ onChange, value }) => {
           </Button>
         </div>
       )}
-
+  
       {ChoiceModal()}
-
+  
       {ApartmentModal()}
       {HouseModal()}
     </div>
   );
+  
 };
 
 // Styles

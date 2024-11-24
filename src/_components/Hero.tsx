@@ -78,13 +78,7 @@ export const Hero = () => {
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </SwiperSlide>
-          <SwiperSlide>
-            <img
-              src="/600x400/IMG_9613.jpeg"
-              alt="Slide 1"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          </SwiperSlide>
+          
           <SwiperSlide>
             <img
               src="/600x400/IMG_9401.jpeg"

@@ -27,9 +27,7 @@ const imagePaths = [
   "/imagesSlider/IMG_9472.jpeg",
   "/imagesSlider/IMG_9473.jpeg",
   "/imagesSlider/IMG_9477.jpeg",
-  "/imagesSlider/IMG_9485.jpeg",
-  "/imagesSlider/IMG_9613.jpeg",
-  "/imagesSlider/IMG_9615.jpeg",
+  "/imagesSlider/IMG_9485.jpeg"
 ];
 
 const ImageSwiper = () => {

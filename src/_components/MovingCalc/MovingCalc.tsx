@@ -43,7 +43,7 @@ function calculateMovingCost(data) {
     },
     heavyItemsTime: 0.5,
     assemblyItemsTime: 0.7,
-    packingOptionMultiplier: { None: 1, Partial: 1.2, Full: 1.3 },
+    packingOptionMultiplier: { None: 1, Partial: 1.3, Full: 1.5 },
     packingTimeAddition: { None: 0, Partial: 0.75, Full: 1.5 },
     travelTimeRate: 1.5,
   };

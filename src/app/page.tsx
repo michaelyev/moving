@@ -42,6 +42,7 @@ const Page = () => {
       <PricingCalculator />
       <InfiniteSwiper />
 
+
       <Container sx={{ marginTop: 4, padding: "unset" }}>
         {" "}
         
@@ -51,6 +52,7 @@ const Page = () => {
           height="40%"
           style={{ borderRadius: "24px", padding: 0 }}
         />
+      
       </Container>
       <ServiceCard />
    

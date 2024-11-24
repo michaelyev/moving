@@ -19,10 +19,8 @@ const StyledCard = styled(Card)(({ theme }) => ({
   height: "100%",
   display: "flex",
   flexDirection: "column",
-  transition: "transform 0.3s ease-in-out",
   borderRadius: "24px", // Set border radius to 24px
   "&:hover": {
-    transform: "translateY(-10px)",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
   },
 }));
@@ -36,7 +34,7 @@ const moverOptions = [
 const PricingCalculator = () => {
   const renderPricingCard = (option) => (
     <Grid id='pricing' item xs={12} md={4} key={option.movers}>
-      <StyledCard elevation={2}>
+      <StyledCard>
         <CardContent>
           <Box display="flex" alignItems="center" gap={1} mb={2}>
             <FaUserFriends size={24} />

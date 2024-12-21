@@ -19,7 +19,7 @@ const pages = [
   { name: "Services", link: "#services" },
   { name: "Pricing", link: "#pricing" },
   { name: "FAQ", link: "#faq" },
-  { name: "Company", link: "#company" }
+  { name: "Company", link: "#company" },
 ];
 
 const Navbar = () => {
@@ -38,7 +38,7 @@ const Navbar = () => {
           background: "#4886FF",
           borderRadius: 8,
           color: "#FFFFFF",
-          mt: {xs:2, sm: 4}
+          mt: { xs: 2, sm: 4 },
         }}
       >
         <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
@@ -62,7 +62,7 @@ const Navbar = () => {
           >
             MOVESTREAM
           </Typography>
-          <Image alt='logo' src="/Subject.png" height={35} width={55} />
+          <Image alt="logo" src="/Subject.png" height={35} width={55} />
           {isMobile ? (
             <Box
               sx={{
@@ -111,7 +111,7 @@ const Navbar = () => {
           >
             <Box
               component="a"
-              href="tel:+12062552708"
+              href="tel:+12069238356"
               sx={{
                 color: "var(--info-main)",
                 mr: 2,
@@ -125,7 +125,7 @@ const Navbar = () => {
                 },
               }}
             >
-              206-255-2708
+              206-923-8356
             </Box>
 
             <BookButton />

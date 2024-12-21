@@ -12,7 +12,7 @@ const ContactInfo = () => (
       color="inherit"
       sx={{ lineHeight: 2 }}
     >
-      206-255-2708
+      206-923-8356
     </Link>
 
     {/* Address */}

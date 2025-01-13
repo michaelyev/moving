@@ -74,7 +74,7 @@ const FAQ = () => {
               },
             }}
           >
-            c
+            206-923-8356
           </Box>
         </Typography>
         <Box

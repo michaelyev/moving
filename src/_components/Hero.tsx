@@ -51,9 +51,7 @@ export const Hero = () => {
             Professional & Reliable
           </Typography>
           <Typography>
-            MoveStream offers trusted, efficient moving services across Seattle
-            and surrounding areas. Our experienced team ensures a smooth,
-            stress-free moving experience for homes and businesses.
+            MoveStream apartment and house moving services across Seattle and surrounding areas. We guarantee stress-free moving experience for homes and businesses. Turn-key solutions for all your moving needs.
           </Typography>
         </Card>
 

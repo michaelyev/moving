@@ -70,7 +70,7 @@
     },
     {
       "id": 2,
-      "title": "Comprehensive Planning",
+      "title": "Planning",
       "description": "We create a customized plan to ensure every detail is covered."
     },
     {
@@ -102,12 +102,12 @@
     {
       "id": 1,
       "title": "Free Quotes",
-      "description": "We offer no-obligation, free quotes to help you plan your move with confidence. Our transparent process ensures you know exactly what to expect before making any commitments."
+      "description": "There are no hidden fees or surprise charges. Upfront pricing lets plan your move without any uncertainty"
     },
     {
       "id": 2,
       "title": "Licensed and Insured",
-      "description": "We are fully licensed and insured to provide you with peace of mind throughout the entire moving process. Your belongings are protected, and you can trust us to handle them with care and professionalism."
+      "description": "MoveStream is a licensed and insured moving company that provides you with peace of mind throughout the entire moving process. Your property and belongings is protected and insured. You can trust us to handle them with care."
     },
     {
       "id": 3,
@@ -116,18 +116,18 @@
     },
     {
       "id": 4,
-      "title": "Expert Packing Services",
+      "title": "Packing Services",
       "description": "With us, there are no hidden fees or surprise charges. We provide clear, upfront pricing so you can budget for your move without any uncertainty"
     },
     {
       "id": 5,
-      "title": "Comprehensive Planning",
-      "description": "Our team handles every detail, from start to finish, ensuring a well-organized and efficient move. We create a customized plan tailored to your specific needs, so nothing is overlooked."
+      "title": "Planning",
+      "description": "From start to finish every detail is taken care of for a properly organized move with a customized plan tailored to your specific needs. Nothing is overlooked."
     },
     {
       "id": 6,
-      "title": "Flexible Scheduling",
-      "description": "We understand that timing is everything, which is why we offer flexible scheduling to fit your needs. Whether you need to move on weekends or evenings, we'll work around your schedule to make it happen."
+      "title": "Flexibility",
+      "description": "We offer flexible scheduling to fit your needs. Whether you need to move on weekends or evenings, we'll adjust to your schedule to make it happen."
     }
   ],
 
@@ -174,20 +174,16 @@
       "content": "Our pricing is based on hourly rates, adjusted for factors like property type, distance, and the number of movers needed. We’ll give you an accurate estimate upfront based on your specific requirements."
     },
     {
-      "title": "What should I do with fragile or valuable items?",
-      "content": "We recommend setting aside any particularly fragile or valuable items, and we can pack them separately with extra care. You can also transport them yourself if you prefer."
+      "title": "Fragile or valuable items?",
+      "content": "Setting aside any particularly fragile or valuable items is recommended so we can pack them separately. Also, you can transport them yourself if you prefer."
     },
     {
       "title": "Do you provide moving insurance?",
-      "content": "Yes, we offer basic liability coverage for all moves. Additional insurance options are also available for added peace of mind."
+      "content": "Yes, we offer basic liability coverage for all moves of up to $25,000. Additional insurance is also available."
     },
     {
-      "title": "What if I need to reschedule or cancel my move?",
-      "content": "We understand that plans change. If you need to reschedule or cancel, please notify us as soon as possible. Cancellation policies may apply based on notice time."
-    },
-    {
-      "title": "How much does it cost for movers?",
-      "content": "Our pricing for movers is as follows:\n- $130 for 2 movers\n- $180 for 3 movers\n- $230 for 4 movers.\nThese rates are per hour and include basic moving services. Additional fees may apply for special items or additional services."
+      "title": "Rescheduling or Cancelling?",
+      "content": "Plans change. If you need to reschedule or cancel, please notify us as soon as possible."
     }
   ],
 

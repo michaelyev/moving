@@ -26,9 +26,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 
 const moverOptions = [
-  { movers: 2, price: 130, bedrooms: { apartment: "1-2", house: "1" } },
-  { movers: 3, price: 180, bedrooms: { apartment: "2-3", house: "2" } },
-  { movers: 4, price: 230, bedrooms: { apartment: "3+", house: "3-4" } },
+  { movers: 2, price: 100, bedrooms: { apartment: "1-2", house: "1" } },
+  { movers: 3, price: 120, bedrooms: { apartment: "2-3", house: "2" } },
+  { movers: 4, price: 140, bedrooms: { apartment: "3+", house: "3-4" } },
 ];
 
 const PricingCalculator = () => {

@@ -122,6 +122,7 @@ const InfiniteSwiper = () => {
         borderRadius: '24px',
         overflow: "hidden"
       }}
+      id="examples"
     >
       {movingCases.map((item, index) => (
         <SwiperSlide key={index} style={{ display: "flex", justifyContent: "center" }}>

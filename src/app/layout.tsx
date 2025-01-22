@@ -14,7 +14,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Google Tag Manager Scripts */}
-        {/*  <Script
+         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=AW-16739692694"
         />
@@ -31,7 +31,7 @@ export default function RootLayout({
               });
             `,
           }}
-        /> */}
+        />
       </head>
       <body>
         <Navbar />

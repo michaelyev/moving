@@ -25,10 +25,10 @@ import { submitData } from "@/lib/formSubmit";
 
 function calculateMovingCost(data) {
   const baseRates = {
-    2: 130,
-    3: 180,
-    4: 230,
-    5: 280,
+    2: 100,
+    3: 120,
+    4: 140,
+    5: 160,
   };
 
   const additionalFactors = {
@@ -300,6 +300,7 @@ export function MovingCalc() {
         background: "unset",
         position: "relative",
       }}
+      
     >
       <Sheet
         sx={{
@@ -321,7 +322,7 @@ export function MovingCalc() {
         Instant Quote No Email
       </Sheet>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form  onSubmit={handleSubmit(onSubmit)}>
         <Sheet
           sx={{
             width: { xs: "100%", sm: 416 },

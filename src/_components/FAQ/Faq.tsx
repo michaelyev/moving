@@ -74,7 +74,7 @@ const FAQ = () => {
               },
             }}
           >
-            206-923-8356
+            206-966-0788
           </Box>
         </Typography>
         <Box
@@ -137,7 +137,7 @@ const FAQ = () => {
               },
             }}
           >
-            206-923-8356
+            206-966-0788
           </Box>
         </Typography>
         <BookButton variant="regular" />

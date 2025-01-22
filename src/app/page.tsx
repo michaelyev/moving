@@ -39,24 +39,22 @@ const Page = () => {
         Seattle&apos;s Best Moving Company | MoveStream
       </Typography>
       <Hero />
-      <PricingCalculator />
-      <InfiniteSwiper />
+      <section id="calculator">
+        <PricingCalculator />
+      </section>
 
+      <InfiniteSwiper />
 
       <Container sx={{ marginTop: 4, padding: "unset" }}>
         {" "}
-        
         <img
           src="/IMG_9425.jpeg"
           width="100%"
           height="40%"
           style={{ borderRadius: "24px", padding: 0 }}
         />
-      
       </Container>
       <ServiceCard />
-   
-
 
       <Benefits />
       <ImageSwiper />

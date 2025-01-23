@@ -127,7 +127,7 @@ const page = () => {
               <strong>Email:</strong> movestream.wa@gmail.com
             </li>
             <li>
-              <strong>Phone:</strong> 206-923-8356
+              <strong>Phone:</strong> 206-966-0788
             </li>
             <li>
               <strong>Address:</strong> 15521 25th LN SE Mill Creek, WA 98012

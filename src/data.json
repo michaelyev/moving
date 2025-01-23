@@ -2,223 +2,217 @@
   "navBtn": [
     {
       "id": 1,
-      "title": "Residential Moving"
+      "title": "House Moving"
     },
     {
       "id": 2,
-      "title": "Commercial Moving"
+      "title": "Business Relocation"
     },
     {
       "id": 3,
-      "title": "Packing Services"
+      "title": "Packing Assistance"
     },
     {
       "id": 4,
-      "title": "Full-Service Moving"
+      "title": "Complete Moving Solutions"
     },
     {
       "id": 5,
-      "title": "Last-Minute Moving"
+      "title": "Emergency Relocation"
     },
     {
       "id": 6,
-      "title": "Same-Day Moving"
+      "title": "Same-Day Moves"
     }
   ],
 
   "cards": [
     {
       "id": 7,
-      "title": "Apartment and House Moving",
-      "description": "Efficient, seamless moving of any size.",
+      "title": "House and Apartment Relocation",
+      "description": "Quick and seamless transitions for all property sizes.",
       "features": [
-        "Efficient Packing",
-        "Disassembly and Reassembly of Furniture",
-        "Floor and Property Protection"
+        "Packing Services",
+        "Furniture Assembly and Disassembly",
+        "We Offer Floor Runners and Wall Protectors"
       ],
-      "buttons": ["Book Now", "Learn More"]
+      "buttons": ["Reserve Now", "Find Out More"]
     },
     {
       "id": 8,
-      "title": "Local Moving",
-      "description": "Quick and affordable moves within your city.",
+      "title": "Local Moving Services Near You",
+      "description": "Affordable rates, efficient  and fast moves within your city and nearby.",
       "features": [
         "Flexible Scheduling",
-        "On-Time Delivery",
-        "Transparent Pricing"
+        "Fast Arrival and Delivery",
+        "No Hidden Charges"
       ],
-      "buttons": ["Book Now", "Learn More"]
+      "buttons": ["Reserve Now", "Find Out More"]
     },
     {
       "id": 9,
-      "title": "Long-Distance Moving",
-      "description": "Reliable, stress-free moves across cities or states.",
+      "title": "Long-Distance Moves",
+      "description": "Reliable and affordable moving services for long distances.",
       "features": [
-        "Comprehensive Planning",
-        "Cross-State Compliance",
-        "Secure Transportation and Tracking"
+        "Detailed Moving Plans",
+        "Compliance with Interstate Regulations",
+        "Secure Transport with Tracking"
       ],
-      "buttons": ["Book Now", "Learn More"]
+      "buttons": ["Reserve Now", "Find Out More"]
     }
   ],
 
   "processes": [
     {
       "id": 1,
-      "title": "Initial Consultation and Quote",
-      "description": "We’ll discuss your moving needs and provide a free, detailed quote."
+      "title": "Initial Consultation and Estimate",
+      "description": "We discuss your moving needs and offer a detailed quote."
     },
     {
       "id": 2,
-      "title": "Planning",
-      "description": "We create a customized plan to ensure every detail is covered."
+      "title": "Custom Planning",
+      "description": "We offer in person estimates for a clear pricing plan."
     },
     {
       "id": 3,
       "title": "Packing and Preparation",
-      "description": "Our expert movers carefully pack your items using top-quality materials."
+      "description": "Our experienced movers carefully pack your furniture using quality materials."
     }
   ],
 
   "processes2": [
     {
       "id": 4,
-      "title": "Loading and Transportation",
-      "description": "We securely load your packed items onto our truck and transport them safely to your new destination, using the best routes for timely delivery."
+      "title": "Loading and Delivery",
+      "description": "Your items are securely loaded and transported for a safe and timely delivery."
     },
     {
       "id": 5,
-      "title": "Unpacking ",
-      "description": "If you choose unpacking services, we’ll expertly unpack your items and help arrange them in your new space, so you can settle in quickly."
+      "title": "Unpacking Assistance",
+      "description": "We will help you to unpack and organize your belongings."
     },
     {
       "id": 6,
-      "title": "Final Inspection",
-      "description": "We conduct a thorough walk-through with you to ensure everything has arrived safely and is in the right place, ensuring your complete satisfaction."
+      "title": "Final Walkthrough",
+      "description": "We do a final walkthrough to check for damages or missing items ensuring your complete satisfaction."
     }
   ],
 
   "benefits": [
     {
       "id": 1,
-      "title": "Free Quotes",
-      "description": "There are no hidden fees or surprise charges. Upfront pricing lets plan your move without any uncertainty"
+      "title": "Complimentary Quotes",
+      "description": "No hidden charges, so you can plan your move with confidence."
     },
     {
       "id": 2,
-      "title": "Licensed and Insured",
-      "description": "MoveStream is a licensed and insured moving company that provides you with peace of mind throughout the entire moving process. Your property and belongings is protected and insured. You can trust us to handle them with care."
+      "title": "Fully Licensed and Insured",
+      "description": "Our company is certified and insured to guarantee your peace of mind during the move."
     },
     {
       "id": 3,
-      "title": "Upfront and Honest Pricing",
-      "description": "With us, there are no hidden fees or surprise charges. We provide clear, upfront pricing so you can budget for your move without any uncertainty"
+      "title": " Accurate Pricing",
+      "description": "Clear, upfront costs with no hidden costs."
     },
     {
       "id": 4,
-      "title": "Packing Services",
-      "description": "With us, there are no hidden fees or surprise charges. We provide clear, upfront pricing so you can budget for your move without any uncertainty"
+      "title": "Professional Packing Services",
+      "description": "We pack your belongings correctly to avoid any damages during the transportation."
     },
     {
       "id": 5,
-      "title": "Planning",
-      "description": "From start to finish every detail is taken care of for a properly organized move with a customized plan tailored to your specific needs. Nothing is overlooked."
+      "title": "Customized Planning",
+      "description": "Every detail is considered and managed to suit your specific moving requirements."
     },
     {
       "id": 6,
-      "title": "Flexibility",
-      "description": "We offer flexible scheduling to fit your needs. Whether you need to move on weekends or evenings, we'll adjust to your schedule to make it happen."
+      "title": "Adaptable Scheduling",
+      "description": "We offer scheduling options to fit your needs, including weekends or evenings."
     }
   ],
 
   "reviews": [
     {
       "id": 1,
-      "title": "Last-Minute Move Made Easy",
-      "content": "I can’t say enough good things about this company! I had a last-minute move, and they managed to accommodate me without any issues. The team worked fast but with incredible attention to detail. They were also super polite and kept me updated throughout the whole process.",
+      "title": "Emergency Moves Made Simple",
+      "content": "This company exceeded my expectations! They managed to accommodate my last-minute move seamlessly. The team worked efficiently while taking great care with my belongings. Highly recommended!",
       "author": "Emily R."
     },
     {
       "id": 2,
-      "title": "Professional, Stress-Free Service",
-      "content": "Absolutely fantastic service! The movers arrived right on time, were incredibly professional, and took great care with all of my belongings. The team made the entire process stress-free and quick. Highly recommend!",
+      "title": "Stress-Free and Professional",
+      "content": "Amazing service! The movers were punctual, professional, and handled my items with care. They made the entire process easy and efficient. Definitely recommend them!",
       "author": "Sarah M."
-    },
-    {
-      "id": 3,
-      "title": "Last-Minute Move Made Easy",
-      "content": "I can’t say enough good things about this company! I had a last-minute move, and they managed to accommodate me without any issues. The team worked fast but with incredible attention to detail. They were also super polite and kept me updated throughout the whole process.",
-      "author": "Emily R."
     }
   ],
 
   "accordionData": [
     {
-      "title": "How far in advance should I book my move?",
-      "content": "To ensure availability and get the best rates, it’s recommended to book your move at least 2-4 weeks in advance. However, we also offer last-minute options when possible."
+      "title": "How early should I schedule my move?",
+      "content": "We recommend booking 1-3 weeks in advance to secure availability. Last-minute bookings are also available."
     },
     {
-      "title": "What is included in the moving service?",
-      "content": "Our moving service includes packing and loading, transport, and unloading. We also provide assembly and disassembly, as well as protection for fragile items if needed."
+      "title": "What’s included in the service?",
+      "content": "Our services cover packing, transport, and unloading. Optional assembly, disassembly, and protection for fragile items are also available."
     },
     {
-      "title": "How do you handle heavy or specialty items?",
-      "content": "We’re experienced in moving heavy and specialty items, including pianos, safes, and large furniture. Please let us know in advance, and we’ll arrange the right equipment and team members for safe handling."
+      "title": "Do you handle heavy or specialty items?",
+      "content": "Yes, we’re experienced in moving items like pianos, safes, and large furniture. Let us know in advance to prepare the right equipment."
     },
     {
-      "title": "Do you offer packing and unpacking services?",
-      "content": "Yes! We offer full packing services as well as unpacking to make your move as smooth as possible. You can select either service when booking."
+      "title": "Can you help with packing and unpacking?",
+      "content": "Absolutely! We provide full packing and unpacking services to ensure a smooth move."
     },
     {
-      "title": "How is the cost of the move calculated?",
-      "content": "Our pricing is based on hourly rates, adjusted for factors like property type, distance, and the number of movers needed. We’ll give you an accurate estimate upfront based on your specific requirements."
+      "title": "How do you calculate moving costs?",
+      "content": "Pricing is based on hourly rates, adjusted for factors like distance and property type. We provide detailed estimates beforehand."
     },
     {
-      "title": "Fragile or valuable items?",
-      "content": "Setting aside any particularly fragile or valuable items is recommended so we can pack them separately. Also, you can transport them yourself if you prefer."
+      "title": "What about fragile or valuable items?",
+      "content": "Set aside fragile or valuable items for separate packing. You can also choose to transport them yourself for added security."
     },
     {
-      "title": "Do you provide moving insurance?",
-      "content": "Yes, we offer basic liability coverage for all moves of up to $25,000. Additional insurance is also available."
+      "title": "Is moving insurance available?",
+      "content": "Yes, we offer basic liability coverage up to $25,000. Additional insurance options are available for extra protection."
     },
     {
-      "title": "Rescheduling or Cancelling?",
-      "content": "Plans change. If you need to reschedule or cancel, please notify us as soon as possible."
+      "title": "Can I reschedule or cancel my move?",
+      "content": "Yes, just let us know as soon as possible if you need to make changes to your booking."
     }
   ],
 
   "services": [
     {
       "id": 1,
-      "title": "Apartment and House Moving"
+      "title": "House and Apartment Moving"
     },
     {
       "id": 2,
-      "title": "Local Moving"
+      "title": "Local Moves"
     },
     {
       "id": 3,
-      "title": "Long-Distance Moving"
+      "title": "Long-Distance Moves"
     },
     {
       "id": 4,
-      "title": "Senior Moving"
+      "title": "Senior Relocation"
     },
     {
       "id": 5,
-      "title": "Military Moving"
+      "title": "Military Relocation"
     },
     {
       "id": 6,
-      "title": "Celebrity Moving"
+      "title": "Specialized Moves"
     },
     {
       "id": 7,
-      "title": "Office & Business Moving"
+      "title": "Corporate Relocation"
     },
     {
       "id": 8,
-      "title": "Furniture Moving"
+      "title": "Furniture Handling"
     },
     {
       "id": 9,
@@ -226,80 +220,81 @@
     },
     {
       "id": 10,
-      "title": "Full-Service Moving"
+      "title": "Comprehensive Moving Solutions"
     },
     {
       "id": 11,
-      "title": "Last-Minute Moving"
+      "title": "Urgent Relocation"
     },
     {
       "id": 12,
-      "title": "Same-Day Moving"
+      "title": "Same-Day Moves"
     }
   ],
 
   "companies": [
     {
       "id": 1,
-      "title": "Pricing",
+      "title": "Cost Details",
       "link": "#pricing"
     },
     {
       "id": 2,
-      "title": "FAQ",
+      "title": "Common Questions",
       "link": "#faq"
     },
     {
       "id": 3,
-      "title": "About us",
+      "title": "Our Story",
       "link": "#company"
     },
     {
       "id": 5,
-      "title": "Price Examples",
+      "title": "Pricing Samples",
       "link": "#pricing"
     }
   ],
+
   "details": [
     {
       "id": 1,
-      "title": "Estimate Costs ",
-      "content": "Get a customized moving quote quickly by using our online calculator. Book your preferred moving date early to secure availability and avoid peak pricing."
+      "title": "Get a Quote",
+      "content": "Use our online tool to quickly receive a customized moving estimate.Book your preferred date early for the best rates."
     },
     {
       "id": 2,
-      "title": "Create a Moving Timeline",
-      "content": "Break down each task by week to manage steps like packing, utility shut-off scheduling, and final move confirmations. This helps reduce last-minute stress."
+      "title": "Plan Your Move",
+      "content": "Break down tasks into weekly steps to stay organized and avoid last-minute stress."
     },
     {
       "id": 3,
-      "title": "Organize and Begin Packing ",
-      "content": "Pack room by room, labeling each box by room for easy unpacking. Or, save time with our professional packing service for secure handling."
+      "title": "Pack Strategically",
+      "content": "Label boxes by room for easier unpacking, or let us handle it with our professional packing services."
     },
     {
       "id": 4,
-      "title": "Arrange Child or Pet Care",
-      "content": "Our expert movers carefully pack your items using top-quality materials."
+      "title": "Prepare for Children or Pets",
+      "content": "Ensure pets and kids are cared for during the move for safety and convenience."
     },
     {
       "id": 5,
-      "title": "Measure Doorways and Furniture",
-      "content": "Confirm that furniture will fit through doorways, staircases, and hallways in the new location."
+      "title": "Measure Access Points",
+      "content": "Double-check that large furniture can fit through doors and hallways at the new location."
     },
     {
       "id": 6,
-      "title": "Disconnect and Prepare Appliances",
-      "content": "Unplug and secure cables for electronics, and clean appliances before the move."
+      "title": "Prepare Appliances",
+      "content": "Unplug devices, secure cords, and clean appliances before the move."
     },
     {
       "id": 7,
-      "title": "Schedule a Final Walkthrough",
-      "content": "Do a final sweep of your old home to check for forgotten items and any last-minute cleaning needs."
+      "title": "Final Home Walkthrough",
+      "content": "Check for any forgotten items and ensure all areas are ready for the move."
     },
     {
       "id": 8,
-      "title": "Notify Utility Providers and Change Address",
-      "content": "Update utilities, subscriptions, and mailing address before moving day to ensure a smooth transition."
+      "title": "Update Utilities and Address",
+      "content": "Notify utility providers and update your mailing address before moving day."
     }
   ]
 }

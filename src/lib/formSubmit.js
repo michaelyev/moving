@@ -1,6 +1,6 @@
 export const submitData = async (endpoint, data) => {
     try {
-      const response = await fetch(`https://renovabackend.adaptable.app/${endpoint}`, {
+      const response = await fetch(`https://backend-may-16-production.up.railway.app/${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -38,15 +38,41 @@ export const Booking = ({
 
   const generateSmsLink = () => {
     const fullData = prepareFullData();
+    const {
+      phoneNumber,
+      addressFrom,
+      addressTo,
+      distance,
+      duration,
+      movers,
+      clutterLevel,
+      packingOption,
+      heavyItems,
+      propertyType,
+    } = fullData;
+  
+    // Format property type details
+    const pickupDetails = propertyType?.pickupProperty;
+    const dropoffDetails = propertyType?.dropOffProperty;
+  
     const smsBody = `
-Moving Summary:
-${JSON.stringify(fullData, null, 2)}
-
-Can I get a better deal?
-`.trim();
-
+  Moving Summary:
+  📍 From: ${addressFrom}
+  📍 To: ${addressTo}
+  📏 Distance: ${distance} miles
+  ⏳ Duration: ${duration} min
+  👷 Movers: ${movers}
+  📦 Packing: ${packingOption}
+  📦 Heavy Items: ${heavyItems.length ? heavyItems.join(", ") : "None"}
+  🏠 Pickup: ${pickupDetails?.type}, Floor ${pickupDetails?.details?.floor}
+  🏠 Dropoff: ${dropoffDetails?.type}, Floor ${dropoffDetails?.details?.floor}
+  
+  Can I get a better deal?
+    `.trim();
+  
     return `sms:2062552708?&body=${encodeURIComponent(smsBody)}`;
   };
+  
 
   const handleBookNow = () => {
     if (!movingCost) {

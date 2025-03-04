@@ -27,8 +27,8 @@ function calculateMovingCost(data) {
   const baseRates = {
     2: 110,
     3: 139,
-    4: 160,
-    5: 180,
+    4: 169,
+    5: 199,
   };
 
   const additionalFactors = {

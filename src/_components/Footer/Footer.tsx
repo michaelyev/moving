@@ -57,8 +57,7 @@ const Footer = () => {
             Fully licensed and insured company:
           </Typography>
           <Typography variant="caption">
-            UBI #60011878 <br /> UTC: THG056947 <br /> DOT No. 3246649
-          </Typography>
+          UBI #604784324 <br /> UTC: THG071599 <br /> DOT No. 4298157          </Typography>
         </Box>
         <Divider sx={{ backgroundColor: "#FBFCFC", mt: "1rem" }} />
         <Box

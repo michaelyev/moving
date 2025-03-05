@@ -33,8 +33,10 @@ export const Booking = ({
     movers,
     clutterLevel,
     packingOption,
-    time: "7:00 AM", // Replace if dynamically set
+    date: propertyType?.moveDate || "Not selected", // Ensure date is included
+    time: propertyType?.moveTime || "Not selected", // Ensure time is included
   });
+  
 
   const generateSmsLink = () => {
     const fullData = prepareFullData();
@@ -45,6 +47,8 @@ export const Booking = ({
       distance,
       duration,
       movers,
+      date,
+      time,
       clutterLevel,
       packingOption,
       heavyItems,
@@ -56,9 +60,11 @@ export const Booking = ({
     const dropoffDetails = propertyType?.dropOffProperty;
   
     const smsBody = `
-  Moving Summary:
+  Hi! I need help moving.
   📍 From: ${addressFrom}
   📍 To: ${addressTo}
+  📅 Move Date: ${date}
+  ⏰ Move Time: ${time}
   📏 Distance: ${distance} miles
   ⏳ Duration: ${duration} min
   👷 Movers: ${movers}
@@ -72,6 +78,7 @@ export const Booking = ({
   
     return `sms:2062552708?&body=${encodeURIComponent(smsBody)}`;
   };
+  
   
 
   const handleBookNow = () => {

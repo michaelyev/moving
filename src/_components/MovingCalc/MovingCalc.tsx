@@ -191,7 +191,7 @@ export function MovingCalc() {
       propertyType: null,
       assemblyItems: {},
       date: null,
-      time: "7:00 AM",
+      time: "",
       movers: 2,
       clutterLevel: 1,
       packingOption: "None",
@@ -208,6 +208,8 @@ export function MovingCalc() {
 
   const addressFrom = watch("addressFrom");
   const addressTo = watch("addressTo");
+  const date = watch("date");
+  const time = watch("time");
   const distance = watch("distance");
   const duration = watch("duration");
   const propertyType = watch("propertyType");
@@ -216,8 +218,6 @@ export function MovingCalc() {
   const heavyItems = watch("heavyItems");
   const packingOption = watch("packingOption");
   const enteredNumber = /^\d{10}$/.test(watch("phoneNumber")) ? watch("phoneNumber") : null;
-
-
   const bedrooms = propertyType?.pickupProperty?.details?.bedrooms || 1;
   const floor = propertyType?.pickupProperty?.details?.floor || 1;
 
@@ -300,7 +300,6 @@ export function MovingCalc() {
         background: "unset",
         position: "relative",
       }}
-      
     >
       <Sheet
         sx={{
@@ -322,7 +321,7 @@ export function MovingCalc() {
         Instant Quote No Email
       </Sheet>
 
-      <form  onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Sheet
           sx={{
             width: { xs: "100%", sm: 416 },
@@ -368,14 +367,14 @@ export function MovingCalc() {
             }}
           >
             <Controller
-              name="date"
+              name="time"
               control={control}
               render={({ field }) => (
                 <CalendarComponent
-                  value={field.value}
-                  onChange={field.onChange}
-                  time="7:00 AM"
-                  onTimeChange={() => {}}
+                  value={date}
+                  onChange={(newDate) => setValue("date", newDate)}
+                  time={time}
+                  onTimeChange={(newTime) => setValue("time", newTime)} // ✅ Pass time update to useForm()
                 />
               )}
             />

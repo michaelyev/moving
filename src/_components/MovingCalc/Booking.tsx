@@ -33,13 +33,21 @@ export const Booking = ({
     movers,
     clutterLevel,
     packingOption,
-    date: propertyType?.moveDate || "Not selected", // Ensure date is included
-    time: propertyType?.moveTime || "Not selected", // Ensure time is included
+    date: propertyType?.moveDate || "Not selected",
+    time: propertyType?.moveTime || "Not selected",
+    movingCost: movingCost ?? "Not calculated", // ✅ Ensures cost is never undefined
+    hourlyRate: movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A", // ✅ Ensures hourly rate is calculated properly
   });
   
 
   const generateSmsLink = () => {
     const fullData = prepareFullData();
+  
+    if (!fullData.movingCost || fullData.movingCost === "Not calculated") {
+      console.error("Moving cost is missing, SMS not sent.");
+      return null;
+    }
+  
     const {
       phoneNumber,
       addressFrom,
@@ -57,7 +65,6 @@ export const Booking = ({
       hourlyRate,
     } = fullData;
   
-    // Format property type details
     const pickupDetails = propertyType?.pickupProperty;
     const dropoffDetails = propertyType?.dropOffProperty;
   
@@ -82,8 +89,6 @@ export const Booking = ({
   
     return `sms:2062552708?&body=${encodeURIComponent(smsBody)}`;
   };
-  
-  
   
 
   const handleBookNow = () => {

@@ -274,16 +274,23 @@ export function MovingCalc() {
 
   const onSubmit = async (data) => {
     try {
-      console.log("Form Data Submitted:", data);
+      const fullData = {
+        ...data,
+        movingCost,
+        hourlyRate: movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A",
+      };
   
-      // Submit data to the server
-      await submitData("moving-form", data);
-  
+      console.log("Form Data Submitted:", fullData);
+    
+      // ✅ Send data to the server with cost and hourly rate
+      await submitData("moving-form", fullData);
+    
       console.log("Submission successful!");
     } catch (error) {
       console.error("Failed to submit data:", error);
     }
   };
+  
   
 
   useEffect(() => {

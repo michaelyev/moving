@@ -53,6 +53,8 @@ export const Booking = ({
       packingOption,
       heavyItems,
       propertyType,
+      movingCost,
+      hourlyRate,
     } = fullData;
   
     // Format property type details
@@ -72,12 +74,15 @@ export const Booking = ({
   📦 Heavy Items: ${heavyItems.length ? heavyItems.join(", ") : "None"}
   🏠 Pickup: ${pickupDetails?.type}, Floor ${pickupDetails?.details?.floor}
   🏠 Dropoff: ${dropoffDetails?.type}, Floor ${dropoffDetails?.details?.floor}
+  💰 Estimated Price: $${movingCost}
+  ⏳ Hourly Rate: $${hourlyRate} per hour
   
   Can I get a better deal?
     `.trim();
   
     return `sms:2062552708?&body=${encodeURIComponent(smsBody)}`;
   };
+  
   
   
 

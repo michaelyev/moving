@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 const Page = () => {
   return (
     <Container maxWidth="lg" sx={{ padding: "unset" }}>
-      <Typography
+      {/* <Typography
         variant="h1"
         sx={{
           fontSize: { sm: "2rem", xs: "1.5rem" },
@@ -37,7 +37,7 @@ const Page = () => {
         }}
       >
         Seattle&apos;s Best Moving Company | MoveStream
-      </Typography>
+      </Typography> */}
       <Hero />
       <section id="calculator">
         <PricingCalculator />

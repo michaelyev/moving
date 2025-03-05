@@ -41,8 +41,7 @@ export const Hero = () => {
               fontSize: { sm: "2rem", xs: "1.5rem" },
               textTransform: "uppercase",
               fontWeight: "bold",
-              marginBottom: 2,
-              display: { xs: "none", sm: "block" },
+              marginBottom: 2
             }}
           >
             Seattle&apos;s Best Moving Company | MoveStream

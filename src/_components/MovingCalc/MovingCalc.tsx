@@ -306,6 +306,7 @@ export function MovingCalc() {
         maxHeight: "100%",
         background: "unset",
         position: "relative",
+        userSelect: 'none'
       }}
     >
       <Sheet

@@ -87,6 +87,8 @@ export const ClutterSlide = ({ value, onChange }) => {
               <Image
                 src={clutterImages[clutterLevel - 1]}
                 alt={`Clutter level ${clutterLevel}`}
+                priority={true}
+                quality={20}
                 width={280}
                 height={180}
                 style={{ borderRadius: "8px" }}

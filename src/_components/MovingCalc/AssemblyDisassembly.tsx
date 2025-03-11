@@ -69,7 +69,7 @@ export const AssemblyDisassemblyPicker = ({ setValue }) => {
           alt=""
           height={14}
           width={14}
-          src="icons/interface-home-5--door-entrance-home-house-map-roof-round-window.svg"
+          src="icons/wrench-svgrepo-com.svg"
         />
         Dis/Assembly
       </Button>

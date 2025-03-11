@@ -69,7 +69,7 @@ export const HeavyItemsPicker = ({ setValue }) => {
           alt=""
           height={14}
           width={14}
-          src="icons/interface-home-5--door-entrance-home-house-map-roof-round-window.svg"
+          src="icons/weight-svgrepo-com.svg"
         />
         Heavy Items
       </Button>
@@ -93,7 +93,7 @@ export const HeavyItemsPicker = ({ setValue }) => {
           <Typography
             sx={{ fontWeight: 600, fontSize: "18px", textAlign: "center" }}
           >
-            Pick Heavy Items
+            Pick Heavy Items (over 150 lbs)
           </Typography>
 
           {/* Scrollable items container */}

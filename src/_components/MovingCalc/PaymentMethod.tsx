@@ -41,7 +41,7 @@ export const PaymentMethodPicker = ({ setValue }) => {
           alt=""
           height={14}
           width={14}
-          src="icons/interface-home-5--door-entrance-home-house-map-roof-round-window.svg"
+          src="icons/payment-method-pay-svgrepo-com.svg"
         />
         Payment
       </Button>

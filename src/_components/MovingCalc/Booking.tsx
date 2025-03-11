@@ -82,7 +82,6 @@ export const Booking = ({
   🏠 Pickup: ${pickupDetails?.type}, Floor ${pickupDetails?.details?.floor}
   🏠 Dropoff: ${dropoffDetails?.type}, Floor ${dropoffDetails?.details?.floor}
   💰 Estimated Price: $${movingCost}
-  ⏳ Hourly Rate: $${hourlyRate} per hour
   
   Can I get a better deal?
     `.trim();
@@ -186,15 +185,29 @@ export const Booking = ({
             borderRadius: "100px",
             width: "42%",
             minHeight: "40px",
-            backgroundColor: "white",
             color: "black",
+            transition: "all 0.3s ease-in-out",
+            text: "green",
             "&:hover": {
               backgroundColor: "#FF881A",
               boxShadow: "0 4px 15px rgba(255, 137, 25, 0.5)",
             },
-            "&:active": {
-              transform: "scale(0.98)",
-            }, // Fixed closing curly brace here
+            animation:
+              movingCost && enteredNumber
+                ? "pulse 1.9s infinite ease-in-out"
+                : "none",
+            "@keyframes pulse": {
+              "0%": {
+                transform: "scale(1.00)"
+              },
+              "50%": {
+                transform: "scale(1.0)"
+              },
+              "100%": {
+                transform: "scale(1.00)"
+              },
+            },
+            backgroundColor: movingCost && enteredNumber ? "lightGreen" : "",
           }}
           type="button"
           onClick={handleGetBetterDeal}

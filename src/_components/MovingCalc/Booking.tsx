@@ -22,22 +22,28 @@ export const Booking = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const prepareFullData = () => ({
-    phoneNumber: enteredNumber || "N/A",
-    heavyItems: heavyItems || [],
-    addressFrom,
-    addressTo,
-    distance,
-    duration,
-    propertyType,
-    movers,
-    clutterLevel,
-    packingOption,
-    date: propertyType?.moveDate || "Not selected",
-    time: propertyType?.moveTime || "Not selected",
-    movingCost: movingCost ?? "Not calculated", // ✅ Ensures cost is never undefined
-    hourlyRate: movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A", // ✅ Ensures hourly rate is calculated properly
-  });
+  const prepareFullData = () => {
+    const fullData = {
+      phoneNumber: enteredNumber || "N/A",
+      heavyItems: heavyItems?.[0] || heavyItems, // ✅ Фикс!
+      assemblyItems: assemblyItems || {}, // ✅ Фикс!
+      addressFrom,
+      addressTo,
+      distance,
+      duration,
+      propertyType,
+      movers,
+      clutterLevel,
+      packingOption,
+      date: date || "Not specified", // ✅ Передаём дату
+      time: time || "Not specified", // ✅ Передаём время
+      movingCost: movingCost ?? "Not calculated",
+      hourlyRate: movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A",
+    };
+  
+    console.log("✅ Full Data Before SMS:", fullData); // Проверяем, есть ли `date` и `assemblyItems`
+    return fullData;
+  };
   
 
   const generateSmsLink = () => {

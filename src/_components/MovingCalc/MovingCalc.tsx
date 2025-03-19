@@ -308,7 +308,7 @@ export function MovingCalc() {
         maxHeight: "100%",
         background: "unset",
         position: "relative",
-        userSelect: 'none'
+        userSelect: "none",
       }}
     >
       <Sheet
@@ -573,19 +573,21 @@ export function MovingCalc() {
             <Booking
               movingCost={movingCost}
               enteredNumber={enteredNumber}
-              addressFrom={addressFrom} // Pass the pickup address
-              addressTo={addressTo} // Pass the drop-off address
-              propertyType={propertyType} // Pass property type details
+              addressFrom={addressFrom}
+              addressTo={addressTo}
+              propertyType={propertyType}
               distance={distance}
               duration={duration}
               totalHours={totalHours}
               movers={movers}
               clutterLevel={clutterLevel}
               packingOption={packingOption}
-              heavyItems={heavyItems}
+              heavyItems={heavyItems?.[0] || heavyItems} // ✅ Фикс, если массив
               assemblyItems={assemblyItems}
-              handleSubmit={handleSubmit} // Pass handleSubmit function
-              onSubmit={onSubmit} // Pass the onSubmit handler}
+              date={date} // ✅ Добавляем дату
+              time={time} // ✅ Добавляем время
+              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
             />
           </Sheet>
         </Sheet>

@@ -8,11 +8,11 @@ const ContactInfo = () => (
     <Link
       underline="none"
       display="block"
-      href="tel:2062552708"
+      href="tel:2066656711"
       color="inherit"
       sx={{ lineHeight: 2 }}
     >
-      206-966-0788
+      206-665-6711
     </Link>
 
     {/* Address */}

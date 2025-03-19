@@ -69,7 +69,7 @@ const MobileMenu = ({ open, onClose, pages }: MobileMenuProps) => {
             }}
             startIcon={<PhoneIcon />}
             component="a"
-            href="tel:2062552708" // This makes the button initiate a call
+            href="tel:2066656711" // This makes the button initiate a call
           >
             Call
           </Button>

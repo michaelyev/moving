@@ -36,18 +36,18 @@ export const Booking = ({
     date: propertyType?.moveDate || "Not selected",
     time: propertyType?.moveTime || "Not selected",
     movingCost: movingCost ?? "Not calculated", // ✅ Ensures cost is never undefined
-    hourlyRate: movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A", // ✅ Ensures hourly rate is calculated properly
+    hourlyRate:
+      movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A", // ✅ Ensures hourly rate is calculated properly
   });
-  
 
   const generateSmsLink = () => {
     const fullData = prepareFullData();
-  
+
     if (!fullData.movingCost || fullData.movingCost === "Not calculated") {
       console.error("Moving cost is missing, SMS not sent.");
       return null;
     }
-  
+
     const {
       phoneNumber,
       addressFrom,
@@ -64,10 +64,10 @@ export const Booking = ({
       movingCost,
       hourlyRate,
     } = fullData;
-  
+
     const pickupDetails = propertyType?.pickupProperty;
     const dropoffDetails = propertyType?.dropOffProperty;
-  
+
     const smsBody = `
   Hi! I need help moving.
   📍 From: ${addressFrom}
@@ -85,10 +85,9 @@ export const Booking = ({
   
   Can I get a better deal?
     `.trim();
-  
-    return `sms:2062552708?&body=${encodeURIComponent(smsBody)}`;
+
+    return `sms:2066656711?&body=${encodeURIComponent(smsBody)}`;
   };
-  
 
   const handleBookNow = () => {
     if (!movingCost) {
@@ -198,13 +197,13 @@ export const Booking = ({
                 : "none",
             "@keyframes pulse": {
               "0%": {
-                transform: "scale(1.00)"
+                transform: "scale(1.00)",
               },
               "50%": {
-                transform: "scale(1.0)"
+                transform: "scale(1.0)",
               },
               "100%": {
-                transform: "scale(1.00)"
+                transform: "scale(1.00)",
               },
             },
             backgroundColor: movingCost && enteredNumber ? "lightGreen" : "",

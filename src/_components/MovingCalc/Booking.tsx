@@ -35,8 +35,8 @@ export const Booking = ({
       movers,
       clutterLevel,
       packingOption,
-      date: date || "Not specified", // ✅ Передаём дату
-      time: time || "Not specified", // ✅ Передаём время
+      date: propertyType?.moveDate || "Not specified", // 🚀 Передаём `date` из пропсов!
+      time: propertyType?.moveTime || "Not specified", // 🚀 Передаём `time` из пропсов!
       movingCost: movingCost ?? "Not calculated",
       hourlyRate: movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A",
     };

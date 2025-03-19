@@ -570,25 +570,26 @@ export function MovingCalc() {
               />
             )}
 
-            <Booking
-              movingCost={movingCost}
-              enteredNumber={enteredNumber}
-              addressFrom={addressFrom}
-              addressTo={addressTo}
-              propertyType={propertyType}
-              distance={distance}
-              duration={duration}
-              totalHours={totalHours}
-              movers={movers}
-              clutterLevel={clutterLevel}
-              packingOption={packingOption}
-              heavyItems={heavyItems?.[0] || heavyItems} // ✅ Фикс, если массив
-              assemblyItems={assemblyItems}
-              date={date} // ✅ Добавляем дату
-              time={time} // ✅ Добавляем время
-              handleSubmit={handleSubmit}
-              onSubmit={onSubmit}
-            />
+<Booking
+  movingCost={movingCost}
+  enteredNumber={enteredNumber}
+  addressFrom={addressFrom}
+  addressTo={addressTo}
+  propertyType={propertyType}
+  distance={distance}
+  duration={duration}
+  totalHours={totalHours}
+  movers={movers}
+  clutterLevel={clutterLevel}
+  packingOption={packingOption}
+  heavyItems={heavyItems?.[0] || heavyItems} // ✅ Фикс, если массив
+  assemblyItems={assemblyItems} // ✅ Должно передаваться!
+  date={date} // ✅ Добавлено!
+  time={time} // ✅ Добавлено!
+  handleSubmit={handleSubmit}
+  onSubmit={onSubmit}
+/>
+
           </Sheet>
         </Sheet>
       </form>

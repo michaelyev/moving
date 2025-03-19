@@ -246,6 +246,8 @@ export function MovingCalc() {
         setTotalHours(hours);
         setMovers(calculatedMovers);
 
+        
+
         if (calculatedMinMovers !== minMovers) {
           setMinMovers(calculatedMinMovers);
           setValue("movers", calculatedMinMovers);
@@ -583,7 +585,7 @@ export function MovingCalc() {
               heavyItems={heavyItems}
               assemblyItems={assemblyItems}
               handleSubmit={handleSubmit} // Pass handleSubmit function
-              onSubmit={onSubmit} // Pass the onSubmit handler
+              onSubmit={onSubmit} // Pass the onSubmit handler}
             />
           </Sheet>
         </Sheet>

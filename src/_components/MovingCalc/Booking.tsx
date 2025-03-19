@@ -36,18 +36,18 @@ export const Booking = ({
     date: propertyType?.moveDate || "Not selected",
     time: propertyType?.moveTime || "Not selected",
     movingCost: movingCost ?? "Not calculated", // ✅ Ensures cost is never undefined
-    hourlyRate:
-      movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A", // ✅ Ensures hourly rate is calculated properly
+    hourlyRate: movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A", // ✅ Ensures hourly rate is calculated properly
   });
+  
 
   const generateSmsLink = () => {
     const fullData = prepareFullData();
-
+  
     if (!fullData.movingCost || fullData.movingCost === "Not calculated") {
       console.error("Moving cost is missing, SMS not sent.");
       return null;
     }
-
+  
     const {
       phoneNumber,
       addressFrom,
@@ -60,34 +60,77 @@ export const Booking = ({
       clutterLevel,
       packingOption,
       heavyItems,
+      assemblyItems,
       propertyType,
       movingCost,
       hourlyRate,
     } = fullData;
-
+  
     const pickupDetails = propertyType?.pickupProperty;
     const dropoffDetails = propertyType?.dropOffProperty;
-
+  
+    // ✅ Convert date to readable format
+    const formattedDate = new Date(date).toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  
+    // ✅ Extract property details (House: Stories, Apartment: Rooms)
+    const formatPropertyDetails = (property) => {
+      if (!property) return "N/A";
+      if (property.type === "House") {
+        return `House, ${property.details?.stories} stories (${property.details?.squareFeet} sq. ft)`;
+      }
+      if (property.type === "Apartment") {
+        return `Apartment, ${property.details?.rooms} rooms, Floor ${property.details?.floor}`;
+      }
+      return property.type;
+    };
+  
+    // ✅ Extract Heavy Items
+    const heavyItemsList = Object.entries(heavyItems?.[0] || heavyItems || {})
+      .filter(([_, { quantity }]) => quantity > 0)
+      .map(([item, { quantity }]) => `${item} (x${quantity})`)
+      .join(", ");
+  
+    // ✅ Extract Assembly Items
+    const assemblyItemsList = Object.entries(assemblyItems || {})
+      .filter(([_, { quantity }]) => quantity > 0)
+      .map(([item, { quantity }]) => `${item} (x${quantity})`)
+      .join(", ");
+  
     const smsBody = `
   Hi! I need help moving.
-  📍 From: ${addressFrom}
-  📍 To: ${addressTo}
-  📅 Move Date: ${date}
-  ⏰ Move Time: ${time}
-  📏 Distance: ${distance} miles
-  ⏳ Duration: ${duration} min
-  👷 Movers: ${movers}
-  📦 Packing: ${packingOption}
-  📦 Heavy Items: ${heavyItems.length ? heavyItems.join(", ") : "None"}
-  🏠 Pickup: ${pickupDetails?.type}, Floor ${pickupDetails?.details?.floor}
-  🏠 Dropoff: ${dropoffDetails?.type}, Floor ${dropoffDetails?.details?.floor}
-  💰 Estimated Price: $${movingCost}
+  
+  📍 **Pickup Address**: ${addressFrom}
+  🏠 **Pickup Property**: ${formatPropertyDetails(pickupDetails)}
+  
+  📍 **Dropoff Address**: ${addressTo}
+  🏠 **Dropoff Property**: ${formatPropertyDetails(dropoffDetails)}
+  
+  📅 **Move Date**: ${formattedDate}
+  ⏰ **Move Time**: ${time}
+  📏 **Distance**: ${distance} miles
+  ⏳ **Estimated Duration**: ${duration} minutes
+  
+  👷 **Movers Needed**: ${movers}
+  📦 **Packing Option**: ${packingOption}
+  📦 **Clutter Level**: ${clutterLevel}
+  
+  🛑 **Heavy Items**: ${heavyItemsList || "None"}
+  🔧 **Assembly Items**: ${assemblyItemsList || "None"}
+  
+  💰 **Estimated Price**: $${movingCost} (Hourly Rate: $${hourlyRate}/hr)
   
   Can I get a better deal?
     `.trim();
-
+  
     return `sms:2066656711?&body=${encodeURIComponent(smsBody)}`;
   };
+  
+  
 
   const handleBookNow = () => {
     if (!movingCost) {
@@ -197,13 +240,13 @@ export const Booking = ({
                 : "none",
             "@keyframes pulse": {
               "0%": {
-                transform: "scale(1.00)",
+                transform: "scale(1.00)"
               },
               "50%": {
-                transform: "scale(1.0)",
+                transform: "scale(1.0)"
               },
               "100%": {
-                transform: "scale(1.00)",
+                transform: "scale(1.00)"
               },
             },
             backgroundColor: movingCost && enteredNumber ? "lightGreen" : "",

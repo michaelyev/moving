@@ -31,7 +31,7 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar color="transparent" elevation={0}>
+    <AppBar position="sticky" color="transparent" elevation={0}>
       <Container
         maxWidth="lg"
         sx={{
@@ -62,7 +62,7 @@ const Navbar = () => {
           >
             MOVESTREAM
           </Typography>
-          <Image alt="logo" src="/Subject.png" height={35} width={55} />
+          {/* <Image alt="logo" src="/Subject.png" height={35} width={55} /> */}
           {isMobile ? (
             <Box
               sx={{

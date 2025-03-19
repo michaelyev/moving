@@ -75,22 +75,20 @@ export const Booking = ({
     const pickupDetails = propertyType?.pickupProperty || {};
     const dropoffDetails = propertyType?.dropOffProperty || {};
   
-    // ✅ Format Date Correctly
-    // ✅ Исправленное форматирование даты
-const formattedDate = date
-  ? new Date(date).toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    })
-  : "Not specified";
-
-// ✅ Оставляем `time` как есть
-const formattedTime = time ? time : "Not specified";
-
+    // ✅ Форматируем дату
+    const formattedDate = date
+      ? new Date(date).toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : "Not specified";
   
-    // ✅ Format Property Details (House: Stories, Apartment: Rooms)
+    // ✅ Оставляем `time` как есть
+    const formattedTime = time ? time : "Not specified";
+  
+    // ✅ Форматируем детали недвижимости
     const formatPropertyDetails = (property) => {
       if (!property || !property.type) return "N/A";
       if (property.type === "House") {
@@ -102,20 +100,20 @@ const formattedTime = time ? time : "Not specified";
       return property.type;
     };
   
-    // ✅ Extract Heavy Items Correctly
+    // ✅ Извлекаем тяжёлые предметы
     const heavyItemsData = heavyItems?.[0] || heavyItems || {};
     const heavyItemsList = Object.entries(heavyItemsData)
       .filter(([_, item]) => item.quantity > 0)
       .map(([item, { quantity }]) => `${item} (x${quantity})`)
       .join(", ") || "None";
   
-    // ✅ Extract Assembly Items Correctly
+    // ✅ Извлекаем предметы для сборки/разборки
     const assemblyItemsList = Object.entries(assemblyItems || {})
       .filter(([_, item]) => item.quantity > 0)
       .map(([item, { quantity }]) => `${item} (x${quantity})`)
       .join(", ") || "None";
   
-    // ✅ Construct SMS Message
+    // ✅ Формируем SMS-сообщение
     const smsBody = `
   Hi! I need help moving.
   
@@ -140,9 +138,13 @@ const formattedTime = time ? time : "Not specified";
   💰 Estimated Price: $${movingCost} (Hourly Rate: $${hourlyRate}/hr)
   
   Can I get a better deal?
-    `.trim();
+      `.trim();
   
-    return `sms:2066656711?&body=${encodeURIComponent(smsBody)}`;
+    const smsLink = `sms:2066656711?&body=${encodeURIComponent(smsBody)}`;
+  
+    console.log("✅ SMS Link Generated:", smsLink); // Проверяем, есть ли ссылка
+    
+    return smsLink;
   };
   
   

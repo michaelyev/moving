@@ -49,7 +49,6 @@ export const Booking = ({
     }
   
     const {
-      phoneNumber,
       addressFrom,
       addressTo,
       distance,
@@ -69,25 +68,20 @@ export const Booking = ({
     const pickupDetails = propertyType?.pickupProperty || {};
     const dropoffDetails = propertyType?.dropOffProperty || {};
   
-    // ✅ Format Date (e.g., Thursday, March 20, 2025)
-const formattedDate = date
-? new Date(date).toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  })
-: "Not specified";
-
-// ✅ Format Time (e.g., 12:30 PM) - Ensures proper format
-const formattedTime = time
-? new Date(`1970-01-01T${time}Z`).toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  })
-: "Not specified";
-
+    // ✅ Format Date Correctly
+    const formattedDate = date
+      ? new Date(date).toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : "Not specified";
+  
+    // ✅ Format Time Correctly
+    const formattedTime = time
+      ? time
+      : "Not specified"; // Keeps the exact time from user input
   
     // ✅ Format Property Details (House: Stories, Apartment: Rooms)
     const formatPropertyDetails = (property) => {
@@ -101,15 +95,15 @@ const formattedTime = time
       return property.type;
     };
   
-    // ✅ Extract Heavy Items
+    // ✅ Format Heavy Items Correctly
     const heavyItemsList = Object.entries(heavyItems?.[0] || heavyItems || {})
-      .filter(([_, { quantity }]) => quantity > 0)
+      .filter(([_, item]) => item.quantity > 0)
       .map(([item, { quantity }]) => `${item} (x${quantity})`)
       .join(", ") || "None";
   
-    // ✅ Extract Assembly Items
+    // ✅ Format Assembly Items Correctly
     const assemblyItemsList = Object.entries(assemblyItems || {})
-      .filter(([_, { quantity }]) => quantity > 0)
+      .filter(([_, item]) => item.quantity > 0)
       .map(([item, { quantity }]) => `${item} (x${quantity})`)
       .join(", ") || "None";
   
@@ -140,7 +134,7 @@ const formattedTime = time
   Can I get a better deal?
     `.trim();
   
-    return `sms:${phoneNumber}?&body=${encodeURIComponent(smsBody)}`;
+    return `sms:2066656711?&body=${encodeURIComponent(smsBody)}`;
   };
   
   

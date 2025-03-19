@@ -66,10 +66,10 @@ export const Booking = ({
       hourlyRate,
     } = fullData;
   
-    const pickupDetails = propertyType?.pickupProperty;
-    const dropoffDetails = propertyType?.dropOffProperty;
+    const pickupDetails = propertyType?.pickupProperty || {};
+    const dropoffDetails = propertyType?.dropOffProperty || {};
   
-    // ✅ Convert date to readable format
+    // ✅ Format Date (e.g., Thursday, March 20, 2025)
     const formattedDate = new Date(date).toLocaleDateString("en-US", {
       weekday: "long",
       month: "long",
@@ -77,9 +77,16 @@ export const Booking = ({
       year: "numeric",
     });
   
-    // ✅ Extract property details (House: Stories, Apartment: Rooms)
+    // ✅ Format Time (e.g., 12:30 PM)
+    const formattedTime = new Date(`1970-01-01T${time}Z`).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  
+    // ✅ Format Property Details (House: Stories, Apartment: Rooms)
     const formatPropertyDetails = (property) => {
-      if (!property) return "N/A";
+      if (!property || !property.type) return "N/A";
       if (property.type === "House") {
         return `House, ${property.details?.stories} stories (${property.details?.squareFeet} sq. ft)`;
       }
@@ -93,41 +100,42 @@ export const Booking = ({
     const heavyItemsList = Object.entries(heavyItems?.[0] || heavyItems || {})
       .filter(([_, { quantity }]) => quantity > 0)
       .map(([item, { quantity }]) => `${item} (x${quantity})`)
-      .join(", ");
+      .join(", ") || "None";
   
     // ✅ Extract Assembly Items
     const assemblyItemsList = Object.entries(assemblyItems || {})
       .filter(([_, { quantity }]) => quantity > 0)
       .map(([item, { quantity }]) => `${item} (x${quantity})`)
-      .join(", ");
+      .join(", ") || "None";
   
+    // ✅ Construct SMS Message
     const smsBody = `
   Hi! I need help moving.
   
-  📍 **Pickup Address**: ${addressFrom}
-  🏠 **Pickup Property**: ${formatPropertyDetails(pickupDetails)}
+  📍 Pickup Address: ${addressFrom}
+  🏠 Pickup Property: ${formatPropertyDetails(pickupDetails)}
   
-  📍 **Dropoff Address**: ${addressTo}
-  🏠 **Dropoff Property**: ${formatPropertyDetails(dropoffDetails)}
+  📍 Dropoff Address: ${addressTo}
+  🏠 Dropoff Property: ${formatPropertyDetails(dropoffDetails)}
   
-  📅 **Move Date**: ${formattedDate}
-  ⏰ **Move Time**: ${time}
-  📏 **Distance**: ${distance} miles
-  ⏳ **Estimated Duration**: ${duration} minutes
+  📅 Move Date: ${formattedDate}
+  ⏰ Move Time: ${formattedTime}
+  📏 Distance: ${distance} miles
+  ⏳ Estimated Duration: ${duration} minutes
   
-  👷 **Movers Needed**: ${movers}
-  📦 **Packing Option**: ${packingOption}
-  📦 **Clutter Level**: ${clutterLevel}
+  👷 Movers Needed: ${movers}
+  📦 Packing Option: ${packingOption}
+  📦 Clutter Level: ${clutterLevel}
   
-  🛑 **Heavy Items**: ${heavyItemsList || "None"}
-  🔧 **Assembly Items**: ${assemblyItemsList || "None"}
+  🛑 Heavy Items: ${heavyItemsList}
+  🔧 Assembly Items: ${assemblyItemsList}
   
-  💰 **Estimated Price**: $${movingCost} (Hourly Rate: $${hourlyRate}/hr)
+  💰 Estimated Price: $${movingCost} (Hourly Rate: $${hourlyRate}/hr)
   
   Can I get a better deal?
     `.trim();
   
-    return `sms:2066656711?&body=${encodeURIComponent(smsBody)}`;
+    return `sms:${phoneNumber}?&body=${encodeURIComponent(smsBody)}`;
   };
   
   

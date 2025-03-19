@@ -25,8 +25,8 @@ export const Booking = ({
   const prepareFullData = () => {
     const fullData = {
       phoneNumber: enteredNumber || "N/A",
-      heavyItems: heavyItems?.[0] || heavyItems, // ✅ Фикс!
-      assemblyItems: assemblyItems || {}, // ✅ Фикс!
+      heavyItems: heavyItems?.[0] || heavyItems,
+      assemblyItems: assemblyItems || {},
       addressFrom,
       addressTo,
       distance,
@@ -35,15 +35,16 @@ export const Booking = ({
       movers,
       clutterLevel,
       packingOption,
-      date: propertyType?.moveDate || "Not specified", // 🚀 Передаём `date` из пропсов!
-      time: propertyType?.moveTime || "Not specified", // 🚀 Передаём `time` из пропсов!
+      date: date || "Not specified", // 🚀 Передаём дату!
+      time: time || "Not specified", // 🚀 Передаём время!
       movingCost: movingCost ?? "Not calculated",
       hourlyRate: movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A",
     };
   
-    console.log("✅ Full Data Before SMS:", fullData); // Проверяем, есть ли `date` и `assemblyItems`
+    console.log("✅ Full Data Before SMS:", fullData); // Проверяем, есть ли `date` и `time`
     return fullData;
   };
+  
   
 
   const generateSmsLink = () => {
@@ -75,17 +76,19 @@ export const Booking = ({
     const dropoffDetails = propertyType?.dropOffProperty || {};
   
     // ✅ Format Date Correctly
-    const formattedDate = date
-      ? new Date(date).toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        })
-      : "Not specified";
-  
-    // ✅ Format Time Properly (Ensure it's not undefined)
-    const formattedTime = time ? time : "Not specified";
+    // ✅ Исправленное форматирование даты
+const formattedDate = date
+  ? new Date(date).toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
+  : "Not specified";
+
+// ✅ Оставляем `time` как есть
+const formattedTime = time ? time : "Not specified";
+
   
     // ✅ Format Property Details (House: Stories, Apartment: Rooms)
     const formatPropertyDetails = (property) => {

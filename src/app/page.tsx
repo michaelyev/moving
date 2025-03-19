@@ -17,6 +17,7 @@ import TeamSwiper from "@/_components/Team/Team";
 import ImageSwiper from "@/_components/GallerySlider/GallerySlider";
 import GoogleReviewCount from "@/_components/GoogleReviews";
 import { GoogleReviewMobile } from "@/_components/GoogleReviewsMobile";
+import { ThumbtackReview } from "@/_components/Thumbtack";
 
 export const metadata: Metadata = {
 	title: "Movestream: Seattle Moving Company",
@@ -43,6 +44,8 @@ const Page = () => {
       <Hero />
 
       <GoogleReviewMobile />
+
+      <ThumbtackReview />
       
       <section id="calculator">
         <PricingCalculator />

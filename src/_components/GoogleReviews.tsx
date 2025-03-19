@@ -38,7 +38,8 @@ const GoogleReviewCount = () => {
       sx={{
         position: "relative",
         bottom: { sm: "50px" },
-        right: { sm: "20px" }
+        right: { sm: "20px" },
+        zIndex: 0
       }}
       className="embedsocial-widget"
       data-ref="37a3fbda41dc3959a41ea9007e14abb6"

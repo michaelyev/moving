@@ -78,10 +78,8 @@ export const Booking = ({
         })
       : "Not specified";
   
-    // ✅ Format Time Correctly
-    const formattedTime = time
-      ? time
-      : "Not specified"; // Keeps the exact time from user input
+    // ✅ Format Time Properly (Ensure it's not undefined)
+    const formattedTime = time ? time : "Not specified";
   
     // ✅ Format Property Details (House: Stories, Apartment: Rooms)
     const formatPropertyDetails = (property) => {
@@ -95,13 +93,14 @@ export const Booking = ({
       return property.type;
     };
   
-    // ✅ Format Heavy Items Correctly
-    const heavyItemsList = Object.entries(heavyItems?.[0] || heavyItems || {})
+    // ✅ Extract Heavy Items Correctly
+    const heavyItemsData = heavyItems?.[0] || heavyItems || {};
+    const heavyItemsList = Object.entries(heavyItemsData)
       .filter(([_, item]) => item.quantity > 0)
       .map(([item, { quantity }]) => `${item} (x${quantity})`)
       .join(", ") || "None";
   
-    // ✅ Format Assembly Items Correctly
+    // ✅ Extract Assembly Items Correctly
     const assemblyItemsList = Object.entries(assemblyItems || {})
       .filter(([_, item]) => item.quantity > 0)
       .map(([item, { quantity }]) => `${item} (x${quantity})`)

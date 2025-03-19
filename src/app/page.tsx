@@ -15,6 +15,8 @@ import PricingCalculator from "@/_components/Prices/Prices";
 import InfiniteSwiper from "@/_components/Slider/Slider";
 import TeamSwiper from "@/_components/Team/Team";
 import ImageSwiper from "@/_components/GallerySlider/GallerySlider";
+import GoogleReviewCount from "@/_components/GoogleReviews";
+import { GoogleReviewMobile } from "@/_components/GoogleReviewsMobile";
 
 export const metadata: Metadata = {
 	title: "Movestream: Seattle Moving Company",
@@ -39,13 +41,17 @@ const Page = () => {
         Seattle&apos;s Best Moving Company | MoveStream
       </Typography> */}
       <Hero />
+
+      <GoogleReviewMobile />
+      
       <section id="calculator">
         <PricingCalculator />
       </section>
+     
 
       <InfiniteSwiper />
 
-      <Container sx={{ marginTop: 4, padding: "unset" }}>
+      {/* <Container sx={{ marginTop: 4, padding: "unset" }}>
         {" "}
         <img
           src="/IMG_9425.jpeg"
@@ -53,7 +59,7 @@ const Page = () => {
           height="40%"
           style={{ borderRadius: "24px", padding: 0 }}
         />
-      </Container>
+      </Container> */}
       <ServiceCard />
 
       <Benefits />

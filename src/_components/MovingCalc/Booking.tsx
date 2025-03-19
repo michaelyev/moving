@@ -70,28 +70,33 @@ export const Booking = ({
     const dropoffDetails = propertyType?.dropOffProperty || {};
   
     // ✅ Format Date (e.g., Thursday, March 20, 2025)
-    const formattedDate = new Date(date).toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-  
-    // ✅ Format Time (e.g., 12:30 PM)
-    const formattedTime = new Date(`1970-01-01T${time}Z`).toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
+const formattedDate = date
+? new Date(date).toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  })
+: "Not specified";
+
+// ✅ Format Time (e.g., 12:30 PM) - Ensures proper format
+const formattedTime = time
+? new Date(`1970-01-01T${time}Z`).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  })
+: "Not specified";
+
   
     // ✅ Format Property Details (House: Stories, Apartment: Rooms)
     const formatPropertyDetails = (property) => {
       if (!property || !property.type) return "N/A";
       if (property.type === "House") {
-        return `House, ${property.details?.stories} stories (${property.details?.squareFeet} sq. ft)`;
+        return `House, ${property.details?.stories || "N/A"} stories (${property.details?.squareFeet || "N/A"} sq. ft)`;
       }
       if (property.type === "Apartment") {
-        return `Apartment, ${property.details?.rooms} rooms, Floor ${property.details?.floor}`;
+        return `Apartment, ${property.details?.rooms || "N/A"} rooms, Floor ${property.details?.floor || "N/A"}`;
       }
       return property.type;
     };

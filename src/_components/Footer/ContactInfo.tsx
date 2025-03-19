@@ -25,7 +25,7 @@ const ContactInfo = () => (
       color="inherit"
       sx={{ lineHeight: 2 }}
     >
-      518 NE 102nd St, Seattle, WA 98125
+      247 1st Ave W, Seattle, WA 98119
     </Link>
 
     {/* Email */}

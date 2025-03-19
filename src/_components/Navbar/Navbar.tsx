@@ -31,7 +31,7 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="sticky" color="transparent" elevation={0}>
+    <AppBar color="transparent" elevation={0}>
       <Container
         maxWidth="lg"
         sx={{

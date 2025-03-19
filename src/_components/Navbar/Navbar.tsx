@@ -111,7 +111,7 @@ const Navbar = () => {
           >
             <Box
               component="a"
-              href="tel:+12069238356"
+              href="tel:+12066656711"
               sx={{
                 color: "var(--info-main)",
                 mr: 2,

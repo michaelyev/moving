@@ -60,7 +60,7 @@ const FAQ = () => {
           Reach us at{" "}
           <Box
             component="a"
-            href="tel:+12069238356"
+            href="tel:+12066656711"
             sx={{
               color: "#0073e6",
               textDecoration: "none",
@@ -123,7 +123,7 @@ const FAQ = () => {
           Reach us at{" "}
           <Box
             component="a"
-            href="tel:+12069238356"
+            href="tel:+12066656711"
             sx={{
               color: "#0073e6",
               textDecoration: "none",

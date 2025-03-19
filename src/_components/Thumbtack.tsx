@@ -47,18 +47,18 @@ export const ThumbtackReview = () => {
   );
 };
 
-// ✅ CSS-in-JS styles for better control
-const styles = {
+// ✅ Fixed TypeScript styles
+const styles: { [key: string]: React.CSSProperties } = {
   wrapper: {
     display: "flex",
-    justifyContent: "center", // ✅ Centers horizontally
-    alignItems: "center", // ✅ Centers vertically (optional)
+    justifyContent: "center",
+    alignItems: "center",
     width: "100%",
-    height: "100%", // Adjust if you want it in full screen height
+    height: "100%",
   },
   container: {
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "column", // ✅ Now TypeScript recognizes it
     alignItems: "center",
     textAlign: "center",
     padding: "15px",
@@ -76,7 +76,8 @@ const styles = {
     textDecoration: "none",
     color: "#0073e6",
     fontWeight: "bold",
-    fontSize: "16px"
+    fontSize: "16px",
+    marginBottom: "5px",
   },
   reviewContainer: {
     display: "flex",
@@ -94,3 +95,4 @@ const styles = {
   },
 };
 
+export default ThumbtackReview;

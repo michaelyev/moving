@@ -32,11 +32,11 @@ const ContactInfo = () => (
     <Link
       underline="none"
       display="block"
-      href="mailto:michael@movestream.us"
+      href="mailto:movestream.wa@gmail.com"
       color="inherit"
       sx={{ lineHeight: 2 }}
     >
-      michael@movestream.us
+      movestream.wa@gmail.com
     </Link>
 
     {/* Business Hours */}

@@ -25,10 +25,10 @@ import { submitData } from "@/lib/formSubmit";
 
 function calculateMovingCost(data) {
   const baseRates = {
-    2: 110,
-    3: 139,
-    4: 169,
-    5: 199,
+    2: 119,
+    3: 149,
+    4: 179,
+    5: 209,
   };
 
   const additionalFactors = {

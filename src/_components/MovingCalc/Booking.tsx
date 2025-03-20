@@ -39,7 +39,8 @@ export const Booking = ({
       date: date || "Not specified",
       time: time || "Not specified",
       movingCost: movingCost ?? "Not calculated",
-      hourlyRate: movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A",
+      hourlyRate:
+        movingCost && totalHours ? (movingCost / totalHours).toFixed(2) : "N/A",
     };
 
     console.log("✅ Full Data Before SMS:", fullData); // Проверяем данные перед отправкой SMS
@@ -100,16 +101,18 @@ export const Booking = ({
     };
 
     // ✅ Извлекаем тяжёлые предметы
-    const heavyItemsList = Object.entries(heavyItems)
-      .filter(([_, item]) => item.quantity > 0)
-      .map(([item, { quantity }]) => `${item} (x${quantity})`)
-      .join(", ") || "None";
+    const heavyItemsList =
+      Object.entries(heavyItems)
+        .filter(([_, item]) => item.quantity > 0)
+        .map(([item, { quantity }]) => `${item} (x${quantity})`)
+        .join(", ") || "None";
 
     // ✅ Извлекаем предметы для сборки/разборки
-    const assemblyItemsList = Object.entries(assemblyItems)
-      .filter(([_, item]) => item.quantity > 0)
-      .map(([item, { quantity }]) => `${item} (x${quantity})`)
-      .join(", ") || "None";
+    const assemblyItemsList =
+      Object.entries(assemblyItems)
+        .filter(([_, item]) => item.quantity > 0)
+        .map(([item, { quantity }]) => `${item} (x${quantity})`)
+        .join(", ") || "None";
 
     // ✅ Формируем SMS-сообщение
     const smsBody = `
@@ -133,7 +136,7 @@ Hi! I need help moving.
 🛑 Heavy Items: ${heavyItemsList}
 🔧 Assembly Items: ${assemblyItemsList}
 
-💰 Estimated Price: $${movingCost} (Hourly Rate: $${hourlyRate}/hr)
+💰 Estimated Price: $${movingCost} 
 
 Can I get a better deal?
     `.trim();
@@ -164,12 +167,17 @@ Can I get a better deal?
       return;
     }
 
-    const smsLink = generateSmsLink();
-    if (smsLink) {
-      console.log("📲 Opening SMS:", smsLink);
-      window.open(smsLink);
+    if (isMobile) {
+      // Redirect to SMS on mobile devices only
+      const smsLink = generateSmsLink();
+      window.location.href = smsLink;
     } else {
-      console.error("⚠️ SMS link not generated!");
+      // On desktop, just log an error or perform desktop-specific behavior
+      console.log("SMS functionality is not available on desktop.");
+      if (enteredNumber) {
+        handleSubmit(onSubmit)(); // Submit the form if phone number exists
+        setIsModalOpen(true); // Open modal
+      }
     }
   };
 
@@ -239,10 +247,36 @@ Can I get a better deal?
 
       {/* Modal */}
       {isModalOpen && (
-        <Box sx={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", backgroundColor: "#fff", borderRadius: 8, padding: 3, boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", zIndex: 2000, textAlign: "center" }}>
-          <Typography level="h5" sx={{ fontWeight: "bold", mb: 1 }}>Thank you!</Typography>
+        <Box
+          sx={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "#fff",
+            borderRadius: 8,
+            padding: 3,
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+            zIndex: 2000,
+            textAlign: "center",
+          }}
+        >
+          <Typography level="h5" sx={{ fontWeight: "bold", mb: 1 }}>
+            Thank you!
+          </Typography>
           <Typography level="body1">We&apos;ll be in touch shortly.</Typography>
-          <Button sx={{ marginTop: 2, background: "#FF881A", color: "white", borderRadius: 4, "&:hover": { backgroundColor: "#4876FF" } }} onClick={closeModal}>Close</Button>
+          <Button
+            sx={{
+              marginTop: 2,
+              background: "#FF881A",
+              color: "white",
+              borderRadius: 4,
+              "&:hover": { backgroundColor: "#4876FF" },
+            }}
+            onClick={closeModal}
+          >
+            Close
+          </Button>
         </Box>
       )}
     </>
